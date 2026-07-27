@@ -15,7 +15,6 @@
       --border: #e6ded6;
       --input-bg: #f5efeb;
       --accent-sage: #4a7c59;
-      --accent-sage-hover: #3d6849;
     }
 
     body { 
@@ -854,7 +853,6 @@
       let totalRows = 0;
       let shapingHtml = '';
       let repeatHtml = '';
-      let origDimW = 0, origDimH = 0;
 
       if (currentShape === 'rect') {
         const w = parseFloat(document.getElementById('tWidth').value) || 0;
@@ -873,7 +871,6 @@
 
         document.getElementById('outputPrimary').innerHTML = `Starting Cast-On / Chain: <span class="stat">${finalStitches}</span> stitches`;
         document.getElementById('paperTargetSummary').innerHTML = `Starting Cast-On: ${finalStitches} stitches (${w}" × ${h}" target)`;
-        origDimW = w; origDimH = h;
       } 
       else if (currentShape === 'taper') {
         const cuffW = parseFloat(document.getElementById('tCuffWidth').value) || 0;
@@ -896,7 +893,6 @@
         `;
         document.getElementById('outputPrimary').innerHTML = `Cuff Cast-On: <span class="stat">${startSts}</span> sts → Top Target: <span class="stat">${endSts}</span> sts`;
         document.getElementById('paperTargetSummary').innerHTML = `Cuff Cast-On: ${startSts} sts → Top Target: ${endSts} sts`;
-        origDimW = topW; origDimH = len;
       }
       else if (currentShape === 'triangle') {
         const wingspan = parseFloat(document.getElementById('tWingspan').value) || 0;
@@ -912,7 +908,6 @@
         `;
         document.getElementById('outputPrimary').innerHTML = `Wingspan Target: <span class="stat">${finalStitches}</span> stitches`;
         document.getElementById('paperTargetSummary').innerHTML = `Wingspan Target: ${finalStitches} sts (${wingspan}" wingspan × ${spine}" spine depth)`;
-        origDimW = wingspan; origDimH = spine;
       }
       else if (currentShape === 'circle') {
         const diam = parseFloat(document.getElementById('tDiameter').value) || 0;
@@ -928,7 +923,6 @@
         `;
         document.getElementById('outputPrimary').innerHTML = `Magic Ring Start: <span class="stat">6</span> sts → Final Crown: <span class="stat">${finalStitches}</span> sts`;
         document.getElementById('paperTargetSummary').innerHTML = `Magic Ring Start: 6 sts → Final Crown: ${finalStitches} sts (${diam}" diameter)`;
-        origDimW = diam; origDimH = diam;
       }
 
       // Update Spec Table inside Paper Sheet
@@ -950,7 +944,7 @@
       document.getElementById('repeatBox').innerHTML = repeatHtml;
       document.getElementById('outRows').innerText = totalRows;
 
-      updateStitchPreview(origDimW, origDimH, pSt, ySt);
+      updateStitchPreview(pSt, ySt);
       generatePrintRowTracker(Math.min(totalRows, 200));
     }
 
@@ -963,29 +957,30 @@
       container.innerHTML = html;
     }
 
-    function updateStitchPreview(origUnitsW, origUnitsH, patternGauge, userGauge) {
+    function updateStitchPreview(patternGauge, userGauge) {
       const scaleFactor = patternGauge / userGauge;
-      const rescUnitsW = origUnitsW * scaleFactor;
-      const rescUnitsH = origUnitsH * scaleFactor;
-
       const canvasMaxW = 280;
       const canvasMaxH = 220;
-      const maxW = Math.max(origUnitsW, rescUnitsW, 1);
-      const maxH = Math.max(origUnitsH, rescUnitsH, 1);
-      const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
-
-      const origW = origUnitsW * pxPerUnit;
-      const origH = origUnitsH * pxPerUnit;
-      const rescW = rescUnitsW * pxPerUnit;
-      const rescH = rescUnitsH * pxPerUnit;
-
       const centerX1 = 180, centerX2 = 520, centerY = 160;
       const gOrig = document.getElementById('box-original');
       const gResc = document.getElementById('box-rescaled');
-
       const unitSym = currentUnit === 'in' ? '"' : ' cm';
 
-      if (currentShape === 'rect' || currentShape === 'taper') {
+      if (currentShape === 'rect') {
+        const origUnitsW = parseFloat(document.getElementById('tWidth').value) || 0;
+        const origUnitsH = parseFloat(document.getElementById('tHeight').value) || 0;
+        const rescUnitsW = origUnitsW * scaleFactor;
+        const rescUnitsH = origUnitsH * scaleFactor;
+
+        const maxW = Math.max(origUnitsW, rescUnitsW, 1);
+        const maxH = Math.max(origUnitsH, rescUnitsH, 1);
+        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
+
+        const origW = origUnitsW * pxPerUnit;
+        const origH = origUnitsH * pxPerUnit;
+        const rescW = rescUnitsW * pxPerUnit;
+        const rescH = rescUnitsH * pxPerUnit;
+
         gOrig.innerHTML = `
           <rect x="${centerX1 - origW/2}" y="${centerY - origH/2}" width="${origW}" height="${origH}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2" rx="6"/>
           <text x="${centerX1}" y="${centerY - origH/2 - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
@@ -996,38 +991,110 @@
           <text x="${centerX2}" y="${centerY - rescH/2 - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
           <text x="${centerX2}" y="${centerY + rescH/2 + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescUnitsW.toFixed(1)}${unitSym} × ${rescUnitsH.toFixed(1)}${unitSym}</text>
         `;
-      } else if (currentShape === 'triangle') {
-        const p1O = `${centerX1},${centerY - origH/2}`;
-        const p2O = `${centerX1 - origW/2},${centerY + origH/2}`;
-        const p3O = `${centerX1 + origW/2},${centerY + origH/2}`;
+      } else if (currentShape === 'taper') {
+        const origCuffW = parseFloat(document.getElementById('tCuffWidth').value) || 0;
+        const origTopW = parseFloat(document.getElementById('tTopWidth').value) || 0;
+        const origH = parseFloat(document.getElementById('tTaperLength').value) || 0;
 
-        const p1R = `${centerX2},${centerY - rescH/2}`;
-        const p2R = `${centerX2 - rescW/2},${centerY + rescH/2}`;
-        const p3R = `${centerX2 + rescW/2},${centerY + rescH/2}`;
+        const rescCuffW = origCuffW * scaleFactor;
+        const rescTopW = origTopW * scaleFactor;
+        const rescH = origH * scaleFactor;
+
+        const maxW = Math.max(origCuffW, origTopW, rescCuffW, rescTopW, 1);
+        const maxH = Math.max(origH, rescH, 1);
+        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
+
+        // Original Sleeve Trapezoid Points
+        const oTopW = origTopW * pxPerUnit;
+        const oCuffW = origCuffW * pxPerUnit;
+        const oH = origH * pxPerUnit;
+
+        const oYTop = centerY - oH / 2;
+        const oYBot = centerY + oH / 2;
+        const oXTopL = centerX1 - oTopW / 2;
+        const oXTopR = centerX1 + oTopW / 2;
+        const oXBotR = centerX1 + oCuffW / 2;
+        const oXBotL = centerX1 - oCuffW / 2;
+
+        const pointsOrig = `${oXTopL},${oYTop} ${oXTopR},${oYTop} ${oXBotR},${oYBot} ${oXBotL},${oYBot}`;
+
+        // Rescaled Sleeve Trapezoid Points
+        const rTopW = rescTopW * pxPerUnit;
+        const rCuffW = rescCuffW * pxPerUnit;
+        const rH = rescH * pxPerUnit;
+
+        const rYTop = centerY - rH / 2;
+        const rYBot = centerY + rH / 2;
+        const rXTopL = centerX2 - rTopW / 2;
+        const rXTopR = centerX2 + rTopW / 2;
+        const rXBotR = centerX2 + rCuffW / 2;
+        const rXBotL = centerX2 - rCuffW / 2;
+
+        const pointsResc = `${rXTopL},${rYTop} ${rXTopR},${rYTop} ${rXBotR},${rYBot} ${rXBotL},${rYBot}`;
+
+        gOrig.innerHTML = `
+          <polygon points="${pointsOrig}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
+          <text x="${centerX1}" y="${oYTop - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
+          <text x="${centerX1}" y="${oYBot + 18}" class="svg-subtitle" text-anchor="middle">${origCuffW}${unitSym} Cuff → ${origTopW}${unitSym} Top</text>
+        `;
+        gResc.innerHTML = `
+          <polygon points="${pointsResc}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
+          <text x="${centerX2}" y="${rYTop - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
+          <text x="${centerX2}" y="${rYBot + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescCuffW.toFixed(1)}${unitSym} Cuff → ${rescTopW.toFixed(1)}${unitSym} Top</text>
+        `;
+      } else if (currentShape === 'triangle') {
+        const origWingspan = parseFloat(document.getElementById('tWingspan').value) || 0;
+        const origSpine = parseFloat(document.getElementById('tSpineDepth').value) || 0;
+
+        const rescWingspan = origWingspan * scaleFactor;
+        const rescSpine = origSpine * scaleFactor;
+
+        const maxW = Math.max(origWingspan, rescWingspan, 1);
+        const maxH = Math.max(origSpine, rescSpine, 1);
+        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
+
+        const oW = origWingspan * pxPerUnit;
+        const oH = origSpine * pxPerUnit;
+        const rW = rescWingspan * pxPerUnit;
+        const rH = rescSpine * pxPerUnit;
+
+        const p1O = `${centerX1},${centerY - oH/2}`;
+        const p2O = `${centerX1 - oW/2},${centerY + oH/2}`;
+        const p3O = `${centerX1 + oW/2},${centerY + oH/2}`;
+
+        const p1R = `${centerX2},${centerY - rH/2}`;
+        const p2R = `${centerX2 - rW/2},${centerY + rH/2}`;
+        const p3R = `${centerX2 + rW/2},${centerY + rH/2}`;
 
         gOrig.innerHTML = `
           <polygon points="${p1O} ${p2O} ${p3O}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
-          <text x="${centerX1}" y="${centerY - origH/2 - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
-          <text x="${centerX1}" y="${centerY + origH/2 + 18}" class="svg-subtitle" text-anchor="middle">${origUnitsW}${unitSym} Wingspan</text>
+          <text x="${centerX1}" y="${centerY - oH/2 - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
+          <text x="${centerX1}" y="${centerY + oH/2 + 18}" class="svg-subtitle" text-anchor="middle">${origWingspan}${unitSym} Wingspan</text>
         `;
         gResc.innerHTML = `
           <polygon points="${p1R} ${p2R} ${p3R}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
-          <text x="${centerX2}" y="${centerY - rescH/2 - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
-          <text x="${centerX2}" y="${centerY + rescH/2 + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescUnitsW.toFixed(1)}${unitSym} Wingspan</text>
+          <text x="${centerX2}" y="${centerY - rH/2 - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
+          <text x="${centerX2}" y="${centerY + rH/2 + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescWingspan.toFixed(1)}${unitSym} Wingspan</text>
         `;
       } else if (currentShape === 'circle') {
-        const rO = origW / 2;
-        const rR = rescW / 2;
+        const origDiam = parseFloat(document.getElementById('tDiameter').value) || 0;
+        const rescDiam = origDiam * scaleFactor;
+
+        const maxW = Math.max(origDiam, rescDiam, 1);
+        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxW / maxW);
+
+        const rO = (origDiam * pxPerUnit) / 2;
+        const rR = (rescDiam * pxPerUnit) / 2;
 
         gOrig.innerHTML = `
           <circle cx="${centerX1}" cy="${centerY}" r="${rO}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
           <text x="${centerX1}" y="${centerY - rO - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
-          <text x="${centerX1}" y="${centerY + rO + 18}" class="svg-subtitle" text-anchor="middle">${origUnitsW}${unitSym} Diam.</text>
+          <text x="${centerX1}" y="${centerY + rO + 18}" class="svg-subtitle" text-anchor="middle">${origDiam}${unitSym} Diam.</text>
         `;
         gResc.innerHTML = `
           <circle cx="${centerX2}" cy="${centerY}" r="${rR}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
           <text x="${centerX2}" y="${centerY - rR - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
-          <text x="${centerX2}" y="${centerY + rR + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescUnitsW.toFixed(1)}${unitSym} Diam.</text>
+          <text x="${centerX2}" y="${centerY + rR + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescDiam.toFixed(1)}${unitSym} Diam.</text>
         `;
       }
 
