@@ -530,10 +530,9 @@
           <input type="number" id="tDiameter" value="20">
         </div>
 
-        <!-- Custom Curve Inputs with Explicit Mode Switch -->
+        <!-- Custom Curve Inputs -->
         <div id="inputsCurve" style="display: none;">
           
-          <!-- Explicit Mode Switch Bar -->
           <div style="display: flex; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 3px; margin-bottom: 0.85rem;">
             <button id="modeBtnPreset" type="button" class="unit-btn active" style="flex:1;" onclick="setCurveMode('preset')">📈 Preset Curves</button>
             <button id="modeBtnCustom" type="button" class="unit-btn" style="flex:1;" onclick="setCurveMode('custom')">✏️ Custom Phase Builder</button>
@@ -572,7 +571,6 @@
           <label style="margin-top: 0.5rem;">Total Curve Height / Length (<span class="unit-name">in</span>)</label>
           <input type="number" id="tCurveLength" value="9">
 
-          <!-- Direct Custom Phase Builder Inputs -->
           <div id="customPhasePanel" style="display: none; margin-top: 0.85rem; background: #f5efeb; padding: 0.85rem; border-radius: 10px; border: 1px dashed var(--border);">
             <div style="font-weight: 700; font-size: 0.84rem; color: #2d2623; margin-bottom: 0.5rem;">✏️ Custom Curve Shaping Sequence</div>
             
@@ -808,7 +806,7 @@
   <script>
     let currentUnit = 'in';
     let currentShape = 'rect';
-    let currentCurveMode = 'preset'; // 'preset' or 'custom'
+    let currentCurveMode = 'preset';
 
     const SAMPLE_SCENARIO_LABELS = {
       rect: "⚡ Load Sample Scenario (Worsted → Chunky Throw Blanket)",
@@ -1494,26 +1492,78 @@
         const maxH = Math.max(origH, rescH, 1);
         const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
 
-        const oSW = origStartW * pxPerUnit, oEW = origEndW * pxPerUnit, oH = origH * pxPerUnit;
-        const rSW = rescStartW * pxPerUnit, rEW = rescEndW * pxPerUnit, rH = rescH * pxPerUnit;
+        const generateCurvePathD = (cx, cy, sw, ew, h) => {
+          const swPx = sw * pxPerUnit;
+          const ewPx = ew * pxPerUnit;
+          const hPx = h * pxPerUnit;
+          const yBot = cy + hPx / 2;
+          const yTop = cy - hPx / 2;
 
-        const oYTop = centerY - oH/2, oYBot = centerY + oH/2;
-        const rYTop = centerY - rH/2, rYBot = centerY + rH/2;
+          if (currentCurveMode === 'custom') {
+            const notchSts = parseInt(document.getElementById('cNotchSts').value) || 0;
+            const p1Rows = parseInt(document.getElementById('cPhase1Rows').value) || 2;
+            const p2Rows = parseInt(document.getElementById('cPhase2Rows').value) || 4;
+            const straightRows = parseInt(document.getElementById('cStraightRows').value) || 0;
 
-        let dOrig = "", dResc = "";
-        const cStyle = document.getElementById('curveStylePreset').value;
+            const totalEstRows = Math.max(1, p1Rows * 4 + p2Rows * 4 + straightRows);
+            const straightHPx = Math.min(hPx * 0.7, (straightRows / totalEstRows) * hPx);
+            const curveHPx = hPx - straightHPx;
 
-        if (currentCurveMode === 'preset' && cStyle === 'convex') {
-          dOrig = `M ${centerX1 - oSW/2} ${oYBot} L ${centerX1 + oSW/2} ${oYBot} Q ${centerX1 + oSW/2} ${oYTop + oH*0.5}, ${centerX1 + oEW/2} ${oYTop} L ${centerX1 - oEW/2} ${oYTop} Q ${centerX1 - oSW/2} ${oYTop + oH*0.5}, ${centerX1 - oSW/2} ${oYBot} Z`;
-          dResc = `M ${centerX2 - rSW/2} ${rYBot} L ${centerX2 + rSW/2} ${rYBot} Q ${centerX2 + rSW/2} ${rYTop + rH*0.5}, ${centerX2 + rEW/2} ${rYTop} L ${centerX2 - rEW/2} ${rYTop} Q ${centerX2 - rSW/2} ${rYTop + rH*0.5}, ${centerX2 - rSW/2} ${rYBot} Z`;
-        } else if (currentCurveMode === 'preset' && cStyle === 'scurve') {
-          dOrig = `M ${centerX1 - oSW/2} ${oYBot} L ${centerX1 + oSW/2} ${oYBot} C ${centerX1 + oSW/2} ${oYBot - oH*0.5}, ${centerX1 + oEW/2} ${oYTop + oH*0.5}, ${centerX1 + oEW/2} ${oYTop} L ${centerX1 - oEW/2} ${oYTop} C ${centerX1 - oEW/2} ${oYTop + oH*0.5}, ${centerX1 - oSW/2} ${oYBot - oH*0.5}, ${centerX1 - oSW/2} ${oYBot} Z`;
-          dResc = `M ${centerX2 - rSW/2} ${rYBot} L ${centerX2 + rSW/2} ${rYBot} C ${centerX2 + rSW/2} ${rYBot - rH*0.5}, ${centerX2 + rEW/2} ${rYTop + rH*0.5}, ${centerX2 + rEW/2} ${rYTop} L ${centerX2 - rEW/2} ${rYTop} C ${centerX2 - rEW/2} ${rYTop + rH*0.5}, ${centerX2 - rSW/2} ${rYBot - rH*0.5}, ${centerX2 - rSW/2} ${rYBot} Z`;
-        } else {
-          // Concave / Armhole / Custom Bezier Path
-          dOrig = `M ${centerX1 - oSW/2} ${oYBot} L ${centerX1 + oSW/2} ${oYBot} C ${centerX1 + oSW/2 - 10} ${oYBot - oH*0.3}, ${centerX1 + oEW/2} ${oYTop + oH*0.2}, ${centerX1 + oEW/2} ${oYTop} L ${centerX1 - oEW/2} ${oYTop} C ${centerX1 - oEW/2} ${oYTop + oH*0.2}, ${centerX1 - oSW/2 + 10} ${oYBot - oH*0.3}, ${centerX1 - oSW/2} ${oYBot} Z`;
-          dResc = `M ${centerX2 - rSW/2} ${rYBot} L ${centerX2 + rSW/2} ${rYBot} C ${centerX2 + rSW/2 - 10} ${rYBot - rH*0.3}, ${centerX2 + rEW/2} ${rYTop + rH*0.2}, ${centerX2 + rEW/2} ${rYTop} L ${centerX2 - rEW/2} ${rYTop} C ${centerX2 - rEW/2} ${rYTop + rH*0.2}, ${centerX2 - rSW/2 + 10} ${rYBot - rH*0.3}, ${centerX2 - rSW/2} ${rYBot} Z`;
-        }
+            const maxDeltaPx = Math.abs(swPx - ewPx) / 2;
+            const notchPx = Math.min(maxDeltaPx * 0.7, notchSts * 3);
+
+            const yCurveTop = yTop + straightHPx;
+
+            if (p1Rows <= p2Rows) {
+              // Concave / Steep-to-Gentle Custom Shape
+              return `M ${cx - swPx/2} ${yBot} 
+                      L ${cx + swPx/2} ${yBot} 
+                      l 0 0 
+                      L ${cx + swPx/2 - notchPx} ${yBot} 
+                      C ${cx + swPx/2 - notchPx} ${yBot - curveHPx * 0.5}, ${cx + ewPx/2} ${yCurveTop + curveHPx * 0.2}, ${cx + ewPx/2} ${yCurveTop} 
+                      L ${cx + ewPx/2} ${yTop} 
+                      L ${cx - ewPx/2} ${yTop} 
+                      L ${cx - ewPx/2} ${yCurveTop} 
+                      C ${cx - ewPx/2} ${yCurveTop + curveHPx * 0.2}, ${cx - swPx/2 + notchPx} ${yBot - curveHPx * 0.5}, ${cx - swPx/2 + notchPx} ${yBot} 
+                      Z`;
+            } else {
+              // Convex / Gentle-to-Steep Custom Shape
+              return `M ${cx - swPx/2} ${yBot} 
+                      L ${cx + swPx/2} ${yBot} 
+                      L ${cx + swPx/2 - notchPx} ${yBot} 
+                      C ${cx + swPx/2 - notchPx + (ewPx - swPx)*0.3} ${yBot - curveHPx * 0.2}, ${cx + ewPx/2} ${yCurveTop + curveHPx * 0.7}, ${cx + ewPx/2} ${yCurveTop} 
+                      L ${cx + ewPx/2} ${yTop} 
+                      L ${cx - ewPx/2} ${yTop} 
+                      L ${cx - ewPx/2} ${yCurveTop} 
+                      C ${cx - ewPx/2} ${yCurveTop + curveHPx * 0.7}, ${cx - swPx/2 + notchPx - (ewPx - swPx)*0.3} ${yBot - curveHPx * 0.2}, ${cx - swPx/2 + notchPx} ${yBot} 
+                      Z`;
+            }
+          } else {
+            // Preset Profiles
+            const cStyle = document.getElementById('curveStylePreset').value;
+
+            if (cStyle === 'convex') {
+              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} Q ${cx + swPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} Q ${cx - swPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
+            } else if (cStyle === 'scurve') {
+              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} C ${cx + swPx/2} ${yBot - hPx*0.5}, ${cx + ewPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot - hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
+            } else if (cStyle === 'raglan') {
+              const notchPx = Math.min(Math.abs(swPx - ewPx) * 0.3, 12);
+              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} L ${cx + swPx/2 - notchPx} ${yBot} L ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} L ${cx - swPx/2 + notchPx} ${yBot} Z`;
+            } else {
+              // Armhole / Concave Default
+              const notchPx = Math.min(Math.abs(swPx - ewPx) * 0.35, 14);
+              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} L ${cx + swPx/2 - notchPx} ${yBot} C ${cx + swPx/2 - notchPx} ${yBot - hPx*0.4}, ${cx + ewPx/2} ${yTop + hPx*0.2}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.2}, ${cx - swPx/2 + notchPx} ${yBot - hPx*0.4}, ${cx - swPx/2 + notchPx} ${yBot} Z`;
+            }
+          }
+        };
+
+        const dOrig = generateCurvePathD(centerX1, centerY, origStartW, origEndW, origH);
+        const dResc = generateCurvePathD(centerX2, centerY, rescStartW, rescEndW, rescH);
+
+        const oYTop = centerY - (origH * pxPerUnit) / 2;
+        const oYBot = centerY + (origH * pxPerUnit) / 2;
+        const rYTop = centerY - (rescH * pxPerUnit) / 2;
+        const rYBot = centerY + (rescH * pxPerUnit) / 2;
 
         gOrig.innerHTML = `
           <path d="${dOrig}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
@@ -1547,7 +1597,7 @@
       window.location.href = "https://buy.stripe.com/9B6eVegcIgGQ5a85p6bo400";
     }
 
-    // Attach real-time input listeners
+    // Attach real-time input listeners across all input controls
     ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'tCurveStartW', 'tCurveEndW', 'tCurveLength', 'cNotchSts', 'cPhase1Rows', 'cPhase2Rows', 'cStraightRows', 'rMultiple', 'rOffset', 'pYardage', 'skeinYardage'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateScale);
