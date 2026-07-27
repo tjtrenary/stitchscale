@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StitchScale | Your Pattern Sizing Companion</title>
+  <title>StitchScale | Pattern Size Cross-Over & Gauge Matrix</title>
   <style>
     :root { 
       --primary: #c85a32; /* Warm Terracotta */
@@ -170,107 +170,54 @@
 
     button.primary-btn:hover { background: var(--primary-hover); }
 
-    .stat { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .stat { font-size: 1.35rem; font-weight: 700; color: var(--primary); }
 
-    /* 5-Column Shape Selector Tabs */
-    .shape-selector {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.25rem;
-      margin-top: 0.5rem;
-      background: var(--input-bg);
-      padding: 4px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-    }
-    .shape-btn {
-      background: transparent;
-      border: none;
-      padding: 8px 2px;
-      border-radius: 7px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .shape-btn.active {
-      background: var(--card);
-      color: var(--primary);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    }
-
-    /* SVG Visualizer Styles & Hover Zoom Effect */
-    .svg-wrapper { 
-      width: 100%; 
-      border-radius: 10px; 
-      overflow: hidden; 
-      margin-top: 0.75rem; 
-      border: 1px solid var(--border); 
-      cursor: zoom-in;
-      position: relative;
-      transition: border-color 0.2s ease;
-    }
-    .svg-wrapper:hover {
-      border-color: var(--primary);
-    }
-    
-    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem; }
-    .badge-safe { background: #e8f0eb; color: #2d5a38; }
-    .badge-warning { background: #fff4e5; color: #b45309; }
-    .badge-alert { background: #fde8e8; color: #9b1c1c; }
-    
-    .svg-title { font-size: 14px; font-weight: 700; fill: #5c4e43; }
-    .svg-subtitle { font-size: 13px; fill: #2d2623; font-weight: 700; }
-    .svg-title-rescaled { font-size: 14px; font-weight: 700; fill: #2d5a38; }
-    .svg-subtitle-rescaled { font-size: 13px; fill: #2d5a38; font-weight: 700; }
-
-    /* LIGHTBOX MODAL STYLES */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(45, 38, 35, 0.75);
-      backdrop-filter: blur(4px);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      padding: 1.5rem;
-      box-sizing: border-box;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal-content {
-      background: #ffffff;
-      padding: 1.75rem;
-      border-radius: 16px;
-      max-width: 850px;
+    /* Size Chart Table Styling */
+    .size-table {
       width: 100%;
-      position: relative;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.88rem;
     }
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: var(--input-bg);
+    .size-table th {
+      background: #f5efeb;
+      color: #2d2623;
+      text-align: left;
+      padding: 6px 8px;
       border: 1px solid var(--border);
-      font-size: 1.25rem;
-      line-height: 1;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-weight: 700;
     }
-    .modal-close:hover { background: #e6ded6; }
+    .size-table td {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .size-table input {
+      margin-top: 0;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.88rem;
+    }
+
+    /* Recommendation Callout Box */
+    .recommendation-box {
+      background: #e8f0eb;
+      border: 1px solid #4a7c59;
+      border-left: 5px solid #4a7c59;
+      padding: 1.25rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
+    .recommendation-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #2d5a38;
+      margin-bottom: 0.35rem;
+    }
+    .recommendation-body {
+      font-size: 0.9rem;
+      color: #2d2623;
+      line-height: 1.5;
+    }
 
     /* PRINTABLE PAPER SHEET PREVIEW */
     .paper-sheet {
@@ -310,83 +257,12 @@
       margin-top: 0.15rem;
     }
 
-    .spec-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-      font-size: 0.84rem;
-    }
-    .spec-table th {
-      background: #f5efeb;
-      color: #2d2623;
-      text-align: left;
-      padding: 6px 10px;
-      border: 1px solid #e6ded6;
-      font-weight: 700;
-    }
-    .spec-table td {
-      padding: 6px 10px;
-      border: 1px solid #e6ded6;
-      color: #4a3e37;
-    }
-
-    .guide-box {
-      background: #fcfaf7;
-      border: 1px solid #e6ded6;
-      border-left: 4px solid var(--primary);
-      border-radius: 6px;
-      padding: 0.85rem 1rem;
-      margin-top: 1rem;
-      font-size: 0.83rem;
-      line-height: 1.5;
-    }
-    .guide-box ol { margin: 0.35rem 0 0 0; padding-left: 1.1rem; }
-    .guide-box li { margin-bottom: 0.35rem; color: #5c4e43; }
-
-    .tracker-grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 5px;
-      margin-top: 0.75rem;
-    }
-    .tracker-cell {
-      border: 1px solid #d4c9bd;
-      border-radius: 4px;
-      padding: 4px 2px;
-      font-size: 0.72rem;
-      text-align: center;
-      background: #fff;
-      color: #736760;
-    }
-
-    .crafter-notes-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      margin-top: 1.25rem;
-      border-top: 1px solid #e6ded6;
-      padding-top: 1rem;
-      font-size: 0.83rem;
-    }
-    .note-line { border-bottom: 1px solid #ccc; height: 1.6rem; margin-top: 0.2rem; }
-
-    details {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.85rem 1.25rem;
-      margin-top: 1.5rem;
-    }
-    summary { font-weight: 600; color: var(--text); cursor: pointer; font-size: 0.95rem; }
-    .guide-content { font-size: 0.88rem; color: var(--text-muted); margin-top: 0.75rem; line-height: 1.6; }
-    .guide-content ol { padding-left: 1.2rem; margin: 0.5rem 0; }
-
     .print-only { display: none; }
 
     @media print {
       body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; font-size: 11pt; }
       .container { max-width: 100% !important; margin: 0 !important; }
-      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .no-print, .shape-selector, .paper-watermark, .modal-overlay { 
+      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .no-print, .paper-watermark { 
         display: none !important; 
       }
       .grid { display: block !important; }
@@ -398,8 +274,6 @@
     @media (max-width: 720px) {
       .grid { grid-template-columns: 1fr; }
       body { padding: 1rem; }
-      .tracker-grid { grid-template-columns: repeat(5, 1fr); }
-      .shape-selector { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -408,14 +282,14 @@
 
     <!-- Print-Only Header -->
     <div class="print-only" style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-      <h2 style="margin: 0; font-size: 1.5rem;">🧶 STITCHSCALE PROJECT BLUEPRINT</h2>
-      <div style="font-size: 0.85rem; color: #555; margin-top: 0.25rem;">Generated Custom Pattern Sizing Worksheet</div>
+      <h2 style="margin: 0; font-size: 1.5rem;">🧶 STITCHSCALE SIZE CROSS-OVER REPORT</h2>
+      <div style="font-size: 0.85rem; color: #555; margin-top: 0.25rem;">Garment Sizing & Tension Match Worksheet</div>
     </div>
 
     <div class="header-bar">
       <div>
         <h1>🧶 StitchScale</h1>
-        <p class="subtitle">Your pattern sizing companion. Rescale any geometry to your exact yarn and gauge.</p>
+        <p class="subtitle">Pattern Size Cross-Over & Gauge Matrix. Find your true size when your tension differs.</p>
       </div>
       
       <div class="unit-toggle">
@@ -425,323 +299,146 @@
     </div>
 
     <div class="no-print">
-      <span id="sampleLink" class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Worsted → Chunky Blanket)</span>
+      <span class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Sweater Gauge Discrepancy)</span>
     </div>
 
     <div class="grid">
       <!-- Input Panel -->
       <div class="card">
         
-        <!-- Shape Type Selector -->
-        <h3>1. Project Geometry</h3>
-        <div class="shape-selector">
-          <button id="btnRect" class="shape-btn active" onclick="setShape('rect')">⬜ Rect</button>
-          <button id="btnTaper" class="shape-btn" onclick="setShape('taper')">📐 Taper</button>
-          <button id="btnTriangle" class="shape-btn" onclick="setShape('triangle')">🔺 Triangle</button>
-          <button id="btnCircle" class="shape-btn" onclick="setShape('circle')">⚪ Circle</button>
-          <button id="btnCurve" class="shape-btn" onclick="setShape('curve')">➰ Curve</button>
+        <h3>1. Gauge Comparison</h3>
+        <p style="font-size: 0.83rem; color: var(--text-muted); margin-top: 0.25rem;">Compare what the pattern designer required against your actual gauge swatch.</p>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+          <div style="flex: 1;">
+            <label>Pattern Stitches (<span class="unit-label-4in">per 4 in</span>)</label>
+            <input type="number" id="pStitches" value="20" oninput="calculateMatrix()">
+          </div>
+          <div style="flex: 1;">
+            <label>Pattern Rows</label>
+            <input type="number" id="pRows" value="28" oninput="calculateMatrix()">
+          </div>
         </div>
 
-        <h3>2. Pattern Specifications</h3>
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+          <div style="flex: 1;">
+            <label>Your Swatch Stitches (<span class="unit-label-4in">per 4 in</span>)</label>
+            <input type="number" id="yStitches" value="18" oninput="calculateMatrix()">
+          </div>
+          <div style="flex: 1;">
+            <label>Your Swatch Rows</label>
+            <input type="number" id="yRows" value="25" oninput="calculateMatrix()">
+          </div>
+        </div>
+
+        <h3>2. Your Target Measurements</h3>
         <div style="display: flex; gap: 0.5rem;">
           <div style="flex: 1;">
             <div class="label-row">
-              <label>Pattern Yarn Weight</label>
+              <label>Target Finished Width / Bust (<span class="unit-name">in</span>)</label>
+              <span class="tip-icon" data-tip="The garment width or bust measurement you actually want to wear.">?</span>
             </div>
-            <select id="pYarnCYC" onchange="updateCYCGauge('p')">
-              <option value="0">#0 Lace</option>
-              <option value="1">#1 Super Fine (Fingering)</option>
-              <option value="2">#2 Fine (Sport)</option>
-              <option value="3">#3 Light (DK)</option>
-              <option value="4" selected>#4 Medium (Worsted)</option>
-              <option value="5">#5 Bulky</option>
-              <option value="6">#6 Super Bulky</option>
-              <option value="7">#7 Jumbo</option>
-            </select>
+            <input type="number" id="targetBust" value="40" oninput="calculateMatrix()">
           </div>
           <div style="flex: 1;">
             <div class="label-row">
-              <label>Pattern Hook Size</label>
-              <span class="tip-icon" data-tip="The exact hook size recommended by the pattern designer.">?</span>
+              <label>Target Length (<span class="unit-name">in</span>)</label>
             </div>
-            <select id="pHook" class="hook-select"></select>
+            <input type="number" id="targetLength" value="24" oninput="calculateMatrix()">
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.5rem;">
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Pattern Stitches (<span class="unit-label-4in">per 4 in</span>)</label>
-            </div>
-            <input type="number" id="pStitches" value="20">
-          </div>
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Pattern Rows</label>
-            </div>
-            <input type="number" id="pRows" value="28">
-          </div>
-        </div>
+        <h3>3. Pattern Size Chart (Widths)</h3>
+        <p style="font-size: 0.83rem; color: var(--text-muted); margin-top: 0.25rem;">Enter the sizes available in your pattern and their designer-intended finished widths.</p>
 
-        <h3>3. Your Swatch & Tools</h3>
-        <div style="display: flex; gap: 0.5rem;">
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Your Yarn Weight</label>
-            </div>
-            <select id="yYarnCYC" onchange="updateCYCGauge('y')">
-              <option value="0">#0 Lace</option>
-              <option value="1">#1 Super Fine (Fingering)</option>
-              <option value="2">#2 Fine (Sport)</option>
-              <option value="3">#3 Light (DK)</option>
-              <option value="4">#4 Medium (Worsted)</option>
-              <option value="5" selected>#5 Bulky</option>
-              <option value="6">#6 Super Bulky</option>
-              <option value="7">#7 Jumbo</option>
-            </select>
-          </div>
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Your Hook Size</label>
-              <span class="tip-icon" data-tip="The exact hook size you used for your gauge swatch.">?</span>
-            </div>
-            <select id="yHook" class="hook-select"></select>
-          </div>
-        </div>
+        <table class="size-table" id="sizeTableInputs">
+          <thead>
+            <tr>
+              <th>Size Name</th>
+              <th>Pattern Width (<span class="unit-name">in</span>)</th>
+              <th style="width: 40px;"></th>
+            </tr>
+          </thead>
+          <tbody id="sizeRowsBody">
+            <tr>
+              <td><input type="text" value="XS" style="width:100%;"></td>
+              <td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td>
+              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="S" style="width:100%;"></td>
+              <td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td>
+              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="M" style="width:100%;"></td>
+              <td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td>
+              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="L" style="width:100%;"></td>
+              <td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td>
+              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="XL" style="width:100%;"></td>
+              <td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td>
+              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" class="primary-btn no-print" style="background: var(--input-bg); color: var(--text); border: 1px dashed var(--border); margin-top: 0.75rem;" onclick="addSizeRow()">+ Add Another Size</button>
 
-        <div style="display: flex; gap: 0.5rem;">
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Your Stitches (<span class="unit-label-4in">per 4 in</span>)</label>
-            </div>
-            <input type="number" id="yStitches" value="14">
-          </div>
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Your Rows</label>
-            </div>
-            <input type="number" id="yRows" value="18">
-          </div>
-        </div>
-
-        <h3>4. Target Dimensions</h3>
-        
-        <!-- Rectangle Inputs -->
-        <div id="inputsRect">
-          <div class="label-row">
-            <label>Standard Size Presets</label>
-          </div>
-          <select id="sizePreset" onchange="applyPreset()">
-            <option value="custom">Custom Dimensions</option>
-            <option value="baby">Baby Blanket (30" × 40")</option>
-            <option value="throw" selected>Throw Blanket (50" × 60")</option>
-            <option value="scarf">Standard Scarf (8" × 60")</option>
-            <option value="dishcloth">Dishcloth (8" × 8")</option>
-            <option value="lapghan">Lapghan Blanket (36" × 48")</option>
-          </select>
-
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-            <div style="flex: 1;">
-              <div class="label-row">
-                <label>Width (<span class="unit-name">in</span>)</label>
-              </div>
-              <input type="number" id="tWidth" value="50">
-            </div>
-            <div style="flex: 1;">
-              <div class="label-row">
-                <label>Height (<span class="unit-name">in</span>)</label>
-              </div>
-              <input type="number" id="tHeight" value="60">
-            </div>
-          </div>
-        </div>
-
-        <!-- Tapered / Sleeve Inputs -->
-        <div id="inputsTaper" style="display: none;">
-          <div style="display: flex; gap: 0.5rem;">
-            <div style="flex: 1;">
-              <label>Start / Cuff Width (<span class="unit-name">in</span>)</label>
-              <input type="number" id="tCuffWidth" value="8">
-            </div>
-            <div style="flex: 1;">
-              <label>End / Top Width (<span class="unit-name">in</span>)</label>
-              <input type="number" id="tTopWidth" value="16">
-            </div>
-          </div>
-          <label style="margin-top: 0.5rem;">Total Length / Height (<span class="unit-name">in</span>)</label>
-          <input type="number" id="tTaperLength" value="18">
-        </div>
-
-        <!-- Triangle Inputs -->
-        <div id="inputsTriangle" style="display: none;">
-          <label>Target Wingspan (<span class="unit-name">in</span>)</label>
-          <input type="number" id="tWingspan" value="60">
-          <label style="margin-top: 0.5rem;">Center Spine Depth (<span class="unit-name">in</span>)</label>
-          <input type="number" id="tSpineDepth" value="30">
-        </div>
-
-        <!-- Circle Inputs -->
-        <div id="inputsCircle" style="display: none;">
-          <label>Target Crown / Circumference Diameter (<span class="unit-name">in</span>)</label>
-          <input type="number" id="tDiameter" value="20">
-        </div>
-
-        <!-- Custom Curve Inputs -->
-        <div id="inputsCurve" style="display: none;">
-          
-          <div style="display: flex; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 3px; margin-bottom: 0.85rem;">
-            <button id="modeBtnPreset" type="button" class="unit-btn active" style="flex:1;" onclick="setCurveMode('preset')">📈 Preset Curves</button>
-            <button id="modeBtnCustom" type="button" class="unit-btn" style="flex:1;" onclick="setCurveMode('custom')">✏️ Custom Phase Builder</button>
-          </div>
-
-          <div style="display: flex; gap: 0.5rem;">
-            <div style="flex: 1;">
-              <div class="label-row"><label>Curve Direction</label></div>
-              <select id="curveDirection" onchange="calculateScale()">
-                <option value="dec" selected>Decreasing (Narrowing)</option>
-                <option value="inc">Increasing (Flaring)</option>
-              </select>
-            </div>
-            <div style="flex: 1;" id="presetProfileGroup">
-              <div class="label-row"><label>Preset Shape Profile</label></div>
-              <select id="curveStylePreset" onchange="calculateScale()">
-                <option value="armhole" selected>Set-In Armhole (Notch + Slope)</option>
-                <option value="raglan">Raglan Line (Notch + 45° Slope)</option>
-                <option value="concave">Concave (Steep → Gentle)</option>
-                <option value="convex">Convex (Gentle → Steep)</option>
-                <option value="scurve">S-Curve (Compound Wave)</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-            <div style="flex: 1;">
-              <label>Start Width (<span class="unit-name">in</span>)</label>
-              <input type="number" id="tCurveStartW" value="20">
-            </div>
-            <div style="flex: 1;">
-              <label>End Width (<span class="unit-name">in</span>)</label>
-              <input type="number" id="tCurveEndW" value="12">
-            </div>
-          </div>
-          <label style="margin-top: 0.5rem;">Total Curve Height / Length (<span class="unit-name">in</span>)</label>
-          <input type="number" id="tCurveLength" value="9">
-
-          <div id="customPhasePanel" style="display: none; margin-top: 0.85rem; background: #f5efeb; padding: 0.85rem; border-radius: 10px; border: 1px dashed var(--border);">
-            <div style="font-weight: 700; font-size: 0.84rem; color: #2d2623; margin-bottom: 0.5rem;">✏️ Custom Curve Shaping Sequence</div>
-            
-            <div style="display: flex; gap: 0.5rem;">
-              <div style="flex: 1;">
-                <label style="font-size:0.75rem;">Initial Notch (sts/side)</label>
-                <input type="number" id="cNotchSts" value="4" min="0">
-              </div>
-              <div style="flex: 1;">
-                <label style="font-size:0.75rem;">Phase 1 Rate (Every X rows)</label>
-                <input type="number" id="cPhase1Rows" value="2" min="1">
-              </div>
-            </div>
-
-            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-              <div style="flex: 1;">
-                <label style="font-size:0.75rem;">Phase 2 Rate (Every Y rows)</label>
-                <input type="number" id="cPhase2Rows" value="4" min="1">
-              </div>
-              <div style="flex: 1;">
-                <label style="font-size:0.75rem;">Straight Vertical Run (Rows)</label>
-                <input type="number" id="cStraightRows" value="6" min="0">
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <h3>5. Stitch Repeat Rule (Optional)</h3>
-        <div style="display: flex; gap: 0.5rem;">
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Multiple of</label>
-              <span class="tip-icon" data-tip="Pattern instruction stitch multiple (e.g. for 'multiple of 6 + 1', enter 6).">?</span>
-            </div>
-            <input type="number" id="rMultiple" placeholder="e.g. 6" min="1">
-          </div>
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Plus (+)</label>
-              <span class="tip-icon" data-tip="Extra offset stitches added to starting chain (e.g. enter 1).">?</span>
-            </div>
-            <input type="number" id="rOffset" placeholder="e.g. 1" value="0" min="0">
-          </div>
-        </div>
-
-        <!-- 6. Volumetric Yardage & Skein Estimator -->
-        <h3>6. Yardage & Skein Estimator (Optional)</h3>
-        <div style="display: flex; gap: 0.5rem;">
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Pattern Stated Yardage (<span class="unit-len-name">yds</span>)</label>
-              <span class="tip-icon" data-tip="Total yardage required by original pattern. If left blank, StitchScale estimates based on fabric surface volume.">?</span>
-            </div>
-            <input type="number" id="pYardage" placeholder="e.g. 1200">
-          </div>
-          <div style="flex: 1;">
-            <div class="label-row">
-              <label>Your Skein Size (<span class="unit-len-name">yds</span>)</label>
-              <span class="tip-icon" data-tip="Yardage/meters per skein or ball of your chosen yarn.">?</span>
-            </div>
-            <input type="number" id="skeinYardage" placeholder="e.g. 180" value="180">
-          </div>
-        </div>
-
-        <button class="primary-btn no-print" onclick="calculateScale()">Recalculate Pattern</button>
+        <button class="primary-btn no-print" onclick="calculateMatrix()">Calculate Size Cross-Over</button>
       </div>
 
       <!-- Output Panel -->
       <div class="card">
-        <h3>Calculated Adjustments</h3>
+        <h3>Size Recommendation & Cross-Over Matrix</h3>
         
-        <div id="outputPrimary">Starting Cast-On / Chain: <span class="stat" id="outStitches">175</span> stitches</div>
-        <div id="shapingScheduleBox"></div>
-        <div id="repeatBox"></div>
-        <div style="margin-top:0.75rem;">New Total Rows / Rounds: <span class="stat" id="outRows">270</span></div>
-
-        <!-- Yardage Output Card -->
-        <div style="margin-top: 1rem; background: #f5efeb; border: 1px solid #e6ded6; padding: 0.85rem 1rem; border-radius: 10px;">
-          <div style="font-weight: 700; color: #2d2623; font-size: 0.9rem;">🧶 Estimated Yardage & Skein Requirements</div>
-          <div style="margin-top: 0.35rem; font-size: 0.88rem; color: #4a3e37;">
-            • Total Required: <span style="font-weight: 700; color: #c85a32;" id="outYardageText">--</span>
-          </div>
-          <div style="font-size: 0.88rem; color: #4a3e37; margin-top: 0.15rem;">
-            • Recommended Purchase: <span style="font-weight: 700; color: #4a7c59;" id="outSkeinsText">--</span> <span style="font-size: 0.75rem; color: #736760;">(includes +10% safety cushion)</span>
+        <!-- Smart Recommendation Box -->
+        <div id="recommendationBox" class="recommendation-box">
+          <div class="recommendation-title">🎯 Optimal Size Match: Size S</div>
+          <div class="recommendation-body" id="recText">
+            Because your gauge is looser than the pattern requirement, following instructions for <b>Size S</b> will yield an actual finished width of 40.0 inches at your tension.
           </div>
         </div>
 
-        <!-- Dynamic SVG Visualizer Component with Click-to-Enlarge Badge -->
-        <div style="margin-top: 1.25rem;">
-          <div id="safety-badge" class="badge badge-safe">Scale: 100% (Safe Drape)</div>
-          <div class="svg-wrapper" onclick="openSvgModal()" title="Click to enlarge diagram">
-            <div style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.92); padding: 3px 9px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; color: var(--primary); pointer-events: none; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">🔍 Click to enlarge</div>
-            <svg id="stitch-canvas" viewBox="0 0 700 350" preserveAspectRatio="xMidYMid meet">
-              <defs>
-                <pattern id="stitch-grid" width="14" height="14" patternUnits="userSpaceOnUse">
-                  <path d="M 14 0 L 0 0 0 14" fill="none" stroke="#d8cebe" stroke-width="1" stroke-dasharray="2 2"/>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="#f5efeb" rx="8"/>
-
-              <g id="box-original"></g>
-              <g id="box-rescaled"></g>
-            </svg>
+        <!-- Length & Row Adjustment Box -->
+        <div style="margin-top: 1rem; background: #f5efeb; border: 1px solid #e6ded6; padding: 1rem; border-radius: 10px;">
+          <div style="font-weight: 700; color: #2d2623; font-size: 0.9rem;">📏 Length & Row Adjustment</div>
+          <div style="margin-top: 0.35rem; font-size: 0.88rem; color: #4a3e37;" id="rowAdjustmentText">
+            • Pattern Row Gauge: 28 rows / 4 in<br>
+            • Your Row Gauge: 25 rows / 4 in<br>
+            • <b>Advice:</b> To hit your 24" length target, work approximately <b>10% fewer rows</b> than instructed in the pattern.
           </div>
+        </div>
+
+        <!-- Cross-Over Matrix Table -->
+        <div style="margin-top: 1.25rem;">
+          <h4 style="margin: 0 0 0.5rem 0; color: #2d2623; font-size: 0.92rem;">📊 Complete Size Cross-Over Table</h4>
+          <table class="size-table">
+            <thead>
+              <tr>
+                <th>Pattern Written Size</th>
+                <th>Designer Intended Width</th>
+                <th>Your Actual Width at Your Gauge</th>
+              </tr>
+            </thead>
+            <tbody id="matrixOutputBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
         </div>
 
         <!-- Export & Friendly Support Section -->
         <div class="no-print" style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-          <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable PDF Blueprint</h4>
-          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">StitchScale is 100% free! Print or save your couch-ready project worksheet directly.</p>
+          <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable Report</h4>
+          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Print or save your size cross-over worksheet directly.</p>
           
-          <button style="background: var(--accent-sage);" class="primary-btn" onclick="window.print()">🖨️ Print / Save PDF Blueprint</button>
+          <button style="background: var(--accent-sage);" class="primary-btn" onclick="window.print()">🖨️ Print Size Worksheet</button>
 
-          <!-- Separate Friendly Support Box -->
+          <!-- Support Box -->
           <div style="margin-top: 1.25rem; padding: 1rem; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--border); text-align: center;">
             <div style="font-size: 0.88rem; font-weight: 700; color: #2d2623;">Enjoying StitchScale? 🧶</div>
             <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0.75rem 0;">If this tool saved you time or kept you from frogging a project, consider supporting its development!</p>
@@ -752,225 +449,10 @@
       </div>
     </div>
 
-    <!-- =======================================================
-         📄 REALISTIC PRINTABLE PAPER SHEET PREVIEW
-         ======================================================= -->
-    <div class="paper-sheet">
-      <div class="paper-watermark no-print">FREE COMMUNITY WORKSHEET</div>
-
-      <div style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem;">
-        <div class="paper-header-title">🧶 STITCHSCALE PROJECT BLUEPRINT</div>
-        <div class="paper-header-sub">Custom Pattern Sizing & Crafting Worksheet</div>
-      </div>
-
-      <!-- Spec Comparison Table -->
-      <table class="spec-table">
-        <thead>
-          <tr>
-            <th>Specification</th>
-            <th>Original Pattern Setup</th>
-            <th>Your Custom Setup</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><b>Yarn Weight</b></td>
-            <td id="tablePYarn">#4 Medium (Worsted)</td>
-            <td id="tableYYarn">#5 Bulky</td>
-          </tr>
-          <tr>
-            <td><b>Hook Size</b></td>
-            <td id="tablePHook">5.50 mm (I-9)</td>
-            <td id="tableYHook">6.50 mm (K-10.5)</td>
-          </tr>
-          <tr>
-            <td><b>Swatch Gauge (per 4 in / 10 cm)</b></td>
-            <td id="tablePGauge">20 sts × 28 rows</td>
-            <td id="tableYGauge">14 sts × 18 rows</td>
-          </tr>
-          <tr>
-            <td><b>Est. Yardage Required</b></td>
-            <td id="tablePYardage">--</td>
-            <td id="tableYYardage" style="font-weight: 700; color: #c85a32;">--</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Workflow Instruction Box -->
-      <div class="guide-box">
-        <b style="color: #2d2623;">📖 How to Interface This Blueprint with Your Original Pattern:</b>
-        <ol>
-          <li><b>Stitch Definitions & Motifs:</b> Keep your original pattern PDF open for special stitch keys, lace motifs, and ribbing rules.</li>
-          <li><b>Starting Cast-On / Chain:</b> Substitute the original pattern's starting stitch count with your <b>Blueprint Cast-On Number</b> listed below.</li>
-          <li><b>Working Length & Shaping:</b> Work in pattern until you reach the total rows or shaping intervals listed below, checking off row checkboxes as you go.</li>
-          <li><b>Borders, Edgings & Seaming Conversion:</b>
-            <ul style="margin: 0.25rem 0 0 0; padding-left: 1rem;">
-              <li><b>Top/Bottom Borders:</b> Check that your rescaled stitch count matches any border stitch repeat (e.g. multiple of 4 + 1). Use the Stitch Repeat Guard if needed.</li>
-              <li><b>Side-Edge Pickup:</b> When picking up stitches along row ends, use a standard ratio (e.g. 1 st per SC row end, 3 sts per 4 HDC/DC row ends) to prevent edge puckering or flaring.</li>
-              <li><b>Seaming:</b> If both panels were rescaled (e.g., Front & Back), seam row-for-row as instructed in the original pattern.</li>
-            </ul>
-          </li>
-        </ol>
-      </div>
-
-      <!-- Live Calculated Output Summary -->
-      <div style="margin-top: 1.25rem; background: #f5efeb; border: 1px solid #e6ded6; padding: 1rem; border-radius: 8px;">
-        <h4 style="margin: 0 0 0.5rem 0; color: #2d2623;">Calculated Project Execution</h4>
-        <div id="paperTargetSummary" style="font-size: 0.95rem; font-weight: 700; color: #c85a32;">Starting Cast-On: 175 sts</div>
-        <div id="paperShapingBox" style="margin-top: 0.25rem;"></div>
-        <div id="paperYardageSummary" style="margin-top: 0.35rem; font-size: 0.88rem; color: #2d2623;"></div>
-      </div>
-
-      <!-- Live Printable Row Tracker -->
-      <div style="margin-top: 1.25rem;">
-        <h4 style="margin: 0 0 0.25rem 0; color: #2d2623; font-size: 0.95rem;">📝 Row & Round Checklist</h4>
-        <div id="printRowTracker" class="tracker-grid"></div>
-      </div>
-
-      <!-- Craft Notes Section -->
-      <div class="crafter-notes-grid">
-        <div>
-          <b>Yarn Brand & Colorway:</b>
-          <div class="note-line"></div>
-          <b style="margin-top: 0.5rem; display: inline-block;">Hook Size Used: <span id="printHookChoice" style="font-weight:normal;"></span></b>
-          <div class="note-line"></div>
-        </div>
-        <div>
-          <b>Dye Lot #:</b>
-          <div class="note-line"></div>
-          <b style="margin-top: 0.5rem; display: inline-block;">Tension & Custom Notes:</b>
-          <div class="note-line"></div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Accordion Guide -->
-    <details class="no-print">
-      <summary>📏 Need help swatching & measuring non-rectangular shapes?</summary>
-      <div class="guide-content">
-        <ol>
-          <li><b>Flat Swatch First:</b> Swatch a flat 5" x 5" square in your main stitch pattern (even for sleeves or circles) to measure baseline gauge per 4 inches / 10 cm.</li>
-          <li><b>Sleeves & Tapers:</b> Measure your cuff diameter and fullest bicep width. StitchScale calculates the exact shaping interval automatically.</li>
-          <li><b>Circles & Crowns:</b> Measure target circumference or flat crown diameter across the center before transitioning to straight sides.</li>
-          <li><b>Custom Curves:</b> Switch between preset profiles or use the Custom Phase Builder to specify exact notch bind-offs and multi-phase decrease rates.</li>
-        </ol>
-      </div>
-    </details>
-
-  </div>
-
-  <!-- LIGHTBOX ENLARGED SVG MODAL OVERLAY -->
-  <div id="svgModal" class="modal-overlay no-print" onclick="closeSvgModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeSvgModal()">&times;</button>
-      <h3 style="margin:0 0 1rem 0; color:#2d2623; font-size:1.1rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">🔍 Scaled Fabric Visualizer (Enlarged)</h3>
-      <div id="modalSvgContainer" style="width: 100%;"></div>
-    </div>
   </div>
 
   <script>
     let currentUnit = 'in';
-    let currentShape = 'rect';
-    let currentCurveMode = 'preset';
-
-    const SAMPLE_SCENARIO_LABELS = {
-      rect: "⚡ Load Sample Scenario (Worsted → Chunky Throw Blanket)",
-      taper: "⚡ Load Sample Scenario (DK → Bulky Tapered Sleeve)",
-      triangle: "⚡ Load Sample Scenario (Fingering → DK Triangle Shawl)",
-      circle: "⚡ Load Sample Scenario (Worsted → Super Bulky Beanie Crown)",
-      curve: "⚡ Load Sample Scenario (DK → Bulky Custom Curved Peplum)"
-    };
-
-    const HOOK_LIST = [
-      { mm: "2.25", label: "2.25 mm (B-1)" },
-      { mm: "2.75", label: "2.75 mm (C-2)" },
-      { mm: "3.25", label: "3.25 mm (D-3)" },
-      { mm: "3.50", label: "3.50 mm (E-4)" },
-      { mm: "3.75", label: "3.75 mm (F-5)" },
-      { mm: "4.00", label: "4.00 mm (G-6)" },
-      { mm: "4.50", label: "4.50 mm (7)" },
-      { mm: "5.00", label: "5.00 mm (H-8)" },
-      { mm: "5.50", label: "5.50 mm (I-9)" },
-      { mm: "6.00", label: "6.00 mm (J-10)" },
-      { mm: "6.50", label: "6.50 mm (K-10.5)" },
-      { mm: "7.00", label: "7.00 mm" },
-      { mm: "8.00", label: "8.00 mm (L-11)" },
-      { mm: "9.00", label: "9.00 mm (M-13)" },
-      { mm: "10.00", label: "10.00 mm (N-15)" },
-      { mm: "12.00", label: "12.00 mm (P-16)" },
-      { mm: "15.00", label: "15.00 mm (Q)" },
-      { mm: "19.00", label: "19.00 mm (S)" },
-      { mm: "25.00", label: "25.00 mm (U)" }
-    ];
-
-    const CYC_DATA = {
-      0: { name: "#0 Lace", defaultHook: "2.25", st: 34, row: 44, ydsPerSqIn: 1.10 },
-      1: { name: "#1 Super Fine", defaultHook: "2.75", st: 28, row: 36, ydsPerSqIn: 0.85 },
-      2: { name: "#2 Fine (Sport)", defaultHook: "3.75", st: 22, row: 30, ydsPerSqIn: 0.65 },
-      3: { name: "#3 Light (DK)", defaultHook: "4.50", st: 18, row: 24, ydsPerSqIn: 0.52 },
-      4: { name: "#4 Medium (Worsted)", defaultHook: "5.50", st: 16, row: 20, ydsPerSqIn: 0.42 },
-      5: { name: "#5 Bulky", defaultHook: "6.50", st: 12, row: 15, ydsPerSqIn: 0.30 },
-      6: { name: "#6 Super Bulky", defaultHook: "9.00", st: 8, row: 10, ydsPerSqIn: 0.20 },
-      7: { name: "#7 Jumbo", defaultHook: "15.00", st: 5, row: 6, ydsPerSqIn: 0.12 }
-    };
-
-    const PRESETS = {
-      in: {
-        baby: { w: 30, h: 40 },
-        throw: { w: 50, h: 60 },
-        scarf: { w: 8, h: 60 },
-        dishcloth: { w: 8, h: 8 },
-        lapghan: { w: 36, h: 48 }
-      },
-      cm: {
-        baby: { w: 75, h: 100 },
-        throw: { w: 125, h: 150 },
-        scarf: { w: 20, h: 150 },
-        dishcloth: { w: 20, h: 20 },
-        lapghan: { w: 90, h: 120 }
-      }
-    };
-
-    function openSvgModal() {
-      const svgCanvas = document.getElementById('stitch-canvas');
-      const container = document.getElementById('modalSvgContainer');
-      container.innerHTML = svgCanvas.outerHTML;
-      document.getElementById('svgModal').classList.add('active');
-    }
-
-    function closeSvgModal(e) {
-      document.getElementById('svgModal').classList.remove('active');
-    }
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeSvgModal();
-    });
-
-    function populateHookDropdowns() {
-      const pSelect = document.getElementById('pHook');
-      const ySelect = document.getElementById('yHook');
-      let html = '';
-      HOOK_LIST.forEach(h => {
-        html += `<option value="${h.mm}">${h.label}</option>`;
-      });
-      pSelect.innerHTML = html;
-      ySelect.innerHTML = html;
-
-      pSelect.value = "5.50";
-      ySelect.value = "6.50";
-    }
-
-    function setCurveMode(mode) {
-      currentCurveMode = mode;
-      document.getElementById('modeBtnPreset').className = mode === 'preset' ? 'unit-btn active' : 'unit-btn';
-      document.getElementById('modeBtnCustom').className = mode === 'custom' ? 'unit-btn active' : 'unit-btn';
-
-      document.getElementById('presetProfileGroup').style.display = mode === 'preset' ? 'block' : 'none';
-      document.getElementById('customPhasePanel').style.display = mode === 'custom' ? 'block' : 'none';
-      
-      calculateScale();
-    }
 
     function setUnit(unit) {
       currentUnit = unit;
@@ -981,720 +463,131 @@
       document.querySelectorAll('.unit-label-4in').forEach(el => {
         el.textContent = unit === 'in' ? 'per 4 in' : 'per 10 cm';
       });
-      document.querySelectorAll('.unit-len-name').forEach(el => {
-        el.textContent = unit === 'in' ? 'yds' : 'm';
-      });
 
-      applyPreset();
-      calculateScale();
+      calculateMatrix();
     }
 
-    function setShape(shape) {
-      currentShape = shape;
-      ['btnRect', 'btnTaper', 'btnTriangle', 'btnCircle', 'btnCurve'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.classList.remove('active');
-      });
-      
-      const activeBtnId = 'btn' + shape.charAt(0).toUpperCase() + shape.slice(1);
-      const activeBtn = document.getElementById(activeBtnId);
-      if (activeBtn) activeBtn.classList.add('active');
-
-      document.getElementById('inputsRect').style.display = shape === 'rect' ? 'block' : 'none';
-      document.getElementById('inputsTaper').style.display = shape === 'taper' ? 'block' : 'none';
-      document.getElementById('inputsTriangle').style.display = shape === 'triangle' ? 'block' : 'none';
-      document.getElementById('inputsCircle').style.display = shape === 'circle' ? 'block' : 'none';
-      document.getElementById('inputsCurve').style.display = shape === 'curve' ? 'block' : 'none';
-
-      const linkEl = document.getElementById('sampleLink');
-      if (linkEl && SAMPLE_SCENARIO_LABELS[shape]) {
-        linkEl.textContent = SAMPLE_SCENARIO_LABELS[shape];
-      }
-
-      calculateScale();
+    function addSizeRow() {
+      const tbody = document.getElementById('sizeRowsBody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" value="New" style="width:100%;"></td>
+        <td><input type="number" value="52" style="width:100%;" oninput="calculateMatrix()"></td>
+        <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+      `;
+      tbody.appendChild(tr);
+      calculateMatrix();
     }
 
-    function updateCYCGauge(prefix) {
-      const cycVal = document.getElementById(prefix + 'YarnCYC').value;
-      const data = CYC_DATA[cycVal];
-      
-      document.getElementById(prefix + 'Hook').value = data.defaultHook;
-      document.getElementById(prefix + 'Stitches').value = data.st;
-      document.getElementById(prefix + 'Rows').value = data.row;
-      calculateScale();
-    }
-
-    function applyPreset() {
-      const selected = document.getElementById('sizePreset').value;
-      if (selected !== 'custom' && PRESETS[currentUnit][selected]) {
-        document.getElementById('tWidth').value = PRESETS[currentUnit][selected].w;
-        document.getElementById('tHeight').value = PRESETS[currentUnit][selected].h;
-        calculateScale();
-      }
+    function removeRow(btn) {
+      const tr = btn.closest('tr');
+      tr.remove();
+      calculateMatrix();
     }
 
     function loadSampleScenario() {
-      if (currentShape === 'rect') {
-        document.getElementById('pYarnCYC').value = 4;
-        document.getElementById('yYarnCYC').value = 5;
-        updateCYCGauge('p');
-        updateCYCGauge('y');
-        document.getElementById('pHook').value = "5.50";
-        document.getElementById('yHook').value = "6.50";
-        document.getElementById('sizePreset').value = 'throw';
-        applyPreset();
-        document.getElementById('rMultiple').value = 12;
-        document.getElementById('rOffset').value = 3;
-        document.getElementById('pYardage').value = 1600;
-        document.getElementById('skeinYardage').value = 180;
-      } else if (currentShape === 'taper') {
-        document.getElementById('pYarnCYC').value = 3;
-        document.getElementById('yYarnCYC').value = 5;
-        updateCYCGauge('p');
-        updateCYCGauge('y');
-        document.getElementById('pHook').value = "4.50";
-        document.getElementById('yHook').value = "6.50";
-        document.getElementById('tCuffWidth').value = 8;
-        document.getElementById('tTopWidth').value = 16;
-        document.getElementById('tTaperLength').value = 18;
-        document.getElementById('rMultiple').value = "";
-        document.getElementById('rOffset').value = 0;
-        document.getElementById('pYardage').value = 450;
-        document.getElementById('skeinYardage').value = 150;
-      } else if (currentShape === 'triangle') {
-        document.getElementById('pYarnCYC').value = 1;
-        document.getElementById('yYarnCYC').value = 3;
-        updateCYCGauge('p');
-        updateCYCGauge('y');
-        document.getElementById('pHook').value = "3.50";
-        document.getElementById('yHook').value = "5.00";
-        document.getElementById('tWingspan').value = 60;
-        document.getElementById('tSpineDepth').value = 30;
-        document.getElementById('rMultiple').value = "";
-        document.getElementById('rOffset').value = 0;
-        document.getElementById('pYardage').value = 800;
-        document.getElementById('skeinYardage').value = 220;
-      } else if (currentShape === 'circle') {
-        document.getElementById('pYarnCYC').value = 4;
-        document.getElementById('yYarnCYC').value = 6;
-        updateCYCGauge('p');
-        updateCYCGauge('y');
-        document.getElementById('pHook').value = "5.50";
-        document.getElementById('yHook').value = "9.00";
-        document.getElementById('tDiameter').value = 20;
-        document.getElementById('rMultiple').value = "";
-        document.getElementById('rOffset').value = 0;
-        document.getElementById('pYardage').value = 220;
-        document.getElementById('skeinYardage').value = 90;
-      } else if (currentShape === 'curve') {
-        document.getElementById('pYarnCYC').value = 3;
-        document.getElementById('yYarnCYC').value = 5;
-        updateCYCGauge('p');
-        updateCYCGauge('y');
-        document.getElementById('pHook').value = "4.50";
-        document.getElementById('yHook').value = "6.50";
-        document.getElementById('curveDirection').value = 'dec';
-        setCurveMode('custom');
-        document.getElementById('tCurveStartW').value = 20;
-        document.getElementById('tCurveEndW').value = 12;
-        document.getElementById('tCurveLength').value = 9;
-        document.getElementById('cNotchSts').value = 4;
-        document.getElementById('cPhase1Rows').value = 2;
-        document.getElementById('cPhase2Rows').value = 4;
-        document.getElementById('cStraightRows').value = 6;
-        document.getElementById('pYardage').value = 550;
-        document.getElementById('skeinYardage').value = 160;
-      }
-      calculateScale();
+      document.getElementById('pStitches').value = 20;
+      document.getElementById('pRows').value = 28;
+      document.getElementById('yStitches').value = 18; // Looser gauge (fewer stitches per 4in -> garment will be bigger)
+      document.getElementById('yRows').value = 25;
+      document.getElementById('targetBust').value = 40;
+      document.getElementById('targetLength').value = 24;
+
+      const tbody = document.getElementById('sizeRowsBody');
+      tbody.innerHTML = `
+        <tr><td><input type="text" value="XS" style="width:100%;"></td><td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="S" style="width:100%;"></td><td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="M" style="width:100%;"></td><td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="L" style="width:100%;"></td><td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="XL" style="width:100%;"></td><td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+      `;
+      calculateMatrix();
     }
 
-    function loadSavedInputs() {
-      const saved = localStorage.getItem('stitchscale_state');
-      if (saved) {
-        try {
-          const data = JSON.parse(saved);
-          if (data.unit) setUnit(data.unit);
-          if (data.shape) setShape(data.shape);
-          if (data.pSt) document.getElementById('pStitches').value = data.pSt;
-          if (data.pRow) document.getElementById('pRows').value = data.pRow;
-          if (data.ySt) document.getElementById('yStitches').value = data.ySt;
-          if (data.yRow) document.getElementById('yRows').value = data.yRow;
-          if (data.pHook) document.getElementById('pHook').value = data.pHook;
-          if (data.yHook) document.getElementById('yHook').value = data.yHook;
-          if (data.pYd) document.getElementById('pYardage').value = data.pYd;
-          if (data.skYd) document.getElementById('skeinYardage').value = data.skYd;
-        } catch (e) {
-          console.error('Error loading state:', e);
-        }
-      }
-    }
+    function calculateMatrix() {
+      const pSt = parseFloat(document.getElementById('pStitches').value) || 20;
+      const pRow = parseFloat(document.getElementById('pRows').value) || 28;
+      const ySt = parseFloat(document.getElementById('yStitches').value) || 20;
+      const yRow = parseFloat(document.getElementById('yRows').value) || 28;
+      const targetBust = parseFloat(document.getElementById('targetBust').value) || 40;
+      const targetLen = parseFloat(document.getElementById('targetLength').value) || 24;
 
-    function calculateScale() {
-      const pSt = parseFloat(document.getElementById('pStitches').value) || 1;
-      const pRow = parseFloat(document.getElementById('pRows').value) || 1;
-      const ySt = parseFloat(document.getElementById('yStitches').value) || 1;
-      const yRow = parseFloat(document.getElementById('yRows').value) || 1;
-      const pCYCVal = document.getElementById('pYarnCYC').value;
-      const yCYCVal = document.getElementById('yYarnCYC').value;
-      const pHookVal = document.getElementById('pHook').value;
-      const yHookVal = document.getElementById('yHook').value;
-      const rMult = parseInt(document.getElementById('rMultiple').value) || 0;
-      const rOff = parseInt(document.getElementById('rOffset').value) || 0;
-
-      const pYardageIn = parseFloat(document.getElementById('pYardage').value) || 0;
-      const skeinSizeIn = parseFloat(document.getElementById('skeinYardage').value) || 0;
-
-      localStorage.setItem('stitchscale_state', JSON.stringify({ 
-        unit: currentUnit, shape: currentShape, pSt, pRow, ySt, yRow, pHook: pHookVal, yHook: yHookVal, pYd: pYardageIn, skYd: skeinSizeIn 
-      }));
-
-      const refDivisor = currentUnit === 'in' ? 4 : 10;
-      let finalStitches = 0;
-      let totalRows = 0;
-      let shapingHtml = '';
-      let repeatHtml = '';
-      let targetAreaInches = 0;
-      let patternAreaInches = 0;
-
-      if (currentShape === 'rect') {
-        const w = parseFloat(document.getElementById('tWidth').value) || 0;
-        const h = parseFloat(document.getElementById('tHeight').value) || 0;
-        const rawStitches = Math.round((w / refDivisor) * ySt);
-        totalRows = Math.round((h / refDivisor) * yRow);
-        finalStitches = rawStitches;
-
-        const wInches = currentUnit === 'in' ? w : w / 2.54;
-        const hInches = currentUnit === 'in' ? h : h / 2.54;
-        targetAreaInches = wInches * hInches;
-        patternAreaInches = targetAreaInches;
-
-        if (rMult > 1) {
-          const kApprox = (rawStitches - rOff) / rMult;
-          const sLower = Math.max(rOff, Math.floor(kApprox) * rMult + rOff);
-          const sUpper = Math.ceil(kApprox) * rMult + rOff;
-          finalStitches = Math.abs(rawStitches - sLower) <= Math.abs(rawStitches - sUpper) ? sLower : sUpper;
-          repeatHtml = `<div style="background:#f5efeb; padding:0.6rem; border-radius:6px; margin-top:0.35rem; font-size:0.85rem; color:#2d2623;">✨ Repeat Guard Applied: ${finalStitches} sts (Option A: ${sLower}, Option B: ${sUpper})</div>`;
-        }
-
-        document.getElementById('outputPrimary').innerHTML = `Starting Cast-On / Chain: <span class="stat">${finalStitches}</span> stitches`;
-        document.getElementById('paperTargetSummary').innerHTML = `Starting Cast-On: ${finalStitches} stitches (${w}" × ${h}" target)`;
-      } 
-      else if (currentShape === 'taper') {
-        const cuffW = parseFloat(document.getElementById('tCuffWidth').value) || 0;
-        const topW = parseFloat(document.getElementById('tTopWidth').value) || 0;
-        const len = parseFloat(document.getElementById('tTaperLength').value) || 0;
-
-        const startSts = Math.round((cuffW / refDivisor) * ySt);
-        const endSts = Math.round((topW / refDivisor) * ySt);
-        totalRows = Math.round((len / refDivisor) * yRow);
-
-        const avgW = (cuffW + topW) / 2;
-        const avgWInches = currentUnit === 'in' ? avgW : avgW / 2.54;
-        const lenInches = currentUnit === 'in' ? len : len / 2.54;
-        targetAreaInches = avgWInches * lenInches;
-        patternAreaInches = targetAreaInches;
-        
-        const deltaSts = Math.abs(endSts - startSts);
-        const incEvents = Math.floor(deltaSts / 2);
-        const rowInterval = incEvents > 0 ? Math.floor(totalRows / incEvents) : 0;
-
-        finalStitches = startSts;
-        shapingHtml = `
-          <div style="font-size:0.85rem; color:#2d2623;">
-            <b>📐 Shaping Rule:</b> Cuff Cast-On ${startSts} sts → Top Target ${endSts} sts. <b>Increase 1 st at each edge every ${rowInterval} rows</b> (${incEvents} times total).
-          </div>
-        `;
-        document.getElementById('outputPrimary').innerHTML = `Cuff Cast-On: <span class="stat">${startSts}</span> sts → Top Target: <span class="stat">${endSts}</span> sts`;
-        document.getElementById('paperTargetSummary').innerHTML = `Cuff Cast-On: ${startSts} sts → Top Target: ${endSts} sts`;
-      }
-      else if (currentShape === 'triangle') {
-        const wingspan = parseFloat(document.getElementById('tWingspan').value) || 0;
-        const spine = parseFloat(document.getElementById('tSpineDepth').value) || 0;
-
-        finalStitches = Math.round((wingspan / refDivisor) * ySt);
-        totalRows = Math.round((spine / refDivisor) * yRow);
-
-        const wInches = currentUnit === 'in' ? wingspan : wingspan / 2.54;
-        const sInches = currentUnit === 'in' ? spine : spine / 2.54;
-        targetAreaInches = (wInches * sInches) / 2;
-        patternAreaInches = targetAreaInches;
-
-        shapingHtml = `
-          <div style="font-size:0.85rem; color:#2d2623;">
-            <b>🔺 Triangle Expansion:</b> ${finalStitches} sts across top wingspan edge over ${totalRows} spine rows.
-          </div>
-        `;
-        document.getElementById('outputPrimary').innerHTML = `Wingspan Target: <span class="stat">${finalStitches}</span> stitches`;
-        document.getElementById('paperTargetSummary').innerHTML = `Wingspan Target: ${finalStitches} sts (${wingspan}" wingspan × ${spine}" spine depth)`;
-      }
-      else if (currentShape === 'circle') {
-        const diam = parseFloat(document.getElementById('tDiameter').value) || 0;
-        const circ = Math.PI * diam;
-        finalStitches = Math.round((circ / refDivisor) * ySt);
-        const totalRounds = Math.round((diam / 2 / refDivisor) * yRow);
-        totalRows = totalRounds;
-
-        const dInches = currentUnit === 'in' ? diam : diam / 2.54;
-        targetAreaInches = Math.PI * Math.pow(dInches / 2, 2);
-        patternAreaInches = targetAreaInches;
-
-        shapingHtml = `
-          <div style="font-size:0.85rem; color:#2d2623;">
-            <b>⚪ Circular Expansion:</b> Magic ring 6 sts → Work 6-st increases each round for <b>${totalRounds} rounds</b> (${finalStitches} final crown sts).
-          </div>
-        `;
-        document.getElementById('outputPrimary').innerHTML = `Magic Ring Start: <span class="stat">6</span> sts → Final Crown: <span class="stat">${finalStitches}</span> sts`;
-        document.getElementById('paperTargetSummary').innerHTML = `Magic Ring Start: 6 sts → Final Crown: ${finalStitches} sts (${diam}" diameter)`;
-      }
-      else if (currentShape === 'curve') {
-        const dir = document.getElementById('curveDirection').value;
-        const startW = parseFloat(document.getElementById('tCurveStartW').value) || 0;
-        const endW = parseFloat(document.getElementById('tCurveEndW').value) || 0;
-        const len = parseFloat(document.getElementById('tCurveLength').value) || 0;
-
-        const startSts = Math.round((startW / refDivisor) * ySt);
-        const endSts = Math.round((endW / refDivisor) * ySt);
-        totalRows = Math.round((len / refDivisor) * yRow);
-
-        const deltaStsSide = Math.max(0, Math.floor(Math.abs(startSts - endSts) / 2));
-        finalStitches = startSts;
-
-        const avgWInches = currentUnit === 'in' ? (startW + endW) / 2 : ((startW + endW) / 2) / 2.54;
-        const lenInches = currentUnit === 'in' ? len : len / 2.54;
-        targetAreaInches = avgWInches * lenInches * 0.90;
-        patternAreaInches = targetAreaInches;
-
-        const actionWord = dir === 'dec' ? 'Decrease' : 'Increase';
-        const actionShort = dir === 'dec' ? 'Dec' : 'Inc';
-        const cutoutWord = dir === 'dec' ? 'Bind off' : 'Cast on';
-
-        if (currentCurveMode === 'custom') {
-          const notchSts = parseInt(document.getElementById('cNotchSts').value) || 0;
-          const p1Rows = parseInt(document.getElementById('cPhase1Rows').value) || 2;
-          const p2Rows = parseInt(document.getElementById('cPhase2Rows').value) || 4;
-          const straightRows = parseInt(document.getElementById('cStraightRows').value) || 0;
-
-          const remSideSts = Math.max(0, deltaStsSide - notchSts);
-          const p1Reps = Math.floor(remSideSts * 0.65);
-          const p2Reps = remSideSts - p1Reps;
-
-          shapingHtml = `
-            <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-              <b style="color:#2d5a38;">✏️ Custom Multi-Phase Shaping Breakdown (${actionWord}):</b>
-              <div style="margin-top:0.25rem;">• <b>Start Width:</b> ${startSts} sts → <b>End Target:</b> ${endSts} sts (${totalRows} total rows)</div>
-              ${notchSts > 0 ? `<div>• <b>Initial Cutout:</b> ${cutoutWord} <b>${notchSts} sts</b> at beg of next 2 rows.</div>` : ''}
-              ${p1Reps > 0 ? `<div>• <b>Phase 1 Shaping:</b> ${actionShort} 1 st at each edge <b>EVERY ${p1Rows} ROWS</b> ${p1Reps} times.</div>` : ''}
-              ${p2Reps > 0 ? `<div>• <b>Phase 2 Shaping:</b> ${actionShort} 1 st at each edge <b>EVERY ${p2Rows} ROWS</b> ${p2Reps} times.</div>` : ''}
-              ${straightRows > 0 ? `<div>• <b>Vertical Straight Run:</b> Work <b>${straightRows} rows straight</b> with no shaping.</div>` : ''}
-            </div>
-          `;
-        } else {
-          const cStyle = document.getElementById('curveStylePreset').value;
-
-          if (cStyle === 'armhole') {
-            const bindOffSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.35));
-            const remSts = deltaStsSide - bindOffSts;
-            const rapidDecs = Math.min(remSts, Math.round(remSts * 0.65));
-            const gentleDecs = remSts - rapidDecs;
-            const activeRows = 2 + (rapidDecs * 2) + (gentleDecs * 4);
-            const straightRows = Math.max(0, totalRows - activeRows);
-
-            shapingHtml = `
-              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-                <b style="color:#2d5a38;">🧥 Set-In Armhole Preset Breakdown:</b>
-                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>Shoulder:</b> ${endSts} sts (${totalRows} rows)</div>
-                <div>• <b>Underarm Notch:</b> ${cutoutWord} <b>${bindOffSts} sts</b> at beg of next 2 rows.</div>
-                ${rapidDecs > 0 ? `<div>• <b>Rapid Curve:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidDecs} times.</div>` : ''}
-                ${gentleDecs > 0 ? `<div>• <b>Gentle Curve:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleDecs} times.</div>` : ''}
-                ${straightRows > 0 ? `<div>• <b>Vertical Run:</b> Work <b>${straightRows} rows straight</b> to shoulder.</div>` : ''}
-              </div>
-            `;
-          } else if (cStyle === 'raglan') {
-            const notchSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.25));
-            const diagDecs = deltaStsSide - notchSts;
-            const diagRows = Math.max(1, totalRows - 2);
-            const rowInterval = diagDecs > 0 ? Math.max(2, Math.floor(diagRows / diagDecs)) : 2;
-
-            shapingHtml = `
-              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-                <b style="color:#2d5a38;">🧥 Raglan Yoke Preset Breakdown:</b>
-                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>Neckline:</b> ${endSts} sts (${totalRows} rows)</div>
-                <div>• <b>Underarm Notch:</b> ${cutoutWord} <b>${notchSts} sts</b> at beg of next 2 rows.</div>
-                <div>• <b>Diagonal Slope:</b> ${actionShort} 1 st at each edge <b>EVERY ${rowInterval} ROWS</b> (${diagDecs} times total).</div>
-              </div>
-            `;
-          } else if (cStyle === 'concave') {
-            const bindOffSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.35));
-            const remSts = deltaStsSide - bindOffSts;
-            const rapidReps = Math.min(remSts, Math.round(remSts * 0.65));
-            const gentleReps = remSts - rapidReps;
-
-            shapingHtml = `
-              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-                <b style="color:#2d5a38;">➰ Concave Preset Schedule (Steep → Gentle):</b>
-                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
-                ${bindOffSts > 0 ? `<div>• <b>Initial Notch:</b> ${cutoutWord} <b>${bindOffSts} sts</b> at beg of next 2 rows.</div>` : ''}
-                ${rapidReps > 0 ? `<div>• <b>Rapid Slope:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidReps} times.</div>` : ''}
-                ${gentleReps > 0 ? `<div>• <b>Gentle Slope:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleReps} times.</div>` : ''}
-              </div>
-            `;
-          } else if (cStyle === 'convex') {
-            const gentleReps = Math.round(deltaStsSide * 0.35);
-            const rapidReps = deltaStsSide - gentleReps;
-
-            shapingHtml = `
-              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-                <b style="color:#2d5a38;">➰ Convex Preset Schedule (Gentle → Steep):</b>
-                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
-                ${gentleReps > 0 ? `<div>• <b>Gentle Lead-In:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleReps} times.</div>` : ''}
-                ${rapidReps > 0 ? `<div>• <b>Steep Finish:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidReps} times.</div>` : ''}
-              </div>
-            `;
-          } else if (cStyle === 'scurve') {
-            const p1Reps = Math.round(deltaStsSide * 0.50);
-            const p2Reps = deltaStsSide - p1Reps;
-
-            shapingHtml = `
-              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-                <b style="color:#2d5a38;">➰ S-Curve Compound Preset:</b>
-                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
-                <div>• <b>S-Wave Phase 1:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${p1Reps} times.</div>
-                <div>• <b>S-Wave Phase 2:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${p2Reps} times.</div>
-              </div>
-            `;
-          }
-        }
-
-        document.getElementById('outputPrimary').innerHTML = `Start Width: <span class="stat">${startSts}</span> sts → End Target: <span class="stat">${endSts}</span> sts`;
-        document.getElementById('paperTargetSummary').innerHTML = `Start Cast-On: ${startSts} sts → End Target: ${endSts} sts (${len}" height)`;
-      }
-
-      // =======================================================
-      // 🧶 VOLUMETRIC YARDAGE & SKEIN ESTIMATION ENGINE
-      // =======================================================
-      let estYardage = 0;
-      const lenUnit = currentUnit === 'in' ? 'yds' : 'm';
-
-      if (pYardageIn > 0) {
-        const rowGaugeRatio = yRow / pRow;
-        const areaRatio = patternAreaInches > 0 ? (targetAreaInches / patternAreaInches) : 1;
-        estYardage = Math.round(pYardageIn * rowGaugeRatio * areaRatio);
-      } else {
-        const density = CYC_DATA[yCYCVal].ydsPerSqIn;
-        estYardage = Math.round(targetAreaInches * density);
-      }
-
-      let yardageText = `${estYardage} ${lenUnit}`;
-      let skeinText = `--`;
-
-      if (skeinSizeIn > 0 && estYardage > 0) {
-        const bufferedYardage = estYardage * 1.10;
-        const skeinsNeeded = Math.ceil(bufferedYardage / skeinSizeIn);
-        skeinText = `${skeinsNeeded} skeins (${skeinSizeIn} ${lenUnit}/skein)`;
-      }
-
-      document.getElementById('outYardageText').textContent = yardageText;
-      document.getElementById('outSkeinsText').textContent = skeinText;
-
-      document.getElementById('tablePYardage').textContent = pYardageIn > 0 ? `${pYardageIn} ${lenUnit}` : `Unspecified`;
-      document.getElementById('tableYYardage').textContent = `${yardageText} (${skeinText})`;
-      document.getElementById('paperYardageSummary').innerHTML = `<b>🧶 Estimated Yardage:</b> ${yardageText} | <b>Recommended Purchase:</b> ${skeinText}`;
-
-      // Update Spec Table inside Paper Sheet
-      const pHookObj = HOOK_LIST.find(h => h.mm === pHookVal);
-      const yHookObj = HOOK_LIST.find(h => h.mm === yHookVal);
-      
-      document.getElementById('tablePYarn').textContent = CYC_DATA[pCYCVal].name;
-      document.getElementById('tableYYarn').textContent = CYC_DATA[yCYCVal].name;
-      document.getElementById('tablePHook').textContent = pHookObj ? pHookObj.label : pHookVal + ' mm';
-      document.getElementById('tableYHook').textContent = yHookObj ? yHookObj.label : yHookVal + ' mm';
-      document.getElementById('tablePGauge').textContent = `${pSt} sts × ${pRow} rows`;
-      document.getElementById('tableYGauge').textContent = `${ySt} sts × ${yRow} rows`;
-
-      const hookText = `${yHookObj ? yHookObj.label : yHookVal + ' mm'}`;
-      document.getElementById('printHookChoice').textContent = hookText;
-
-      document.getElementById('shapingScheduleBox').innerHTML = shapingHtml;
-      document.getElementById('paperShapingBox').innerHTML = shapingHtml;
-      document.getElementById('repeatBox').innerHTML = repeatHtml;
-      document.getElementById('outRows').innerText = totalRows;
-
-      updateStitchPreview(pSt, ySt);
-      generatePrintRowTracker(Math.min(totalRows, 200));
-
-      const modal = document.getElementById('svgModal');
-      if (modal && modal.classList.contains('active')) {
-        openSvgModal();
-      }
-    }
-
-    function generatePrintRowTracker(totalRows) {
-      const container = document.getElementById('printRowTracker');
-      let html = '';
-      for (let i = 1; i <= totalRows; i++) {
-        html += `<div class="tracker-cell">[ &nbsp; ] R${i}</div>`;
-      }
-      container.innerHTML = html;
-    }
-
-    function updateStitchPreview(patternGauge, userGauge) {
-      const scaleFactor = patternGauge / userGauge;
-      const canvasMaxW = 280;
-      const canvasMaxH = 220;
-      const centerX1 = 180, centerX2 = 520, centerY = 160;
-      const gOrig = document.getElementById('box-original');
-      const gResc = document.getElementById('box-rescaled');
       const unitSym = currentUnit === 'in' ? '"' : ' cm';
 
-      if (currentShape === 'rect') {
-        const origUnitsW = parseFloat(document.getElementById('tWidth').value) || 0;
-        const origUnitsH = parseFloat(document.getElementById('tHeight').value) || 0;
-        const rescUnitsW = origUnitsW * scaleFactor;
-        const rescUnitsH = origUnitsH * scaleFactor;
+      // Gauge scale factor for width (inverse of stitch ratio)
+      // width_actual = width_pattern * (pSt / ySt)
+      const widthMultiplier = pSt / ySt;
+      const rowMultiplier = pRow / yRow;
 
-        const maxW = Math.max(origUnitsW, rescUnitsW, 1);
-        const maxH = Math.max(origUnitsH, rescUnitsH, 1);
-        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
+      const rows = document.querySelectorAll('#sizeRowsBody tr');
+      let sizesData = [];
 
-        const origW = origUnitsW * pxPerUnit;
-        const origH = origUnitsH * pxPerUnit;
-        const rescW = rescUnitsW * pxPerUnit;
-        const rescH = rescUnitsH * pxPerUnit;
+      rows.forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        if (inputs.length >= 2) {
+          const name = inputs[0].value || 'Unknown';
+          const patternWidth = parseFloat(inputs[1].value) || 0;
+          const actualWidth = patternWidth * widthMultiplier;
+          sizesData.push({ name, patternWidth, actualWidth });
+        }
+      });
 
-        gOrig.innerHTML = `
-          <rect x="${centerX1 - origW/2}" y="${centerY - origH/2}" width="${origW}" height="${origH}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2" rx="6"/>
-          <text x="${centerX1}" y="${centerY - origH/2 - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
-          <text x="${centerX1}" y="${centerY + origH/2 + 20}" class="svg-subtitle" text-anchor="middle">${origUnitsW}${unitSym} × ${origUnitsH}${unitSym}</text>
+      // Find closest size to target bust
+      let bestSize = null;
+      let minDiff = Infinity;
+
+      sizesData.forEach(s => {
+        const diff = Math.abs(s.actualWidth - targetBust);
+        if (diff < minDiff) {
+          minDiff = diff;
+          bestSize = s;
+        }
+      });
+
+      // Populate Matrix Table HTML
+      let tableHtml = '';
+      sizesData.forEach(s => {
+        const isBest = bestSize && s.name === bestSize.name;
+        const highlightStyle = isBest ? 'background: #e8f0eb; font-weight: 700; color: #2d5a38;' : '';
+        tableHtml += `
+          <tr style="${highlightStyle}">
+            <td>${s.name} ${isBest ? '⭐ (Best Match)' : ''}</td>
+            <td>${s.patternWidth}${unitSym}</td>
+            <td><b>${s.actualWidth.toFixed(1)}${unitSym}</b></td>
+          </tr>
         `;
-        gResc.innerHTML = `
-          <rect x="${centerX2 - rescW/2}" y="${centerY - rescH/2}" width="${rescW}" height="${rescH}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5" rx="6"/>
-          <text x="${centerX2}" y="${centerY - rescH/2 - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
-          <text x="${centerX2}" y="${centerY + rescH/2 + 20}" class="svg-subtitle-rescaled" text-anchor="middle">${rescUnitsW.toFixed(1)}${unitSym} × ${rescUnitsH.toFixed(1)}${unitSym}</text>
-        `;
-      } else if (currentShape === 'taper') {
-        const origCuffW = parseFloat(document.getElementById('tCuffWidth').value) || 0;
-        const origTopW = parseFloat(document.getElementById('tTopWidth').value) || 0;
-        const origH = parseFloat(document.getElementById('tTaperLength').value) || 0;
+      });
+      document.getElementById('matrixOutputBody').innerHTML = tableHtml;
 
-        const rescCuffW = origCuffW * scaleFactor;
-        const rescTopW = origTopW * scaleFactor;
-        const rescH = origH * scaleFactor;
-
-        const maxW = Math.max(origCuffW, origTopW, rescCuffW, rescTopW, 1);
-        const maxH = Math.max(origH, rescH, 1);
-        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
-
-        const oTopW = origTopW * pxPerUnit;
-        const oCuffW = origCuffW * pxPerUnit;
-        const oH = origH * pxPerUnit;
-
-        const oYTop = centerY - oH / 2;
-        const oYBot = centerY + oH / 2;
-        const pointsOrig = `${centerX1 - oTopW/2},${oYTop} ${centerX1 + oTopW/2},${oYTop} ${centerX1 + oCuffW/2},${oYBot} ${centerX1 - oCuffW/2},${oYBot}`;
-
-        const rTopW = rescTopW * pxPerUnit;
-        const rCuffW = rescCuffW * pxPerUnit;
-        const rH = rescH * pxPerUnit;
-
-        const rYTop = centerY - rH / 2;
-        const rYBot = centerY + rH / 2;
-        const pointsResc = `${centerX2 - rTopW/2},${rYTop} ${centerX2 + rTopW/2},${rYTop} ${centerX2 + rCuffW/2},${rYBot} ${centerX2 - rCuffW/2},${rYBot}`;
-
-        gOrig.innerHTML = `
-          <polygon points="${pointsOrig}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
-          <text x="${centerX1}" y="${oYTop - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
-          <text x="${centerX1}" y="${oYBot + 20}" class="svg-subtitle" text-anchor="middle">${origCuffW}${unitSym} Cuff → ${origTopW}${unitSym} Top</text>
-        `;
-        gResc.innerHTML = `
-          <polygon points="${pointsResc}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
-          <text x="${centerX2}" y="${rYTop - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
-          <text x="${centerX2}" y="${rYBot + 20}" class="svg-subtitle-rescaled" text-anchor="middle">${rescCuffW.toFixed(1)}${unitSym} Cuff → ${rescTopW.toFixed(1)}${unitSym} Top</text>
-        `;
-      } else if (currentShape === 'triangle') {
-        const origWingspan = parseFloat(document.getElementById('tWingspan').value) || 0;
-        const origSpine = parseFloat(document.getElementById('tSpineDepth').value) || 0;
-
-        const rescWingspan = origWingspan * scaleFactor;
-        const rescSpine = origSpine * scaleFactor;
-
-        const maxW = Math.max(origWingspan, rescWingspan, 1);
-        const maxH = Math.max(origSpine, rescSpine, 1);
-        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
-
-        const oW = origWingspan * pxPerUnit;
-        const oH = origSpine * pxPerUnit;
-        const rW = rescWingspan * pxPerUnit;
-        const rH = rescSpine * pxPerUnit;
-
-        const p1O = `${centerX1},${centerY - oH/2}`;
-        const p2O = `${centerX1 - oW/2},${centerY + oH/2}`;
-        const p3O = `${centerX1 + oW/2},${centerY + oH/2}`;
-
-        const p1R = `${centerX2},${centerY - rH/2}`;
-        const p2R = `${centerX2 - rW/2},${centerY + rH/2}`;
-        const p3R = `${centerX2 + rW/2},${centerY + rH/2}`;
-
-        gOrig.innerHTML = `
-          <polygon points="${p1O} ${p2O} ${p3O}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
-          <text x="${centerX1}" y="${centerY - oH/2 - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
-          <text x="${centerX1}" y="${centerY + oH/2 + 20}" class="svg-subtitle" text-anchor="middle">${origWingspan}${unitSym} Wingspan</text>
-        `;
-        gResc.innerHTML = `
-          <polygon points="${p1R} ${p2R} ${p3R}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
-          <text x="${centerX2}" y="${centerY - rH/2 - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
-          <text x="${centerX2}" y="${centerY + rH/2 + 20}" class="svg-subtitle-rescaled" text-anchor="middle">${rescWingspan.toFixed(1)}${unitSym} Wingspan</text>
-        `;
-      } else if (currentShape === 'circle') {
-        const origDiam = parseFloat(document.getElementById('tDiameter').value) || 0;
-        const rescDiam = origDiam * scaleFactor;
-
-        const maxW = Math.max(origDiam, rescDiam, 1);
-        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxW / maxW);
-
-        const rO = (origDiam * pxPerUnit) / 2;
-        const rR = (rescDiam * pxPerUnit) / 2;
-
-        gOrig.innerHTML = `
-          <circle cx="${centerX1}" cy="${centerY}" r="${rO}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
-          <text x="${centerX1}" y="${centerY - rO - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
-          <text x="${centerX1}" y="${centerY + rO + 20}" class="svg-subtitle" text-anchor="middle">${origDiam}${unitSym} Diam.</text>
-        `;
-        gResc.innerHTML = `
-          <circle cx="${centerX2}" cy="${centerY}" r="${rR}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
-          <text x="${centerX2}" y="${centerY - rR - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
-          <text x="${centerX2}" y="${centerY + rR + 20}" class="svg-subtitle-rescaled" text-anchor="middle">${rescDiam.toFixed(1)}${unitSym} Diam.</text>
-        `;
-      } else if (currentShape === 'curve') {
-        const origStartW = parseFloat(document.getElementById('tCurveStartW').value) || 0;
-        const origEndW = parseFloat(document.getElementById('tCurveEndW').value) || 0;
-        const origH = parseFloat(document.getElementById('tCurveLength').value) || 0;
-
-        const rescStartW = origStartW * scaleFactor;
-        const rescEndW = origEndW * scaleFactor;
-        const rescH = origH * scaleFactor;
-
-        const maxW = Math.max(origStartW, origEndW, rescStartW, rescEndW, 1);
-        const maxH = Math.max(origH, rescH, 1);
-        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
-
-        const generateCurvePathD = (cx, cy, sw, ew, h) => {
-          const swPx = sw * pxPerUnit;
-          const ewPx = ew * pxPerUnit;
-          const hPx = h * pxPerUnit;
-          const yBot = cy + hPx / 2;
-          const yTop = cy - hPx / 2;
-
-          let notchPx = 0;
-          let p1Rows = 2, p2Rows = 4, straightRows = 0;
-
-          if (currentCurveMode === 'custom') {
-            const notchSts = parseInt(document.getElementById('cNotchSts').value) || 0;
-            p1Rows = parseInt(document.getElementById('cPhase1Rows').value) || 2;
-            p2Rows = parseInt(document.getElementById('cPhase2Rows').value) || 4;
-            straightRows = parseInt(document.getElementById('cStraightRows').value) || 0;
-
-            const maxDeltaPx = Math.abs(swPx - ewPx) / 2;
-            notchPx = Math.min(maxDeltaPx * 0.7, notchSts * 3);
-          } else {
-            const cStyle = document.getElementById('curveStylePreset').value;
-            if (cStyle === 'armhole' || cStyle === 'concave') {
-              notchPx = Math.min(Math.abs(swPx - ewPx) * 0.35, 14);
-            } else if (cStyle === 'raglan') {
-              notchPx = Math.min(Math.abs(swPx - ewPx) * 0.30, 12);
-            }
-          }
-
-          // Clean Underarm Notch Stub Handler (Eliminates Horizontal Overhang Spikes)
-          if (notchPx > 1) {
-            const stubH = Math.min(hPx * 0.12, 10);
-            const yNotch = yBot - stubH;
-            const curveHPx = hPx - stubH;
-
-            if (currentCurveMode === 'preset' && document.getElementById('curveStylePreset').value === 'raglan') {
-              return `M ${cx - swPx/2} ${yBot} 
-                      L ${cx + swPx/2} ${yBot} 
-                      L ${cx + swPx/2} ${yNotch} 
-                      L ${cx + swPx/2 - notchPx} ${yNotch} 
-                      L ${cx + ewPx/2} ${yTop} 
-                      L ${cx - ewPx/2} ${yTop} 
-                      L ${cx - swPx/2 + notchPx} ${yNotch} 
-                      L ${cx - swPx/2} ${yNotch} 
-                      Z`;
-            }
-
-            return `M ${cx - swPx/2} ${yBot} 
-                    L ${cx + swPx/2} ${yBot} 
-                    L ${cx + swPx/2} ${yNotch} 
-                    L ${cx + swPx/2 - notchPx} ${yNotch} 
-                    C ${cx + swPx/2 - notchPx} ${yNotch - curveHPx * 0.4}, ${cx + ewPx/2} ${yTop + curveHPx * 0.2}, ${cx + ewPx/2} ${yTop} 
-                    L ${cx - ewPx/2} ${yTop} 
-                    C ${cx - ewPx/2} ${yTop + curveHPx * 0.2}, ${cx - swPx/2 + notchPx} ${yNotch - curveHPx * 0.4}, ${cx - swPx/2 + notchPx} ${yNotch} 
-                    L ${cx - swPx/2} ${yNotch} 
-                    Z`;
-          } else {
-            // Smooth Bezier Curves (Convex, S-Curve, or Zero-Notch Curves)
-            const cStyle = document.getElementById('curveStylePreset').value;
-
-            if (currentCurveMode === 'preset' && cStyle === 'convex') {
-              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} Q ${cx + swPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} Q ${cx - swPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
-            } else if (currentCurveMode === 'preset' && cStyle === 'scurve') {
-              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} C ${cx + swPx/2} ${yBot - hPx*0.5}, ${cx + ewPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot - hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
-            } else {
-              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} C ${cx + swPx/2} ${yBot - hPx*0.4}, ${cx + ewPx/2} ${yTop + hPx*0.2}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.2}, ${cx - swPx/2} ${yBot - hPx*0.4}, ${cx - swPx/2} ${yBot} Z`;
-            }
-          }
-        };
-
-        const dOrig = generateCurvePathD(centerX1, centerY, origStartW, origEndW, origH);
-        const dResc = generateCurvePathD(centerX2, centerY, rescStartW, rescEndW, rescH);
-
-        const oYTop = centerY - (origH * pxPerUnit) / 2;
-        const oYBot = centerY + (origH * pxPerUnit) / 2;
-        const rYTop = centerY - (rescH * pxPerUnit) / 2;
-        const rYBot = centerY + (rescH * pxPerUnit) / 2;
-
-        gOrig.innerHTML = `
-          <path d="${dOrig}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
-          <text x="${centerX1}" y="${oYTop - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
-          <text x="${centerX1}" y="${oYBot + 20}" class="svg-subtitle" text-anchor="middle">${origStartW}${unitSym} → ${origEndW}${unitSym}</text>
-        `;
-        gResc.innerHTML = `
-          <path d="${dResc}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
-          <text x="${centerX2}" y="${rYTop - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
-          <text x="${centerX2}" y="${rYBot + 20}" class="svg-subtitle-rescaled" text-anchor="middle">${rescStartW.toFixed(1)}${unitSym} → ${rescEndW.toFixed(1)}${unitSym}</text>
+      // Update Recommendation Box
+      if (bestSize) {
+        document.getElementById('recommendationBox').innerHTML = `
+          <div class="recommendation-title">🎯 Optimal Size Match: Size ${bestSize.name}</div>
+          <div class="recommendation-body">
+            To achieve your target width of <b>${targetBust}${unitSym}</b> at your gauge, follow the written instructions for <b>Size ${bestSize.name}</b> (which will yield an actual finished width of <b>${bestSize.actualWidth.toFixed(1)}${unitSym}</b>).
+          </div>
         `;
       }
 
-      const pctChange = Math.round((scaleFactor - 1) * 100);
-      const badge = document.getElementById('safety-badge');
-      const absChange = Math.abs(pctChange);
-
-      if (absChange <= 15) {
-        badge.className = 'badge badge-safe';
-        badge.textContent = `Scale: ${pctChange >= 0 ? '+' : ''}${pctChange}% (Safe Drape)`;
-      } else if (absChange <= 35) {
-        badge.className = 'badge badge-warning';
-        badge.textContent = `Scale: ${pctChange >= 0 ? '+' : ''}${pctChange}% (Noticeable Drape Shift)`;
+      // Update Row / Length Adjustment Advice
+      const rowDiffPct = Math.round((1 - rowMultiplier) * 100);
+      let rowAdvice = `• Pattern Row Gauge: ${pRow} rows / 4"<br>• Your Row Gauge: ${yRow} rows / 4"<br>`;
+      if (Math.abs(rowDiffPct) < 2) {
+        rowAdvice += `• <b>Length Advice:</b> Your row gauge matches closely! Follow the pattern's row counts directly for length.`;
+      } else if (rowMultiplier > 1) {
+        rowAdvice += `• <b>Length Advice:</b> Your rows are taller than the pattern's. To reach your ${targetLen}${unitSym} length, work approximately <b>${Math.abs(rowDiffPct)}% fewer rows</b>.`;
       } else {
-        badge.className = 'badge badge-alert';
-        badge.textContent = `Scale: ${pctChange >= 0 ? '+' : ''}${pctChange}% (Major Dimension Shift)`;
+        rowAdvice += `• <b>Length Advice:</b> Your rows are shorter than the pattern's. To reach your ${targetLen}${unitSym} length, work approximately <b>${Math.abs(rowDiffPct)}% more rows</b>.`;
       }
+      document.getElementById('rowAdjustmentText').innerHTML = rowAdvice;
     }
 
     function triggerSupport() {
       window.location.href = "https://buy.stripe.com/9B6eVegcIgGQ5a85p6bo400";
     }
 
-    // Attach real-time input listeners across all input controls
-    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'tCurveStartW', 'tCurveEndW', 'tCurveLength', 'cNotchSts', 'cPhase1Rows', 'cPhase2Rows', 'cStraightRows', 'rMultiple', 'rOffset', 'pYardage', 'skeinYardage'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.addEventListener('input', calculateScale);
-    });
-
     // Initialize
-    populateHookDropdowns();
-    loadSavedInputs();
-    calculateScale();
+    calculateMatrix();
   </script>
 </body>
 </html>
