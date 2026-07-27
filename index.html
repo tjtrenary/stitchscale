@@ -543,6 +543,25 @@
           </div>
         </div>
 
+        <!-- 6. Volumetric Yardage & Skein Estimator -->
+        <h3>6. Yardage & Skein Estimator (Optional)</h3>
+        <div style="display: flex; gap: 0.5rem;">
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Pattern Stated Yardage (<span class="unit-len-name">yds</span>)</label>
+              <span class="tip-icon" data-tip="Total yardage required by original pattern. If left blank, StitchScale estimates based on fabric surface volume.">?</span>
+            </div>
+            <input type="number" id="pYardage" placeholder="e.g. 1200">
+          </div>
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Your Skein Size (<span class="unit-len-name">yds</span>)</label>
+              <span class="tip-icon" data-tip="Yardage/meters per skein or ball of your chosen yarn.">?</span>
+            </div>
+            <input type="number" id="skeinYardage" placeholder="e.g. 180" value="180">
+          </div>
+        </div>
+
         <button class="primary-btn no-print" onclick="calculateScale()">Recalculate Pattern</button>
       </div>
 
@@ -554,6 +573,17 @@
         <div id="shapingScheduleBox"></div>
         <div id="repeatBox"></div>
         <div style="margin-top:0.75rem;">New Total Rows / Rounds: <span class="stat" id="outRows">270</span></div>
+
+        <!-- Yardage Output Card -->
+        <div style="margin-top: 1rem; background: #f5efeb; border: 1px solid #e6ded6; padding: 0.85rem 1rem; border-radius: 10px;">
+          <div style="font-weight: 700; color: #2d2623; font-size: 0.9rem;">🧶 Estimated Yardage & Skein Requirements</div>
+          <div style="margin-top: 0.35rem; font-size: 0.88rem; color: #4a3e37;">
+            • Total Required: <span style="font-weight: 700; color: #c85a32;" id="outYardageText">--</span>
+          </div>
+          <div style="font-size: 0.88rem; color: #4a3e37; margin-top: 0.15rem;">
+            • Recommended Purchase: <span style="font-weight: 700; color: #4a7c59;" id="outSkeinsText">--</span> <span style="font-size: 0.75rem; color: #736760;">(includes +10% safety cushion)</span>
+          </div>
+        </div>
 
         <!-- Dynamic SVG Visualizer Component -->
         <div style="margin-top: 1.25rem;">
@@ -627,6 +657,11 @@
             <td id="tablePGauge">20 sts × 28 rows</td>
             <td id="tableYGauge">14 sts × 18 rows</td>
           </tr>
+          <tr>
+            <td><b>Est. Yardage Required</b></td>
+            <td id="tablePYardage">--</td>
+            <td id="tableYYardage" style="font-weight: 700; color: #c85a32;">--</td>
+          </tr>
         </tbody>
       </table>
 
@@ -652,6 +687,7 @@
         <h4 style="margin: 0 0 0.5rem 0; color: #2d2623;">Calculated Project Execution</h4>
         <div id="paperTargetSummary" style="font-size: 0.95rem; font-weight: 700; color: #c85a32;">Starting Cast-On: 175 sts</div>
         <div id="paperShapingBox" style="margin-top: 0.25rem;"></div>
+        <div id="paperYardageSummary" style="margin-top: 0.35rem; font-size: 0.88rem; color: #2d2623;"></div>
       </div>
 
       <!-- Live Printable Row Tracker -->
@@ -726,14 +762,14 @@
     ];
 
     const CYC_DATA = {
-      0: { name: "#0 Lace", defaultHook: "2.25", st: 34, row: 44 },
-      1: { name: "#1 Super Fine", defaultHook: "2.75", st: 28, row: 36 },
-      2: { name: "#2 Fine (Sport)", defaultHook: "3.75", st: 22, row: 30 },
-      3: { name: "#3 Light (DK)", defaultHook: "4.50", st: 18, row: 24 },
-      4: { name: "#4 Medium (Worsted)", defaultHook: "5.50", st: 16, row: 20 },
-      5: { name: "#5 Bulky", defaultHook: "6.50", st: 12, row: 15 },
-      6: { name: "#6 Super Bulky", defaultHook: "9.00", st: 8, row: 10 },
-      7: { name: "#7 Jumbo", defaultHook: "15.00", st: 5, row: 6 }
+      0: { name: "#0 Lace", defaultHook: "2.25", st: 34, row: 44, ydsPerSqIn: 1.10 },
+      1: { name: "#1 Super Fine", defaultHook: "2.75", st: 28, row: 36, ydsPerSqIn: 0.85 },
+      2: { name: "#2 Fine (Sport)", defaultHook: "3.75", st: 22, row: 30, ydsPerSqIn: 0.65 },
+      3: { name: "#3 Light (DK)", defaultHook: "4.50", st: 18, row: 24, ydsPerSqIn: 0.52 },
+      4: { name: "#4 Medium (Worsted)", defaultHook: "5.50", st: 16, row: 20, ydsPerSqIn: 0.42 },
+      5: { name: "#5 Bulky", defaultHook: "6.50", st: 12, row: 15, ydsPerSqIn: 0.30 },
+      6: { name: "#6 Super Bulky", defaultHook: "9.00", st: 8, row: 10, ydsPerSqIn: 0.20 },
+      7: { name: "#7 Jumbo", defaultHook: "15.00", st: 5, row: 6, ydsPerSqIn: 0.12 }
     };
 
     const PRESETS = {
@@ -775,6 +811,9 @@
       document.querySelectorAll('.unit-name').forEach(el => el.textContent = unit);
       document.querySelectorAll('.unit-label-4in').forEach(el => {
         el.textContent = unit === 'in' ? 'per 4 in' : 'per 10 cm';
+      });
+      document.querySelectorAll('.unit-len-name').forEach(el => {
+        el.textContent = unit === 'in' ? 'yds' : 'm';
       });
 
       applyPreset();
@@ -832,6 +871,8 @@
         applyPreset();
         document.getElementById('rMultiple').value = 12;
         document.getElementById('rOffset').value = 3;
+        document.getElementById('pYardage').value = 1600;
+        document.getElementById('skeinYardage').value = 180;
       } else if (currentShape === 'taper') {
         document.getElementById('pYarnCYC').value = 3; // DK
         document.getElementById('yYarnCYC').value = 5; // Bulky
@@ -844,6 +885,8 @@
         document.getElementById('tTaperLength').value = 18;
         document.getElementById('rMultiple').value = "";
         document.getElementById('rOffset').value = 0;
+        document.getElementById('pYardage').value = 450;
+        document.getElementById('skeinYardage').value = 150;
       } else if (currentShape === 'triangle') {
         document.getElementById('pYarnCYC').value = 1; // Fingering
         document.getElementById('yYarnCYC').value = 3; // DK
@@ -855,6 +898,8 @@
         document.getElementById('tSpineDepth').value = 30;
         document.getElementById('rMultiple').value = "";
         document.getElementById('rOffset').value = 0;
+        document.getElementById('pYardage').value = 800;
+        document.getElementById('skeinYardage').value = 220;
       } else if (currentShape === 'circle') {
         document.getElementById('pYarnCYC').value = 4; // Worsted
         document.getElementById('yYarnCYC').value = 6; // Super Bulky
@@ -865,6 +910,8 @@
         document.getElementById('tDiameter').value = 20;
         document.getElementById('rMultiple').value = "";
         document.getElementById('rOffset').value = 0;
+        document.getElementById('pYardage').value = 220;
+        document.getElementById('skeinYardage').value = 90;
       }
       calculateScale();
     }
@@ -882,6 +929,8 @@
           if (data.yRow) document.getElementById('yRows').value = data.yRow;
           if (data.pHook) document.getElementById('pHook').value = data.pHook;
           if (data.yHook) document.getElementById('yHook').value = data.yHook;
+          if (data.pYd) document.getElementById('pYardage').value = data.pYd;
+          if (data.skYd) document.getElementById('skeinYardage').value = data.skYd;
         } catch (e) {
           console.error('Error loading state:', e);
         }
@@ -900,8 +949,11 @@
       const rMult = parseInt(document.getElementById('rMultiple').value) || 0;
       const rOff = parseInt(document.getElementById('rOffset').value) || 0;
 
+      const pYardageIn = parseFloat(document.getElementById('pYardage').value) || 0;
+      const skeinSizeIn = parseFloat(document.getElementById('skeinYardage').value) || 0;
+
       localStorage.setItem('stitchscale_state', JSON.stringify({ 
-        unit: currentUnit, shape: currentShape, pSt, pRow, ySt, yRow, pHook: pHookVal, yHook: yHookVal 
+        unit: currentUnit, shape: currentShape, pSt, pRow, ySt, yRow, pHook: pHookVal, yHook: yHookVal, pYd: pYardageIn, skYd: skeinSizeIn 
       }));
 
       const refDivisor = currentUnit === 'in' ? 4 : 10;
@@ -909,6 +961,8 @@
       let totalRows = 0;
       let shapingHtml = '';
       let repeatHtml = '';
+      let targetAreaInches = 0;
+      let patternAreaInches = 0;
 
       if (currentShape === 'rect') {
         const w = parseFloat(document.getElementById('tWidth').value) || 0;
@@ -916,6 +970,11 @@
         const rawStitches = Math.round((w / refDivisor) * ySt);
         totalRows = Math.round((h / refDivisor) * yRow);
         finalStitches = rawStitches;
+
+        const wInches = currentUnit === 'in' ? w : w / 2.54;
+        const hInches = currentUnit === 'in' ? h : h / 2.54;
+        targetAreaInches = wInches * hInches;
+        patternAreaInches = targetAreaInches; // base target dimensions
 
         if (rMult > 1) {
           const kApprox = (rawStitches - rOff) / rMult;
@@ -936,6 +995,12 @@
         const startSts = Math.round((cuffW / refDivisor) * ySt);
         const endSts = Math.round((topW / refDivisor) * ySt);
         totalRows = Math.round((len / refDivisor) * yRow);
+
+        const avgW = (cuffW + topW) / 2;
+        const avgWInches = currentUnit === 'in' ? avgW : avgW / 2.54;
+        const lenInches = currentUnit === 'in' ? len : len / 2.54;
+        targetAreaInches = avgWInches * lenInches;
+        patternAreaInches = targetAreaInches;
         
         const deltaSts = Math.abs(endSts - startSts);
         const incEvents = Math.floor(deltaSts / 2);
@@ -957,6 +1022,11 @@
         finalStitches = Math.round((wingspan / refDivisor) * ySt);
         totalRows = Math.round((spine / refDivisor) * yRow);
 
+        const wInches = currentUnit === 'in' ? wingspan : wingspan / 2.54;
+        const sInches = currentUnit === 'in' ? spine : spine / 2.54;
+        targetAreaInches = (wInches * sInches) / 2;
+        patternAreaInches = targetAreaInches;
+
         shapingHtml = `
           <div style="font-size:0.85rem; color:#2d2623;">
             <b>🔺 Triangle Expansion:</b> ${finalStitches} sts across top wingspan edge over ${totalRows} spine rows.
@@ -972,6 +1042,10 @@
         const totalRounds = Math.round((diam / 2 / refDivisor) * yRow);
         totalRows = totalRounds;
 
+        const dInches = currentUnit === 'in' ? diam : diam / 2.54;
+        targetAreaInches = Math.PI * Math.pow(dInches / 2, 2);
+        patternAreaInches = targetAreaInches;
+
         shapingHtml = `
           <div style="font-size:0.85rem; color:#2d2623;">
             <b>⚪ Circular Expansion:</b> Magic ring 6 sts → Work 6-st increases each round for <b>${totalRounds} rounds</b> (${finalStitches} final crown sts).
@@ -981,6 +1055,42 @@
         document.getElementById('paperTargetSummary').innerHTML = `Magic Ring Start: 6 sts → Final Crown: ${finalStitches} sts (${diam}" diameter)`;
       }
 
+      // =======================================================
+      // 🧶 VOLUMETRIC YARDAGE & SKEIN ESTIMATION ENGINE
+      // =======================================================
+      let estYardage = 0;
+      const lenUnit = currentUnit === 'in' ? 'yds' : 'm';
+
+      if (pYardageIn > 0) {
+        // Volumetric scaling from pattern baseline:
+        // Total yarn length scales linearly with row gauge and surface area ratio
+        const rowGaugeRatio = yRow / pRow;
+        const areaRatio = patternAreaInches > 0 ? (targetAreaInches / patternAreaInches) : 1;
+        estYardage = Math.round(pYardageIn * rowGaugeRatio * areaRatio);
+      } else {
+        // Empirical surface density estimation (based on CYC weight category yards/sq in)
+        const density = CYC_DATA[yCYCVal].ydsPerSqIn;
+        estYardage = Math.round(targetAreaInches * density);
+      }
+
+      let yardageText = `${estYardage} ${lenUnit}`;
+      let skeinText = `--`;
+
+      if (skeinSizeIn > 0 && estYardage > 0) {
+        // Add 10% safety cushion for swatching and weaving ends
+        const bufferedYardage = estYardage * 1.10;
+        const skeinsNeeded = Math.ceil(bufferedYardage / skeinSizeIn);
+        skeinText = `${skeinsNeeded} skeins (${skeinSizeIn} ${lenUnit}/skein)`;
+      }
+
+      document.getElementById('outYardageText').textContent = yardageText;
+      document.getElementById('outSkeinsText').textContent = skeinText;
+
+      document.getElementById('tablePYardage').textContent = pYardageIn > 0 ? `${pYardageIn} ${lenUnit}` : `Unspecified`;
+      document.getElementById('tableYYardage').textContent = `${yardageText} (${skeinText})`;
+      document.getElementById('paperYardageSummary').innerHTML = `<b>🧶 Estimated Yardage:</b> ${yardageText} | <b>Recommended Purchase:</b> ${skeinText}`;
+
+      // Update Spec Table inside Paper Sheet
       const pHookObj = HOOK_LIST.find(h => h.mm === pHookVal);
       const yHookObj = HOOK_LIST.find(h => h.mm === yHookVal);
       
@@ -1172,7 +1282,7 @@
     }
 
     // Attach real-time input listeners
-    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'rMultiple', 'rOffset'].forEach(id => {
+    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'rMultiple', 'rOffset', 'pYardage', 'skeinYardage'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateScale);
     });
