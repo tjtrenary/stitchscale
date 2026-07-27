@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StitchScale | Pattern Size Cross-Over & Gauge Matrix</title>
+  <title>StitchScale | Multi-Dimensional Size Cross-Over Matrix</title>
   <style>
     :root { 
       --primary: #c85a32; /* Warm Terracotta */
@@ -27,7 +27,7 @@
       line-height: 1.5;
     }
 
-    .container { max-width: 960px; margin: 0 auto; }
+    .container { max-width: 1050px; margin: 0 auto; }
 
     .header-bar {
       display: flex;
@@ -79,7 +79,7 @@
     }
     .sample-link:hover { opacity: 0.8; }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.25rem; }
+    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.5rem; margin-top: 1.25rem; }
     
     .card { 
       background: var(--card); 
@@ -137,14 +137,14 @@
 
     input, select { 
       width: 100%; 
-      padding: 0.6rem 0.75rem; 
+      padding: 0.55rem 0.65rem; 
       border-radius: 8px; 
       border: 1px solid var(--border); 
       background: var(--input-bg); 
       color: var(--text); 
       margin-top: 0.25rem; 
       box-sizing: border-box; 
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-family: inherit;
     }
 
@@ -170,32 +170,34 @@
 
     button.primary-btn:hover { background: var(--primary-hover); }
 
-    .stat { font-size: 1.35rem; font-weight: 700; color: var(--primary); }
-
-    /* Size Chart Table Styling */
+    /* Multi-Dimensional Size Chart Table Styling */
+    .size-table-wrapper {
+      overflow-x: auto;
+      margin-top: 0.75rem;
+    }
     .size-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 0.75rem;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
     }
     .size-table th {
       background: #f5efeb;
       color: #2d2623;
       text-align: left;
-      padding: 6px 8px;
+      padding: 6px 6px;
       border: 1px solid var(--border);
       font-weight: 700;
+      white-space: nowrap;
     }
     .size-table td {
-      padding: 6px 8px;
+      padding: 5px 6px;
       border: 1px solid var(--border);
       color: var(--text);
     }
     .size-table input {
       margin-top: 0;
-      padding: 0.35rem 0.5rem;
-      font-size: 0.88rem;
+      padding: 0.3rem 0.4rem;
+      font-size: 0.82rem;
     }
 
     /* Recommendation Callout Box */
@@ -203,20 +205,20 @@
       background: #e8f0eb;
       border: 1px solid #4a7c59;
       border-left: 5px solid #4a7c59;
-      padding: 1.25rem;
+      padding: 1.15rem;
       border-radius: 10px;
       margin-top: 1rem;
     }
     .recommendation-title {
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 800;
       color: #2d5a38;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
     }
     .recommendation-body {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: #2d2623;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     /* PRINTABLE PAPER SHEET PREVIEW */
@@ -271,7 +273,7 @@
       .print-only { display: block !important; }
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 768px) {
       .grid { grid-template-columns: 1fr; }
       body { padding: 1rem; }
     }
@@ -283,13 +285,13 @@
     <!-- Print-Only Header -->
     <div class="print-only" style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem; margin-bottom: 1rem;">
       <h2 style="margin: 0; font-size: 1.5rem;">🧶 STITCHSCALE SIZE CROSS-OVER REPORT</h2>
-      <div style="font-size: 0.85rem; color: #555; margin-top: 0.25rem;">Garment Sizing & Tension Match Worksheet</div>
+      <div style="font-size: 0.85rem; color: #555; margin-top: 0.25rem;">Multi-Dimensional Garment Sizing & Tension Worksheet</div>
     </div>
 
     <div class="header-bar">
       <div>
         <h1>🧶 StitchScale</h1>
-        <p class="subtitle">Pattern Size Cross-Over & Gauge Matrix. Find your true size when your tension differs.</p>
+        <p class="subtitle">Multi-Dimensional Size Cross-Over Matrix & Gauge Matcher.</p>
       </div>
       
       <div class="unit-toggle">
@@ -299,17 +301,56 @@
     </div>
 
     <div class="no-print">
-      <span class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Sweater Gauge Discrepancy)</span>
+      <span class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Garment Sizing Discrepancy)</span>
     </div>
 
     <div class="grid">
       <!-- Input Panel -->
       <div class="card">
         
-        <h3>1. Gauge Comparison</h3>
-        <p style="font-size: 0.83rem; color: var(--text-muted); margin-top: 0.25rem;">Compare what the pattern designer required against your actual gauge swatch.</p>
+        <h3>1. Pattern & Swatch Specifications</h3>
+        
+        <div style="display: flex; gap: 0.5rem;">
+          <div style="flex: 1;">
+            <div class="label-row"><label>Pattern Yarn Weight</label></div>
+            <select id="pYarnCYC" onchange="updateCYCGauge('p')">
+              <option value="0">#0 Lace</option>
+              <option value="1">#1 Super Fine</option>
+              <option value="2">#2 Fine (Sport)</option>
+              <option value="3">#3 Light (DK)</option>
+              <option value="4" selected>#4 Medium (Worsted)</option>
+              <option value="5">#5 Bulky</option>
+              <option value="6">#6 Super Bulky</option>
+              <option value="7">#7 Jumbo</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <div class="label-row"><label>Pattern Needle / Hook</label></div>
+            <select id="pHook" class="hook-select"></select>
+          </div>
+        </div>
 
-        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+          <div style="flex: 1;">
+            <div class="label-row"><label>Your Yarn Weight</label></div>
+            <select id="yYarnCYC" onchange="updateCYCGauge('y')">
+              <option value="0">#0 Lace</option>
+              <option value="1">#1 Super Fine</option>
+              <option value="2">#2 Fine (Sport)</option>
+              <option value="3">#3 Light (DK)</option>
+              <option value="4">#4 Medium (Worsted)</option>
+              <option value="5" selected>#5 Bulky</option>
+              <option value="6">#6 Super Bulky</option>
+              <option value="7">#7 Jumbo</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <div class="label-row"><label>Your Needle / Hook</label></div>
+            <select id="yHook" class="hook-select"></select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
           <div style="flex: 1;">
             <label>Pattern Stitches (<span class="unit-label-4in">per 4 in</span>)</label>
             <input type="number" id="pStitches" value="20" oninput="calculateMatrix()">
@@ -323,120 +364,122 @@
         <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
           <div style="flex: 1;">
             <label>Your Swatch Stitches (<span class="unit-label-4in">per 4 in</span>)</label>
-            <input type="number" id="yStitches" value="18" oninput="calculateMatrix()">
+            <input type="number" id="yStitches" value="17" oninput="calculateMatrix()">
           </div>
           <div style="flex: 1;">
             <label>Your Swatch Rows</label>
-            <input type="number" id="yRows" value="25" oninput="calculateMatrix()">
+            <input type="number" id="yRows" value="24" oninput="calculateMatrix()">
           </div>
         </div>
 
-        <h3>2. Your Target Measurements</h3>
+        <h3>2. Your Desired Fit</h3>
         <div style="display: flex; gap: 0.5rem;">
           <div style="flex: 1;">
-            <div class="label-row">
-              <label>Target Finished Width / Bust (<span class="unit-name">in</span>)</label>
-              <span class="tip-icon" data-tip="The garment width or bust measurement you actually want to wear.">?</span>
-            </div>
+            <label>Target Bust / Chest (<span class="unit-name">in</span>)</label>
             <input type="number" id="targetBust" value="40" oninput="calculateMatrix()">
           </div>
           <div style="flex: 1;">
-            <div class="label-row">
-              <label>Target Length (<span class="unit-name">in</span>)</label>
-            </div>
-            <input type="number" id="targetLength" value="24" oninput="calculateMatrix()">
+            <label>Target Sleeve Length (<span class="unit-name">in</span>)</label>
+            <input type="number" id="targetSleeve" value="18" oninput="calculateMatrix()">
           </div>
         </div>
 
-        <h3>3. Pattern Size Chart (Widths)</h3>
-        <p style="font-size: 0.83rem; color: var(--text-muted); margin-top: 0.25rem;">Enter the sizes available in your pattern and their designer-intended finished widths.</p>
+        <h3>3. Pattern Multi-Dimensional Size Chart</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Enter each size's designer-intended dimensions.</p>
 
-        <table class="size-table" id="sizeTableInputs">
-          <thead>
-            <tr>
-              <th>Size Name</th>
-              <th>Pattern Width (<span class="unit-name">in</span>)</th>
-              <th style="width: 40px;"></th>
-            </tr>
-          </thead>
-          <tbody id="sizeRowsBody">
-            <tr>
-              <td><input type="text" value="XS" style="width:100%;"></td>
-              <td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td>
-              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="S" style="width:100%;"></td>
-              <td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td>
-              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="M" style="width:100%;"></td>
-              <td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td>
-              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="L" style="width:100%;"></td>
-              <td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td>
-              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="XL" style="width:100%;"></td>
-              <td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td>
-              <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <button type="button" class="primary-btn no-print" style="background: var(--input-bg); color: var(--text); border: 1px dashed var(--border); margin-top: 0.75rem;" onclick="addSizeRow()">+ Add Another Size</button>
+        <div class="size-table-wrapper">
+          <table class="size-table" id="sizeTableInputs">
+            <thead>
+              <tr>
+                <th>Size</th>
+                <th>Bust (<span class="unit-name">in</span>)</th>
+                <th>Sleeve L. (<span class="unit-name">in</span>)</th>
+                <th>Total L. (<span class="unit-name">in</span>)</th>
+                <th style="width: 28px;"></th>
+              </tr>
+            </thead>
+            <tbody id="sizeRowsBody">
+              <tr>
+                <td><input type="text" value="XS" style="width:100%;"></td>
+                <td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="17" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="22" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" value="S" style="width:100%;"></td>
+                <td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="17.5" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="23" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" value="M" style="width:100%;"></td>
+                <td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="18" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="24" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" value="L" style="width:100%;"></td>
+                <td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="18.5" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="25" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" value="XL" style="width:100%;"></td>
+                <td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="19" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><input type="number" value="26" style="width:100%;" oninput="calculateMatrix()"></td>
+                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button type="button" class="primary-btn no-print" style="background: var(--input-bg); color: var(--text); border: 1px dashed var(--border); margin-top: 0.75rem;" onclick="addSizeRow()">+ Add Size</button>
 
-        <button class="primary-btn no-print" onclick="calculateMatrix()">Calculate Size Cross-Over</button>
+        <button class="primary-btn no-print" onclick="calculateMatrix()">Calculate Cross-Over Matrix</button>
       </div>
 
       <!-- Output Panel -->
       <div class="card">
-        <h3>Size Recommendation & Cross-Over Matrix</h3>
+        <h3>Updated Effective Size Chart</h3>
         
         <!-- Smart Recommendation Box -->
         <div id="recommendationBox" class="recommendation-box">
           <div class="recommendation-title">🎯 Optimal Size Match: Size S</div>
           <div class="recommendation-body" id="recText">
-            Because your gauge is looser than the pattern requirement, following instructions for <b>Size S</b> will yield an actual finished width of 40.0 inches at your tension.
-          </div>
-        </div>
-
-        <!-- Length & Row Adjustment Box -->
-        <div style="margin-top: 1rem; background: #f5efeb; border: 1px solid #e6ded6; padding: 1rem; border-radius: 10px;">
-          <div style="font-weight: 700; color: #2d2623; font-size: 0.9rem;">📏 Length & Row Adjustment</div>
-          <div style="margin-top: 0.35rem; font-size: 0.88rem; color: #4a3e37;" id="rowAdjustmentText">
-            • Pattern Row Gauge: 28 rows / 4 in<br>
-            • Your Row Gauge: 25 rows / 4 in<br>
-            • <b>Advice:</b> To hit your 24" length target, work approximately <b>10% fewer rows</b> than instructed in the pattern.
+            Because your gauge differs from the pattern, following instructions for <b>Size S</b> will yield an actual finished bust of 42.4 inches at your tension.
           </div>
         </div>
 
         <!-- Cross-Over Matrix Table -->
         <div style="margin-top: 1.25rem;">
-          <h4 style="margin: 0 0 0.5rem 0; color: #2d2623; font-size: 0.92rem;">📊 Complete Size Cross-Over Table</h4>
-          <table class="size-table">
-            <thead>
-              <tr>
-                <th>Pattern Written Size</th>
-                <th>Designer Intended Width</th>
-                <th>Your Actual Width at Your Gauge</th>
-              </tr>
-            </thead>
-            <tbody id="matrixOutputBody">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
+          <h4 style="margin: 0 0 0.5rem 0; color: #2d2623; font-size: 0.92rem;">📊 Translated Effective Measurements</h4>
+          <div class="size-table-wrapper">
+            <table class="size-table">
+              <thead>
+                <tr>
+                  <th>Written Size</th>
+                  <th>Effective Bust</th>
+                  <th>Effective Sleeve L.</th>
+                  <th>Effective Total L.</th>
+                </tr>
+              </thead>
+              <tbody id="matrixOutputBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Export & Friendly Support Section -->
         <div class="no-print" style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
           <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable Report</h4>
-          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Print or save your size cross-over worksheet directly.</p>
+          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Print or save your multi-dimensional size cross-over sheet.</p>
           
-          <button style="background: var(--accent-sage);" class="primary-btn" onclick="window.print()">🖨️ Print Size Worksheet</button>
+          <button style="background: var(--accent-sage);" class="primary-btn" onclick="window.print()">🖨️ Print Effective Size Worksheet</button>
 
           <!-- Support Box -->
           <div style="margin-top: 1.25rem; padding: 1rem; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--border); text-align: center;">
@@ -453,6 +496,61 @@
 
   <script>
     let currentUnit = 'in';
+
+    const HOOK_LIST = [
+      { mm: "2.25", label: "2.25 mm (B-1)" },
+      { mm: "2.75", label: "2.75 mm (C-2)" },
+      { mm: "3.25", label: "3.25 mm (D-3)" },
+      { mm: "3.50", label: "3.50 mm (E-4)" },
+      { mm: "3.75", label: "3.75 mm (F-5)" },
+      { mm: "4.00", label: "4.00 mm (G-6)" },
+      { mm: "4.50", label: "4.50 mm (7)" },
+      { mm: "5.00", label: "5.00 mm (H-8)" },
+      { mm: "5.50", label: "5.50 mm (I-9)" },
+      { mm: "6.00", label: "6.00 mm (J-10)" },
+      { mm: "6.50", label: "6.50 mm (K-10.5)" },
+      { mm: "7.00", label: "7.00 mm" },
+      { mm: "8.00", label: "8.00 mm (L-11)" },
+      { mm: "9.00", label: "9.00 mm (M-13)" },
+      { mm: "10.00", label: "10.00 mm (N-15)" },
+      { mm: "12.00", label: "12.00 mm (P-16)" },
+      { mm: "15.00", label: "15.00 mm (Q)" },
+      { mm: "19.00", label: "19.00 mm (S)" },
+      { mm: "25.00", label: "25.00 mm (U)" }
+    ];
+
+    const CYC_DATA = {
+      0: { name: "#0 Lace", defaultHook: "2.25", st: 34, row: 44 },
+      1: { name: "#1 Super Fine", defaultHook: "2.75", st: 28, row: 36 },
+      2: { name: "#2 Fine (Sport)", defaultHook: "3.75", st: 22, row: 30 },
+      3: { name: "#3 Light (DK)", defaultHook: "4.50", st: 18, row: 24 },
+      4: { name: "#4 Medium (Worsted)", defaultHook: "5.50", st: 16, row: 20 },
+      5: { name: "#5 Bulky", defaultHook: "6.50", st: 12, row: 15 },
+      6: { name: "#6 Super Bulky", defaultHook: "9.00", st: 8, row: 10 },
+      7: { name: "#7 Jumbo", defaultHook: "15.00", st: 5, row: 6 }
+    };
+
+    function populateHookDropdowns() {
+      const pSelect = document.getElementById('pHook');
+      const ySelect = document.getElementById('yHook');
+      let html = '';
+      HOOK_LIST.forEach(h => {
+        html += `<option value="${h.mm}">${h.label}</option>`;
+      });
+      pSelect.innerHTML = html;
+      ySelect.innerHTML = html;
+      pSelect.value = "5.50";
+      ySelect.value = "6.50";
+    }
+
+    function updateCYCGauge(prefix) {
+      const cycVal = document.getElementById(prefix + 'YarnCYC').value;
+      const data = CYC_DATA[cycVal];
+      document.getElementById(prefix + 'Hook').value = data.defaultHook;
+      document.getElementById(prefix + 'Stitches').value = data.st;
+      document.getElementById(prefix + 'Rows').value = data.row;
+      calculateMatrix();
+    }
 
     function setUnit(unit) {
       currentUnit = unit;
@@ -473,6 +571,8 @@
       tr.innerHTML = `
         <td><input type="text" value="New" style="width:100%;"></td>
         <td><input type="number" value="52" style="width:100%;" oninput="calculateMatrix()"></td>
+        <td><input type="number" value="19" style="width:100%;" oninput="calculateMatrix()"></td>
+        <td><input type="number" value="27" style="width:100%;" oninput="calculateMatrix()"></td>
         <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
       `;
       tbody.appendChild(tr);
@@ -480,26 +580,29 @@
     }
 
     function removeRow(btn) {
-      const tr = btn.closest('tr');
-      tr.remove();
+      btn.closest('tr').remove();
       calculateMatrix();
     }
 
     function loadSampleScenario() {
+      document.getElementById('pYarnCYC').value = 4;
+      document.getElementById('yYarnCYC').value = 5;
+      updateCYCGauge('p');
+      updateCYCGauge('y');
       document.getElementById('pStitches').value = 20;
       document.getElementById('pRows').value = 28;
-      document.getElementById('yStitches').value = 18; // Looser gauge (fewer stitches per 4in -> garment will be bigger)
-      document.getElementById('yRows').value = 25;
+      document.getElementById('yStitches').value = 17; // Looser gauge -> larger garment width
+      document.getElementById('yRows').value = 22; // Taller rows -> longer garment length
       document.getElementById('targetBust').value = 40;
-      document.getElementById('targetLength').value = 24;
+      document.getElementById('targetSleeve').value = 18;
 
       const tbody = document.getElementById('sizeRowsBody');
       tbody.innerHTML = `
-        <tr><td><input type="text" value="XS" style="width:100%;"></td><td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="S" style="width:100%;"></td><td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="M" style="width:100%;"></td><td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="L" style="width:100%;"></td><td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="XL" style="width:100%;"></td><td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="XS" style="width:100%;"></td><td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="17" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="22" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="S" style="width:100%;"></td><td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="17.5" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="23" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="M" style="width:100%;"></td><td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="18" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="24" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="L" style="width:100%;"></td><td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="18.5" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="25" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
+        <tr><td><input type="text" value="XL" style="width:100%;"></td><td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="19" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="26" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
       `;
       calculateMatrix();
     }
@@ -510,13 +613,12 @@
       const ySt = parseFloat(document.getElementById('yStitches').value) || 20;
       const yRow = parseFloat(document.getElementById('yRows').value) || 28;
       const targetBust = parseFloat(document.getElementById('targetBust').value) || 40;
-      const targetLen = parseFloat(document.getElementById('targetLength').value) || 24;
 
       const unitSym = currentUnit === 'in' ? '"' : ' cm';
 
-      // Gauge scale factor for width (inverse of stitch ratio)
-      // width_actual = width_pattern * (pSt / ySt)
+      // Width scaling ratio (stitch gauge)
       const widthMultiplier = pSt / ySt;
+      // Length scaling ratio (row gauge)
       const rowMultiplier = pRow / yRow;
 
       const rows = document.querySelectorAll('#sizeRowsBody tr');
@@ -524,11 +626,17 @@
 
       rows.forEach(tr => {
         const inputs = tr.querySelectorAll('input');
-        if (inputs.length >= 2) {
+        if (inputs.length >= 4) {
           const name = inputs[0].value || 'Unknown';
-          const patternWidth = parseFloat(inputs[1].value) || 0;
-          const actualWidth = patternWidth * widthMultiplier;
-          sizesData.push({ name, patternWidth, actualWidth });
+          const pBust = parseFloat(inputs[1].value) || 0;
+          const pSleeve = parseFloat(inputs[2].value) || 0;
+          const pTotal = parseFloat(inputs[3].value) || 0;
+
+          const actBust = pBust * widthMultiplier;
+          const actSleeve = pSleeve * rowMultiplier;
+          const actTotal = pTotal * rowMultiplier;
+
+          sizesData.push({ name, actBust, actSleeve, actTotal });
         }
       });
 
@@ -537,23 +645,24 @@
       let minDiff = Infinity;
 
       sizesData.forEach(s => {
-        const diff = Math.abs(s.actualWidth - targetBust);
+        const diff = Math.abs(s.actBust - targetBust);
         if (diff < minDiff) {
           minDiff = diff;
           bestSize = s;
         }
       });
 
-      // Populate Matrix Table HTML
+      // Populate Table HTML
       let tableHtml = '';
       sizesData.forEach(s => {
         const isBest = bestSize && s.name === bestSize.name;
         const highlightStyle = isBest ? 'background: #e8f0eb; font-weight: 700; color: #2d5a38;' : '';
         tableHtml += `
           <tr style="${highlightStyle}">
-            <td>${s.name} ${isBest ? '⭐ (Best Match)' : ''}</td>
-            <td>${s.patternWidth}${unitSym}</td>
-            <td><b>${s.actualWidth.toFixed(1)}${unitSym}</b></td>
+            <td>${s.name} ${isBest ? '⭐' : ''}</td>
+            <td><b>${s.actBust.toFixed(1)}${unitSym}</b></td>
+            <td>${s.actSleeve.toFixed(1)}${unitSym}</td>
+            <td>${s.actTotal.toFixed(1)}${unitSym}</td>
           </tr>
         `;
       });
@@ -564,22 +673,10 @@
         document.getElementById('recommendationBox').innerHTML = `
           <div class="recommendation-title">🎯 Optimal Size Match: Size ${bestSize.name}</div>
           <div class="recommendation-body">
-            To achieve your target width of <b>${targetBust}${unitSym}</b> at your gauge, follow the written instructions for <b>Size ${bestSize.name}</b> (which will yield an actual finished width of <b>${bestSize.actualWidth.toFixed(1)}${unitSym}</b>).
+            To hit your target bust measurement of <b>${targetBust}${unitSym}</b> at your current gauge, follow the written pattern instructions for <b>Size ${bestSize.name}</b>. At your tension, it will effectively measure <b>${bestSize.actBust.toFixed(1)}${unitSym} bust</b>, <b>${bestSize.actSleeve.toFixed(1)}${unitSym} sleeve length</b>, and <b>${bestSize.actTotal.toFixed(1)}${unitSym} total length</b>.
           </div>
         `;
       }
-
-      // Update Row / Length Adjustment Advice
-      const rowDiffPct = Math.round((1 - rowMultiplier) * 100);
-      let rowAdvice = `• Pattern Row Gauge: ${pRow} rows / 4"<br>• Your Row Gauge: ${yRow} rows / 4"<br>`;
-      if (Math.abs(rowDiffPct) < 2) {
-        rowAdvice += `• <b>Length Advice:</b> Your row gauge matches closely! Follow the pattern's row counts directly for length.`;
-      } else if (rowMultiplier > 1) {
-        rowAdvice += `• <b>Length Advice:</b> Your rows are taller than the pattern's. To reach your ${targetLen}${unitSym} length, work approximately <b>${Math.abs(rowDiffPct)}% fewer rows</b>.`;
-      } else {
-        rowAdvice += `• <b>Length Advice:</b> Your rows are shorter than the pattern's. To reach your ${targetLen}${unitSym} length, work approximately <b>${Math.abs(rowDiffPct)}% more rows</b>.`;
-      }
-      document.getElementById('rowAdjustmentText').innerHTML = rowAdvice;
     }
 
     function triggerSupport() {
@@ -587,6 +684,7 @@
     }
 
     // Initialize
+    populateHookDropdowns();
     calculateMatrix();
   </script>
 </body>
