@@ -15,6 +15,7 @@
       --border: #e6ded6;
       --input-bg: #f5efeb;
       --accent-sage: #4a7c59;
+      --accent-sage-hover: #3d6849;
     }
 
     body { 
@@ -364,7 +365,7 @@
     </div>
 
     <div class="no-print">
-      <span class="sample-link" onclick="loadSleeveSample()">⚡ Load Sample Scenario (Tapered Sleeve Rescale)</span>
+      <span id="sampleLink" class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Worsted → Chunky Throw Blanket)</span>
     </div>
 
     <div class="grid">
@@ -689,6 +690,13 @@
     let currentUnit = 'in';
     let currentShape = 'rect';
 
+    const SAMPLE_SCENARIO_LABELS = {
+      rect: "⚡ Load Sample Scenario (Worsted → Chunky Throw Blanket)",
+      taper: "⚡ Load Sample Scenario (DK → Bulky Tapered Sleeve)",
+      triangle: "⚡ Load Sample Scenario (Fingering → DK Triangle Shawl)",
+      circle: "⚡ Load Sample Scenario (Worsted → Super Bulky Beanie Crown)"
+    };
+
     const HOOK_LIST = [
       { mm: "2.25", label: "2.25 mm (B-1)" },
       { mm: "2.75", label: "2.75 mm (C-2)" },
@@ -779,6 +787,12 @@
       document.getElementById('inputsTriangle').style.display = shape === 'triangle' ? 'block' : 'none';
       document.getElementById('inputsCircle').style.display = shape === 'circle' ? 'block' : 'none';
 
+      // Dynamically update the sample scenario button text
+      const linkEl = document.getElementById('sampleLink');
+      if (linkEl && SAMPLE_SCENARIO_LABELS[shape]) {
+        linkEl.textContent = SAMPLE_SCENARIO_LABELS[shape];
+      }
+
       calculateScale();
     }
 
@@ -801,15 +815,52 @@
       }
     }
 
-    function loadSleeveSample() {
-      setShape('taper');
-      document.getElementById('pYarnCYC').value = 4;
-      document.getElementById('yYarnCYC').value = 5;
-      updateCYCGauge('p');
-      updateCYCGauge('y');
-      document.getElementById('tCuffWidth').value = 8;
-      document.getElementById('tTopWidth').value = 16;
-      document.getElementById('tTaperLength').value = 18;
+    function loadSampleScenario() {
+      if (currentShape === 'rect') {
+        document.getElementById('pYarnCYC').value = 4; // Worsted
+        document.getElementById('yYarnCYC').value = 5; // Bulky
+        updateCYCGauge('p');
+        updateCYCGauge('y');
+        document.getElementById('pHook').value = "5.50";
+        document.getElementById('yHook').value = "6.50";
+        document.getElementById('sizePreset').value = 'throw';
+        applyPreset();
+        document.getElementById('rMultiple').value = 12;
+        document.getElementById('rOffset').value = 3;
+      } else if (currentShape === 'taper') {
+        document.getElementById('pYarnCYC').value = 3; // DK
+        document.getElementById('yYarnCYC').value = 5; // Bulky
+        updateCYCGauge('p');
+        updateCYCGauge('y');
+        document.getElementById('pHook').value = "4.50";
+        document.getElementById('yHook').value = "6.50";
+        document.getElementById('tCuffWidth').value = 8;
+        document.getElementById('tTopWidth').value = 16;
+        document.getElementById('tTaperLength').value = 18;
+        document.getElementById('rMultiple').value = "";
+        document.getElementById('rOffset').value = 0;
+      } else if (currentShape === 'triangle') {
+        document.getElementById('pYarnCYC').value = 1; // Fingering
+        document.getElementById('yYarnCYC').value = 3; // DK
+        updateCYCGauge('p');
+        updateCYCGauge('y');
+        document.getElementById('pHook').value = "3.50";
+        document.getElementById('yHook').value = "5.00";
+        document.getElementById('tWingspan').value = 60;
+        document.getElementById('tSpineDepth').value = 30;
+        document.getElementById('rMultiple').value = "";
+        document.getElementById('rOffset').value = 0;
+      } else if (currentShape === 'circle') {
+        document.getElementById('pYarnCYC').value = 4; // Worsted
+        document.getElementById('yYarnCYC').value = 6; // Super Bulky
+        updateCYCGauge('p');
+        updateCYCGauge('y');
+        document.getElementById('pHook').value = "5.50";
+        document.getElementById('yHook').value = "9.00";
+        document.getElementById('tDiameter').value = 20;
+        document.getElementById('rMultiple').value = "";
+        document.getElementById('rOffset').value = 0;
+      }
       calculateScale();
     }
 
@@ -1004,7 +1055,6 @@
         const maxH = Math.max(origH, rescH, 1);
         const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
 
-        // Original Sleeve Trapezoid Points
         const oTopW = origTopW * pxPerUnit;
         const oCuffW = origCuffW * pxPerUnit;
         const oH = origH * pxPerUnit;
@@ -1018,7 +1068,6 @@
 
         const pointsOrig = `${oXTopL},${oYTop} ${oXTopR},${oYTop} ${oXBotR},${oYBot} ${oXBotL},${oYBot}`;
 
-        // Rescaled Sleeve Trapezoid Points
         const rTopW = rescTopW * pxPerUnit;
         const rCuffW = rescCuffW * pxPerUnit;
         const rH = rescH * pxPerUnit;
