@@ -365,7 +365,7 @@
     </div>
 
     <div class="no-print">
-      <span id="sampleLink" class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Worsted → Chunky Throw Blanket)</span>
+      <span id="sampleLink" class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Worsted → Chunky Blanket)</span>
     </div>
 
     <div class="grid">
@@ -573,15 +573,21 @@
           </div>
         </div>
 
+        <!-- Export & Friendly Support Section -->
         <div class="no-print" style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
           <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable PDF Blueprint</h4>
-          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">StitchScale is 100% free! Print or save your couch-ready project worksheet below.</p>
+          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">StitchScale is 100% free! Print or save your couch-ready project worksheet directly.</p>
           
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button style="background: var(--accent-sage); flex: 1;" class="primary-btn" onclick="window.print()">🖨️ Print / Save PDF Blueprint</button>
-            <button style="background: var(--primary); flex: 1;" class="primary-btn" onclick="triggerSupport()">🧶 Buy Me a Skein of Yarn ($3)</button>
+          <button style="background: var(--accent-sage);" class="primary-btn" onclick="window.print()">🖨️ Print / Save PDF Blueprint</button>
+
+          <!-- Separate Friendly Support Box -->
+          <div style="margin-top: 1.25rem; padding: 1rem; background: var(--input-bg); border-radius: 12px; border: 1px dashed var(--border); text-align: center;">
+            <div style="font-size: 0.88rem; font-weight: 700; color: #2d2623;">Enjoying StitchScale? 🧶</div>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0.75rem 0;">If this tool saved you time or kept you from frogging a project, consider supporting its development!</p>
+            <button style="background: var(--primary); width: auto; padding: 0.55rem 1.25rem; font-size: 0.88rem; margin-top: 0; display: inline-block;" class="primary-btn" onclick="triggerSupport()">🧶 Buy Me a Skein of Yarn ($3)</button>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -787,7 +793,6 @@
       document.getElementById('inputsTriangle').style.display = shape === 'triangle' ? 'block' : 'none';
       document.getElementById('inputsCircle').style.display = shape === 'circle' ? 'block' : 'none';
 
-      // Dynamically update the sample scenario button text
       const linkEl = document.getElementById('sampleLink');
       if (linkEl && SAMPLE_SCENARIO_LABELS[shape]) {
         linkEl.textContent = SAMPLE_SCENARIO_LABELS[shape];
@@ -976,7 +981,6 @@
         document.getElementById('paperTargetSummary').innerHTML = `Magic Ring Start: 6 sts → Final Crown: ${finalStitches} sts (${diam}" diameter)`;
       }
 
-      // Update Spec Table inside Paper Sheet
       const pHookObj = HOOK_LIST.find(h => h.mm === pHookVal);
       const yHookObj = HOOK_LIST.find(h => h.mm === yHookVal);
       
