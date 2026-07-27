@@ -216,16 +216,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
-    .cyc-info {
-      font-size: 0.78rem;
-      color: #736760;
-      background: #f5efeb;
-      padding: 6px 10px;
-      border-radius: 6px;
-      margin-top: 0.35rem;
-      border: 1px dashed #e6ded6;
-    }
-
     /* SVG Visualizer Styles */
     .svg-wrapper { width: 100%; border-radius: 10px; overflow: hidden; margin-top: 0.75rem; border: 1px solid var(--border); }
     .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem; }
@@ -345,20 +335,30 @@
         </div>
 
         <h3>2. Pattern Specifications</h3>
-        <div class="label-row">
-          <label>Pattern Yarn Weight (CYC)</label>
+        <div style="display: flex; gap: 0.5rem;">
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Pattern Yarn Weight</label>
+            </div>
+            <select id="pYarnCYC" onchange="updateCYCGauge('p')">
+              <option value="0">#0 Lace</option>
+              <option value="1">#1 Super Fine (Fingering)</option>
+              <option value="2">#2 Fine (Sport)</option>
+              <option value="3">#3 Light (DK)</option>
+              <option value="4" selected>#4 Medium (Worsted)</option>
+              <option value="5">#5 Bulky</option>
+              <option value="6">#6 Super Bulky</option>
+              <option value="7">#7 Jumbo</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Pattern Hook Size</label>
+              <span class="tip-icon" data-tip="The exact hook size recommended by the pattern designer.">?</span>
+            </div>
+            <select id="pHook" class="hook-select"></select>
+          </div>
         </div>
-        <select id="pYarnCYC" onchange="updateCYCGauge('p')">
-          <option value="0">#0 Lace</option>
-          <option value="1">#1 Super Fine (Fingering)</option>
-          <option value="2">#2 Fine (Sport)</option>
-          <option value="3">#3 Light (DK)</option>
-          <option value="4" selected>#4 Medium (Worsted)</option>
-          <option value="5">#5 Bulky</option>
-          <option value="6">#6 Super Bulky</option>
-          <option value="7">#7 Jumbo</option>
-        </select>
-        <div id="pCYCHookInfo" class="cyc-info">Hook: 5.5–6.5 mm (I-9 to K-10.5)</div>
 
         <div style="display: flex; gap: 0.5rem;">
           <div style="flex: 1;">
@@ -376,20 +376,30 @@
         </div>
 
         <h3>3. Your Swatch & Tools</h3>
-        <div class="label-row">
-          <label>Your Yarn Weight (CYC)</label>
+        <div style="display: flex; gap: 0.5rem;">
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Your Yarn Weight</label>
+            </div>
+            <select id="yYarnCYC" onchange="updateCYCGauge('y')">
+              <option value="0">#0 Lace</option>
+              <option value="1">#1 Super Fine (Fingering)</option>
+              <option value="2">#2 Fine (Sport)</option>
+              <option value="3">#3 Light (DK)</option>
+              <option value="4">#4 Medium (Worsted)</option>
+              <option value="5" selected>#5 Bulky</option>
+              <option value="6">#6 Super Bulky</option>
+              <option value="7">#7 Jumbo</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Your Hook Size</label>
+              <span class="tip-icon" data-tip="The exact hook size you used for your gauge swatch.">?</span>
+            </div>
+            <select id="yHook" class="hook-select"></select>
+          </div>
         </div>
-        <select id="yYarnCYC" onchange="updateCYCGauge('y')">
-          <option value="0">#0 Lace</option>
-          <option value="1">#1 Super Fine (Fingering)</option>
-          <option value="2">#2 Fine (Sport)</option>
-          <option value="3">#3 Light (DK)</option>
-          <option value="4">#4 Medium (Worsted)</option>
-          <option value="5" selected>#5 Bulky</option>
-          <option value="6">#6 Super Bulky</option>
-          <option value="7">#7 Jumbo</option>
-        </select>
-        <div id="yCYCHookInfo" class="cyc-info">Hook: 6.5–9.0 mm (K-10.5 to M-13)</div>
 
         <div style="display: flex; gap: 0.5rem;">
           <div style="flex: 1;">
@@ -534,7 +544,7 @@
         <div>
           <b>Yarn Brand / Colorway:</b>
           <div class="note-line"></div>
-          <b style="margin-top: 0.5rem; display: inline-block;">Hook / Needle Size Used:</b>
+          <b style="margin-top: 0.5rem; display: inline-block;">Hook Size Used: <span id="printHookChoice" style="font-weight:normal;"></span></b>
           <div class="note-line"></div>
         </div>
         <div>
@@ -562,17 +572,39 @@
 
   <script>
     let currentUnit = 'in';
-    let currentShape = 'rect'; // 'rect', 'taper', 'triangle', 'circle'
+    let currentShape = 'rect';
+
+    const HOOK_LIST = [
+      { mm: "2.25", label: "2.25 mm (B-1)" },
+      { mm: "2.75", label: "2.75 mm (C-2)" },
+      { mm: "3.25", label: "3.25 mm (D-3)" },
+      { mm: "3.50", label: "3.50 mm (E-4)" },
+      { mm: "3.75", label: "3.75 mm (F-5)" },
+      { mm: "4.00", label: "4.00 mm (G-6)" },
+      { mm: "4.50", label: "4.50 mm (7)" },
+      { mm: "5.00", label: "5.00 mm (H-8)" },
+      { mm: "5.50", label: "5.50 mm (I-9)" },
+      { mm: "6.00", label: "6.00 mm (J-10)" },
+      { mm: "6.50", label: "6.50 mm (K-10.5)" },
+      { mm: "7.00", label: "7.00 mm" },
+      { mm: "8.00", label: "8.00 mm (L-11)" },
+      { mm: "9.00", label: "9.00 mm (M-13)" },
+      { mm: "10.00", label: "10.00 mm (N-15)" },
+      { mm: "12.00", label: "12.00 mm (P-16)" },
+      { mm: "15.00", label: "15.00 mm (Q)" },
+      { mm: "19.00", label: "19.00 mm (S)" },
+      { mm: "25.00", label: "25.00 mm (U)" }
+    ];
 
     const CYC_DATA = {
-      0: { name: "#0 Lace", hook: "1.5–2.25 mm (B-1)", st: 34, row: 44 },
-      1: { name: "#1 Super Fine", hook: "2.25–3.5 mm (B-1 to E-4)", st: 28, row: 36 },
-      2: { name: "#2 Fine (Sport)", hook: "3.5–4.5 mm (E-4 to G-6)", st: 22, row: 30 },
-      3: { name: "#3 Light (DK)", hook: "4.5–5.5 mm (G-6 to I-9)", st: 18, row: 24 },
-      4: { name: "#4 Medium (Worsted)", hook: "5.5–6.5 mm (I-9 to K-10.5)", st: 16, row: 20 },
-      5: { name: "#5 Bulky", hook: "6.5–9.0 mm (K-10.5 to M-13)", st: 12, row: 15 },
-      6: { name: "#6 Super Bulky", hook: "9.0–15.0 mm (M-13 to Q)", st: 8, row: 10 },
-      7: { name: "#7 Jumbo", hook: "15.0+ mm (Q+)", st: 5, row: 6 }
+      0: { name: "#0 Lace", defaultHook: "2.25", st: 34, row: 44 },
+      1: { name: "#1 Super Fine", defaultHook: "2.75", st: 28, row: 36 },
+      2: { name: "#2 Fine (Sport)", defaultHook: "3.75", st: 22, row: 30 },
+      3: { name: "#3 Light (DK)", defaultHook: "4.50", st: 18, row: 24 },
+      4: { name: "#4 Medium (Worsted)", defaultHook: "5.50", st: 16, row: 20 },
+      5: { name: "#5 Bulky", defaultHook: "6.50", st: 12, row: 15 },
+      6: { name: "#6 Super Bulky", defaultHook: "9.00", st: 8, row: 10 },
+      7: { name: "#7 Jumbo", defaultHook: "15.00", st: 5, row: 6 }
     };
 
     const PRESETS = {
@@ -591,6 +623,20 @@
         lapghan: { w: 90, h: 120 }
       }
     };
+
+    function populateHookDropdowns() {
+      const pSelect = document.getElementById('pHook');
+      const ySelect = document.getElementById('yHook');
+      let html = '';
+      HOOK_LIST.forEach(h => {
+        html += `<option value="${h.mm}">${h.label}</option>`;
+      });
+      pSelect.innerHTML = html;
+      ySelect.innerHTML = html;
+
+      pSelect.value = "5.50"; // Default Worsted
+      ySelect.value = "6.50"; // Default Bulky
+    }
 
     function setUnit(unit) {
       currentUnit = unit;
@@ -624,9 +670,9 @@
     function updateCYCGauge(prefix) {
       const cycVal = document.getElementById(prefix + 'YarnCYC').value;
       const data = CYC_DATA[cycVal];
-      document.getElementById(prefix + 'CYCHookInfo').textContent = `Rec. Hook: ${data.hook}`;
       
-      // Pre-fill standard gauge if default
+      // Suggest baseline hook and stitches for CYC weight
+      document.getElementById(prefix + 'Hook').value = data.defaultHook;
       document.getElementById(prefix + 'Stitches').value = data.st;
       document.getElementById(prefix + 'Rows').value = data.row;
       calculateScale();
@@ -671,6 +717,8 @@
           if (data.pRow) document.getElementById('pRows').value = data.pRow;
           if (data.ySt) document.getElementById('yStitches').value = data.ySt;
           if (data.yRow) document.getElementById('yRows').value = data.yRow;
+          if (data.pHook) document.getElementById('pHook').value = data.pHook;
+          if (data.yHook) document.getElementById('yHook').value = data.yHook;
         } catch (e) {
           console.error('Error loading state:', e);
         }
@@ -682,8 +730,15 @@
       const pRow = parseFloat(document.getElementById('pRows').value) || 1;
       const ySt = parseFloat(document.getElementById('yStitches').value) || 1;
       const yRow = parseFloat(document.getElementById('yRows').value) || 1;
+      const pHookVal = document.getElementById('pHook').value;
+      const yHookVal = document.getElementById('yHook').value;
       const rMult = parseInt(document.getElementById('rMultiple').value) || 0;
       const rOff = parseInt(document.getElementById('rOffset').value) || 0;
+
+      // Save state including precise hook selection
+      localStorage.setItem('stitchscale_state', JSON.stringify({ 
+        unit: currentUnit, shape: currentShape, pSt, pRow, ySt, yRow, pHook: pHookVal, yHook: yHookVal 
+      }));
 
       const refDivisor = currentUnit === 'in' ? 4 : 10;
       let finalStitches = 0;
@@ -720,7 +775,7 @@
         totalRows = Math.round((len / refDivisor) * yRow);
         
         const deltaSts = Math.abs(endSts - startSts);
-        const incEvents = Math.floor(deltaSts / 2); // 2 increases per shaping row
+        const incEvents = Math.floor(deltaSts / 2);
         const rowInterval = incEvents > 0 ? Math.floor(totalRows / incEvents) : 0;
 
         finalStitches = startSts;
@@ -771,6 +826,11 @@
         origDimW = diam; origDimH = diam;
       }
 
+      // Display selected hook info on printable sheet
+      const pHookObj = HOOK_LIST.find(h => h.mm === pHookVal);
+      const yHookObj = HOOK_LIST.find(h => h.mm === yHookVal);
+      document.getElementById('printHookChoice').textContent = `${yHookObj ? yHookObj.label : yHookVal + ' mm'} (Pattern specified: ${pHookObj ? pHookObj.label : pHookVal + ' mm'})`;
+
       document.getElementById('shapingScheduleBox').innerHTML = shapingHtml;
       document.getElementById('repeatBox').innerHTML = repeatHtml;
       document.getElementById('outRows').innerText = totalRows;
@@ -811,7 +871,6 @@
 
       const unitSym = currentUnit === 'in' ? '"' : ' cm';
 
-      // Shape-specific SVG rendering
       if (currentShape === 'rect' || currentShape === 'taper') {
         gOrig.innerHTML = `
           <rect x="${centerX1 - origW/2}" y="${centerY - origH/2}" width="${origW}" height="${origH}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2" rx="6"/>
@@ -879,12 +938,13 @@
     }
 
     // Attach real-time input listeners
-    ['pStitches', 'pRows', 'yStitches', 'yRows', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'rMultiple', 'rOffset'].forEach(id => {
+    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'rMultiple', 'rOffset'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateScale);
     });
 
     // Initialize
+    populateHookDropdowns();
     checkPaidStatus();
     loadSavedInputs();
     calculateScale();
