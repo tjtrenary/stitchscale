@@ -530,8 +530,15 @@
           <input type="number" id="tDiameter" value="20">
         </div>
 
-        <!-- Custom Curve Inputs -->
+        <!-- Custom Curve Inputs with Explicit Mode Switch -->
         <div id="inputsCurve" style="display: none;">
+          
+          <!-- Explicit Mode Switch Bar -->
+          <div style="display: flex; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 3px; margin-bottom: 0.85rem;">
+            <button id="modeBtnPreset" type="button" class="unit-btn active" style="flex:1;" onclick="setCurveMode('preset')">📈 Preset Curves</button>
+            <button id="modeBtnCustom" type="button" class="unit-btn" style="flex:1;" onclick="setCurveMode('custom')">✏️ Custom Phase Builder</button>
+          </div>
+
           <div style="display: flex; gap: 0.5rem;">
             <div style="flex: 1;">
               <div class="label-row"><label>Curve Direction</label></div>
@@ -540,13 +547,14 @@
                 <option value="inc">Increasing (Flaring)</option>
               </select>
             </div>
-            <div style="flex: 1;">
-              <div class="label-row"><label>Curvature Profile</label></div>
-              <select id="curveStyle" onchange="toggleCurveMode()">
-                <option value="concave" selected>Concave (Steep → Gentle)</option>
+            <div style="flex: 1;" id="presetProfileGroup">
+              <div class="label-row"><label>Preset Shape Profile</label></div>
+              <select id="curveStylePreset" onchange="calculateScale()">
+                <option value="armhole" selected>Set-In Armhole (Notch + Slope)</option>
+                <option value="raglan">Raglan Line (Notch + 45° Slope)</option>
+                <option value="concave">Concave (Steep → Gentle)</option>
                 <option value="convex">Convex (Gentle → Steep)</option>
                 <option value="scurve">S-Curve (Compound Wave)</option>
-                <option value="manual">Manual Multi-Phase Control</option>
               </select>
             </div>
           </div>
@@ -564,21 +572,29 @@
           <label style="margin-top: 0.5rem;">Total Curve Height / Length (<span class="unit-name">in</span>)</label>
           <input type="number" id="tCurveLength" value="9">
 
-          <!-- Advanced Manual Phase Entry Box -->
-          <div id="manualCurveBox" style="display: none; margin-top: 0.75rem; background: #f5efeb; padding: 0.85rem; border-radius: 8px; border: 1px dashed #d4c9bd;">
-            <div style="font-weight: 700; font-size: 0.82rem; color: #2d2623; margin-bottom: 0.35rem;">⚙️ Custom Manual Phase Parameters</div>
+          <!-- Direct Custom Phase Builder Inputs -->
+          <div id="customPhasePanel" style="display: none; margin-top: 0.85rem; background: #f5efeb; padding: 0.85rem; border-radius: 10px; border: 1px dashed var(--border);">
+            <div style="font-weight: 700; font-size: 0.84rem; color: #2d2623; margin-bottom: 0.5rem;">✏️ Custom Curve Shaping Sequence</div>
+            
             <div style="display: flex; gap: 0.5rem;">
               <div style="flex: 1;">
-                <label style="font-size:0.75rem;">Initial Notch/Cutout (sts)</label>
-                <input type="number" id="tCurveNotch" value="4" min="0">
+                <label style="font-size:0.75rem;">Initial Notch (sts/side)</label>
+                <input type="number" id="cNotchSts" value="4" min="0">
               </div>
               <div style="flex: 1;">
                 <label style="font-size:0.75rem;">Phase 1 Rate (Every X rows)</label>
-                <input type="number" id="tCurvePhase1Rows" value="2" min="1">
+                <input type="number" id="cPhase1Rows" value="2" min="1">
               </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
               <div style="flex: 1;">
                 <label style="font-size:0.75rem;">Phase 2 Rate (Every Y rows)</label>
-                <input type="number" id="tCurvePhase2Rows" value="4" min="1">
+                <input type="number" id="cPhase2Rows" value="4" min="1">
+              </div>
+              <div style="flex: 1;">
+                <label style="font-size:0.75rem;">Straight Vertical Run (Rows)</label>
+                <input type="number" id="cStraightRows" value="6" min="0">
               </div>
             </div>
           </div>
@@ -782,7 +798,7 @@
           <li><b>Flat Swatch First:</b> Swatch a flat 5" x 5" square in your main stitch pattern (even for sleeves or circles) to measure baseline gauge per 4 inches / 10 cm.</li>
           <li><b>Sleeves & Tapers:</b> Measure your cuff diameter and fullest bicep width. StitchScale calculates the exact shaping interval automatically.</li>
           <li><b>Circles & Crowns:</b> Measure target circumference or flat crown diameter across the center before transitioning to straight sides.</li>
-          <li><b>Custom Curves:</b> Enter start width, target end width, height, and select your curvature profile (Concave, Convex, S-Curve, or Manual Phase Entry).</li>
+          <li><b>Custom Curves:</b> Switch between preset profiles or use the Custom Phase Builder to specify exact notch bind-offs and multi-phase decrease rates.</li>
         </ol>
       </div>
     </details>
@@ -792,6 +808,7 @@
   <script>
     let currentUnit = 'in';
     let currentShape = 'rect';
+    let currentCurveMode = 'preset'; // 'preset' or 'custom'
 
     const SAMPLE_SCENARIO_LABELS = {
       rect: "⚡ Load Sample Scenario (Worsted → Chunky Throw Blanket)",
@@ -865,9 +882,14 @@
       ySelect.value = "6.50";
     }
 
-    function toggleCurveMode() {
-      const style = document.getElementById('curveStyle').value;
-      document.getElementById('manualCurveBox').style.display = style === 'manual' ? 'block' : 'none';
+    function setCurveMode(mode) {
+      currentCurveMode = mode;
+      document.getElementById('modeBtnPreset').className = mode === 'preset' ? 'unit-btn active' : 'unit-btn';
+      document.getElementById('modeBtnCustom').className = mode === 'custom' ? 'unit-btn active' : 'unit-btn';
+
+      document.getElementById('presetProfileGroup').style.display = mode === 'preset' ? 'block' : 'none';
+      document.getElementById('customPhasePanel').style.display = mode === 'custom' ? 'block' : 'none';
+      
       calculateScale();
     }
 
@@ -934,8 +956,8 @@
 
     function loadSampleScenario() {
       if (currentShape === 'rect') {
-        document.getElementById('pYarnCYC').value = 4; // Worsted
-        document.getElementById('yYarnCYC').value = 5; // Bulky
+        document.getElementById('pYarnCYC').value = 4;
+        document.getElementById('yYarnCYC').value = 5;
         updateCYCGauge('p');
         updateCYCGauge('y');
         document.getElementById('pHook').value = "5.50";
@@ -947,8 +969,8 @@
         document.getElementById('pYardage').value = 1600;
         document.getElementById('skeinYardage').value = 180;
       } else if (currentShape === 'taper') {
-        document.getElementById('pYarnCYC').value = 3; // DK
-        document.getElementById('yYarnCYC').value = 5; // Bulky
+        document.getElementById('pYarnCYC').value = 3;
+        document.getElementById('yYarnCYC').value = 5;
         updateCYCGauge('p');
         updateCYCGauge('y');
         document.getElementById('pHook').value = "4.50";
@@ -961,8 +983,8 @@
         document.getElementById('pYardage').value = 450;
         document.getElementById('skeinYardage').value = 150;
       } else if (currentShape === 'triangle') {
-        document.getElementById('pYarnCYC').value = 1; // Fingering
-        document.getElementById('yYarnCYC').value = 3; // DK
+        document.getElementById('pYarnCYC').value = 1;
+        document.getElementById('yYarnCYC').value = 3;
         updateCYCGauge('p');
         updateCYCGauge('y');
         document.getElementById('pHook').value = "3.50";
@@ -974,8 +996,8 @@
         document.getElementById('pYardage').value = 800;
         document.getElementById('skeinYardage').value = 220;
       } else if (currentShape === 'circle') {
-        document.getElementById('pYarnCYC').value = 4; // Worsted
-        document.getElementById('yYarnCYC').value = 6; // Super Bulky
+        document.getElementById('pYarnCYC').value = 4;
+        document.getElementById('yYarnCYC').value = 6;
         updateCYCGauge('p');
         updateCYCGauge('y');
         document.getElementById('pHook').value = "5.50";
@@ -986,18 +1008,21 @@
         document.getElementById('pYardage').value = 220;
         document.getElementById('skeinYardage').value = 90;
       } else if (currentShape === 'curve') {
-        document.getElementById('pYarnCYC').value = 3; // DK
-        document.getElementById('yYarnCYC').value = 5; // Bulky
+        document.getElementById('pYarnCYC').value = 3;
+        document.getElementById('yYarnCYC').value = 5;
         updateCYCGauge('p');
         updateCYCGauge('y');
         document.getElementById('pHook').value = "4.50";
         document.getElementById('yHook').value = "6.50";
         document.getElementById('curveDirection').value = 'dec';
-        document.getElementById('curveStyle').value = 'concave';
-        toggleCurveMode();
+        setCurveMode('custom');
         document.getElementById('tCurveStartW').value = 20;
         document.getElementById('tCurveEndW').value = 12;
         document.getElementById('tCurveLength').value = 9;
+        document.getElementById('cNotchSts').value = 4;
+        document.getElementById('cPhase1Rows').value = 2;
+        document.getElementById('cPhase2Rows').value = 4;
+        document.getElementById('cStraightRows').value = 6;
         document.getElementById('pYardage').value = 550;
         document.getElementById('skeinYardage').value = 160;
       }
@@ -1144,7 +1169,6 @@
       }
       else if (currentShape === 'curve') {
         const dir = document.getElementById('curveDirection').value;
-        const cStyle = document.getElementById('curveStyle').value;
         const startW = parseFloat(document.getElementById('tCurveStartW').value) || 0;
         const endW = parseFloat(document.getElementById('tCurveEndW').value) || 0;
         const len = parseFloat(document.getElementById('tCurveLength').value) || 0;
@@ -1163,11 +1187,13 @@
 
         const actionWord = dir === 'dec' ? 'Decrease' : 'Increase';
         const actionShort = dir === 'dec' ? 'Dec' : 'Inc';
+        const cutoutWord = dir === 'dec' ? 'Bind off' : 'Cast on';
 
-        if (cStyle === 'manual') {
-          const notchSts = parseInt(document.getElementById('tCurveNotch').value) || 0;
-          const p1Rows = parseInt(document.getElementById('tCurvePhase1Rows').value) || 2;
-          const p2Rows = parseInt(document.getElementById('tCurvePhase2Rows').value) || 4;
+        if (currentCurveMode === 'custom') {
+          const notchSts = parseInt(document.getElementById('cNotchSts').value) || 0;
+          const p1Rows = parseInt(document.getElementById('cPhase1Rows').value) || 2;
+          const p2Rows = parseInt(document.getElementById('cPhase2Rows').value) || 4;
+          const straightRows = parseInt(document.getElementById('cStraightRows').value) || 0;
 
           const remSideSts = Math.max(0, deltaStsSide - notchSts);
           const p1Reps = Math.floor(remSideSts * 0.65);
@@ -1175,52 +1201,90 @@
 
           shapingHtml = `
             <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-              <b style="color:#2d5a38;">➰ Custom Manual Curve Schedule (${actionWord}):</b>
-              <div style="margin-top:0.25rem;">• <b>Start Width:</b> ${startSts} sts → <b>End Target:</b> ${endSts} sts (${totalRows} rows total)</div>
-              ${notchSts > 0 ? `<div>• <b>Initial Flat Step:</b> ${dir === 'dec' ? 'Bind off' : 'Cast on'} <b>${notchSts} sts</b> at beg of next 2 rows.</div>` : ''}
+              <b style="color:#2d5a38;">✏️ Custom Multi-Phase Shaping Breakdown (${actionWord}):</b>
+              <div style="margin-top:0.25rem;">• <b>Start Width:</b> ${startSts} sts → <b>End Target:</b> ${endSts} sts (${totalRows} total rows)</div>
+              ${notchSts > 0 ? `<div>• <b>Initial Flat Cutout:</b> ${cutoutWord} <b>${notchSts} sts</b> at beg of next 2 rows.</div>` : ''}
               ${p1Reps > 0 ? `<div>• <b>Phase 1 Shaping:</b> ${actionShort} 1 st at each edge <b>EVERY ${p1Rows} ROWS</b> ${p1Reps} times.</div>` : ''}
               ${p2Reps > 0 ? `<div>• <b>Phase 2 Shaping:</b> ${actionShort} 1 st at each edge <b>EVERY ${p2Rows} ROWS</b> ${p2Reps} times.</div>` : ''}
+              ${straightRows > 0 ? `<div>• <b>Vertical Straight Run:</b> Work <b>${straightRows} rows straight</b> with no shaping.</div>` : ''}
             </div>
           `;
-        } else if (cStyle === 'concave') {
-          const bindOffSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.35));
-          const remSts = deltaStsSide - bindOffSts;
-          const rapidReps = Math.min(remSts, Math.round(remSts * 0.65));
-          const gentleReps = remSts - rapidReps;
+        } else {
+          // Preset Profile Mode
+          const cStyle = document.getElementById('curveStylePreset').value;
 
-          shapingHtml = `
-            <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-              <b style="color:#2d5a38;">➰ Concave Curve Schedule (Steep → Gentle):</b>
-              <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
-              ${bindOffSts > 0 ? `<div>• <b>Initial Cutout:</b> ${dir === 'dec' ? 'Bind off' : 'Cast on'} <b>${bindOffSts} sts</b> at beg of next 2 rows.</div>` : ''}
-              ${rapidReps > 0 ? `<div>• <b>Rapid Slope:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidReps} times.</div>` : ''}
-              ${gentleReps > 0 ? `<div>• <b>Gentle Slope:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleReps} times.</div>` : ''}
-            </div>
-          `;
-        } else if (cStyle === 'convex') {
-          const gentleReps = Math.round(deltaStsSide * 0.35);
-          const rapidReps = deltaStsSide - gentleReps;
+          if (cStyle === 'armhole') {
+            const bindOffSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.35));
+            const remSts = deltaStsSide - bindOffSts;
+            const rapidDecs = Math.min(remSts, Math.round(remSts * 0.65));
+            const gentleDecs = remSts - rapidDecs;
+            const activeRows = 2 + (rapidDecs * 2) + (gentleDecs * 4);
+            const straightRows = Math.max(0, totalRows - activeRows);
 
-          shapingHtml = `
-            <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-              <b style="color:#2d5a38;">➰ Convex Curve Schedule (Gentle → Steep):</b>
-              <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
-              ${gentleReps > 0 ? `<div>• <b>Gentle Lead-In:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleReps} times.</div>` : ''}
-              ${rapidReps > 0 ? `<div>• <b>Steep Finish:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidReps} times.</div>` : ''}
-            </div>
-          `;
-        } else if (cStyle === 'scurve') {
-          const p1Reps = Math.round(deltaStsSide * 0.50);
-          const p2Reps = deltaStsSide - p1Reps;
+            shapingHtml = `
+              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+                <b style="color:#2d5a38;">🧥 Set-In Armhole Preset Breakdown:</b>
+                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>Shoulder:</b> ${endSts} sts (${totalRows} rows)</div>
+                <div>• <b>Underarm Notch:</b> ${cutoutWord} <b>${bindOffSts} sts</b> at beg of next 2 rows.</div>
+                ${rapidDecs > 0 ? `<div>• <b>Rapid Curve:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidDecs} times.</div>` : ''}
+                ${gentleDecs > 0 ? `<div>• <b>Gentle Curve:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleDecs} times.</div>` : ''}
+                ${straightRows > 0 ? `<div>• <b>Vertical Run:</b> Work <b>${straightRows} rows straight</b> to shoulder.</div>` : ''}
+              </div>
+            `;
+          } else if (cStyle === 'raglan') {
+            const notchSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.25));
+            const diagDecs = deltaStsSide - notchSts;
+            const diagRows = Math.max(1, totalRows - 2);
+            const rowInterval = diagDecs > 0 ? Math.max(2, Math.floor(diagRows / diagDecs)) : 2;
 
-          shapingHtml = `
-            <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
-              <b style="color:#2d5a38;">➰ S-Curve Compound Schedule:</b>
-              <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
-              <div>• <b>S-Wave Phase 1:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${p1Reps} times.</div>
-              <div>• <b>S-Wave Phase 2:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${p2Reps} times.</div>
-            </div>
-          `;
+            shapingHtml = `
+              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+                <b style="color:#2d5a38;">🧥 Raglan Yoke Preset Breakdown:</b>
+                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>Neckline:</b> ${endSts} sts (${totalRows} rows)</div>
+                <div>• <b>Underarm Notch:</b> ${cutoutWord} <b>${notchSts} sts</b> at beg of next 2 rows.</div>
+                <div>• <b>Diagonal Slope:</b> ${actionShort} 1 st at each edge <b>EVERY ${rowInterval} ROWS</b> (${diagDecs} times total).</div>
+              </div>
+            `;
+          } else if (cStyle === 'concave') {
+            const bindOffSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.35));
+            const remSts = deltaStsSide - bindOffSts;
+            const rapidReps = Math.min(remSts, Math.round(remSts * 0.65));
+            const gentleReps = remSts - rapidReps;
+
+            shapingHtml = `
+              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+                <b style="color:#2d5a38;">➰ Concave Preset Schedule (Steep → Gentle):</b>
+                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
+                ${bindOffSts > 0 ? `<div>• <b>Initial Notch:</b> ${cutoutWord} <b>${bindOffSts} sts</b> at beg of next 2 rows.</div>` : ''}
+                ${rapidReps > 0 ? `<div>• <b>Rapid Slope:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidReps} times.</div>` : ''}
+                ${gentleReps > 0 ? `<div>• <b>Gentle Slope:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleReps} times.</div>` : ''}
+              </div>
+            `;
+          } else if (cStyle === 'convex') {
+            const gentleReps = Math.round(deltaStsSide * 0.35);
+            const rapidReps = deltaStsSide - gentleReps;
+
+            shapingHtml = `
+              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+                <b style="color:#2d5a38;">➰ Convex Preset Schedule (Gentle → Steep):</b>
+                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
+                ${gentleReps > 0 ? `<div>• <b>Gentle Lead-In:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleReps} times.</div>` : ''}
+                ${rapidReps > 0 ? `<div>• <b>Steep Finish:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidReps} times.</div>` : ''}
+              </div>
+            `;
+          } else if (cStyle === 'scurve') {
+            const p1Reps = Math.round(deltaStsSide * 0.50);
+            const p2Reps = deltaStsSide - p1Reps;
+
+            shapingHtml = `
+              <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+                <b style="color:#2d5a38;">➰ S-Curve Compound Preset:</b>
+                <div style="margin-top:0.25rem;">• <b>Start:</b> ${startSts} sts → <b>End:</b> ${endSts} sts (${totalRows} total rows)</div>
+                <div>• <b>S-Wave Phase 1:</b> ${actionShort} 1 st at each edge <b>EVERY 2 ROWS</b> ${p1Reps} times.</div>
+                <div>• <b>S-Wave Phase 2:</b> ${actionShort} 1 st at each edge <b>EVERY 4 ROWS</b> ${p2Reps} times.</div>
+              </div>
+            `;
+          }
         }
 
         document.getElementById('outputPrimary').innerHTML = `Start Width: <span class="stat">${startSts}</span> sts → End Target: <span class="stat">${endSts}</span> sts`;
@@ -1418,7 +1482,6 @@
           <text x="${centerX2}" y="${centerY + rR + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescDiam.toFixed(1)}${unitSym} Diam.</text>
         `;
       } else if (currentShape === 'curve') {
-        const cStyle = document.getElementById('curveStyle').value;
         const origStartW = parseFloat(document.getElementById('tCurveStartW').value) || 0;
         const origEndW = parseFloat(document.getElementById('tCurveEndW').value) || 0;
         const origH = parseFloat(document.getElementById('tCurveLength').value) || 0;
@@ -1438,17 +1501,16 @@
         const rYTop = centerY - rH/2, rYBot = centerY + rH/2;
 
         let dOrig = "", dResc = "";
+        const cStyle = document.getElementById('curveStylePreset').value;
 
-        if (cStyle === 'convex') {
-          // Convex Curve (Gentle Start -> Steep End)
+        if (currentCurveMode === 'preset' && cStyle === 'convex') {
           dOrig = `M ${centerX1 - oSW/2} ${oYBot} L ${centerX1 + oSW/2} ${oYBot} Q ${centerX1 + oSW/2} ${oYTop + oH*0.5}, ${centerX1 + oEW/2} ${oYTop} L ${centerX1 - oEW/2} ${oYTop} Q ${centerX1 - oSW/2} ${oYTop + oH*0.5}, ${centerX1 - oSW/2} ${oYBot} Z`;
           dResc = `M ${centerX2 - rSW/2} ${rYBot} L ${centerX2 + rSW/2} ${rYBot} Q ${centerX2 + rSW/2} ${rYTop + rH*0.5}, ${centerX2 + rEW/2} ${rYTop} L ${centerX2 - rEW/2} ${rYTop} Q ${centerX2 - rSW/2} ${rYTop + rH*0.5}, ${centerX2 - rSW/2} ${rYBot} Z`;
-        } else if (cStyle === 'scurve') {
-          // S-Curve Wave
+        } else if (currentCurveMode === 'preset' && cStyle === 'scurve') {
           dOrig = `M ${centerX1 - oSW/2} ${oYBot} L ${centerX1 + oSW/2} ${oYBot} C ${centerX1 + oSW/2} ${oYBot - oH*0.5}, ${centerX1 + oEW/2} ${oYTop + oH*0.5}, ${centerX1 + oEW/2} ${oYTop} L ${centerX1 - oEW/2} ${oYTop} C ${centerX1 - oEW/2} ${oYTop + oH*0.5}, ${centerX1 - oSW/2} ${oYBot - oH*0.5}, ${centerX1 - oSW/2} ${oYBot} Z`;
           dResc = `M ${centerX2 - rSW/2} ${rYBot} L ${centerX2 + rSW/2} ${rYBot} C ${centerX2 + rSW/2} ${rYBot - rH*0.5}, ${centerX2 + rEW/2} ${rYTop + rH*0.5}, ${centerX2 + rEW/2} ${rYTop} L ${centerX2 - rEW/2} ${rYTop} C ${centerX2 - rEW/2} ${rYTop + rH*0.5}, ${centerX2 - rSW/2} ${rYBot - rH*0.5}, ${centerX2 - rSW/2} ${rYBot} Z`;
         } else {
-          // Concave Curve / Armhole Cutout
+          // Concave / Armhole / Custom Bezier Path
           dOrig = `M ${centerX1 - oSW/2} ${oYBot} L ${centerX1 + oSW/2} ${oYBot} C ${centerX1 + oSW/2 - 10} ${oYBot - oH*0.3}, ${centerX1 + oEW/2} ${oYTop + oH*0.2}, ${centerX1 + oEW/2} ${oYTop} L ${centerX1 - oEW/2} ${oYTop} C ${centerX1 - oEW/2} ${oYTop + oH*0.2}, ${centerX1 - oSW/2 + 10} ${oYBot - oH*0.3}, ${centerX1 - oSW/2} ${oYBot} Z`;
           dResc = `M ${centerX2 - rSW/2} ${rYBot} L ${centerX2 + rSW/2} ${rYBot} C ${centerX2 + rSW/2 - 10} ${rYBot - rH*0.3}, ${centerX2 + rEW/2} ${rYTop + rH*0.2}, ${centerX2 + rEW/2} ${rYTop} L ${centerX2 - rEW/2} ${rYTop} C ${centerX2 - rEW/2} ${rYTop + rH*0.2}, ${centerX2 - rSW/2 + 10} ${rYBot - rH*0.3}, ${centerX2 - rSW/2} ${rYBot} Z`;
         }
@@ -1486,7 +1548,7 @@
     }
 
     // Attach real-time input listeners
-    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'tCurveStartW', 'tCurveEndW', 'tCurveLength', 'tCurveNotch', 'tCurvePhase1Rows', 'tCurvePhase2Rows', 'rMultiple', 'rOffset', 'pYardage', 'skeinYardage'].forEach(id => {
+    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'tCurveStartW', 'tCurveEndW', 'tCurveLength', 'cNotchSts', 'cPhase1Rows', 'cPhase2Rows', 'cStraightRows', 'rMultiple', 'rOffset', 'pYardage', 'skeinYardage'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateScale);
     });
