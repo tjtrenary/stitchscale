@@ -28,6 +28,23 @@
 
     .container { max-width: 940px; margin: 0 auto; }
     
+    /* Unlocked Post-Checkout Banner */
+    .unlocked-banner {
+      display: none;
+      background: #e8f0eb;
+      border: 1px solid #4a7c59;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .unlocked-banner-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
     .header-bar {
       display: flex;
       justify-content: space-between;
@@ -101,7 +118,6 @@
 
     label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
     
-    /* Hover Tooltip Icon */
     .tip-icon {
       display: inline-flex;
       align-items: center;
@@ -185,7 +201,6 @@
     .svg-title-rescaled { font-size: 12px; font-weight: 700; fill: #2d5a38; }
     .svg-subtitle-rescaled { font-size: 11px; fill: #4a7c59; font-weight: 600; }
 
-    /* Accordion Guide */
     details {
       background: var(--card);
       border: 1px solid var(--border);
@@ -193,19 +208,64 @@
       padding: 0.85rem 1.25rem;
       margin-top: 1.5rem;
     }
-    summary {
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      font-size: 0.95rem;
-    }
-    .guide-content {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-top: 0.75rem;
-      line-height: 1.6;
-    }
+    summary { font-weight: 600; color: var(--text); cursor: pointer; font-size: 0.95rem; }
+    .guide-content { font-size: 0.88rem; color: var(--text-muted); margin-top: 0.75rem; line-height: 1.6; }
     .guide-content ol { padding-left: 1.2rem; margin: 0.5rem 0; }
+
+    /* Print-Only Blueprint Elements (Hidden on Web View) */
+    .print-only { display: none; }
+
+    /* =======================================================
+       🖨️ PRINT-OPTIMIZED BLUEPRINT STYLES (@media print)
+       ======================================================= */
+    @media print {
+      body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; font-size: 11pt; }
+      .container { max-width: 100% !important; margin: 0 !important; }
+      
+      /* Hide Non-Essential Web UI Elements */
+      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .unlocked-banner, .no-print { 
+        display: none !important; 
+      }
+
+      .grid { display: block !important; }
+      .card { border: none !important; box-shadow: none !important; padding: 0 !important; background: transparent !important; margin-bottom: 1.5rem; }
+
+      /* Show Printable Elements */
+      .print-only { display: block !important; }
+
+      /* Printable Row Counter Grid */
+      .tracker-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 6px;
+        margin-top: 0.75rem;
+        page-break-inside: avoid;
+      }
+      .tracker-cell {
+        border: 1px solid #a89a8c;
+        border-radius: 4px;
+        padding: 4px 2px;
+        text-anchor: middle;
+        font-size: 0.75rem;
+        text-align: center;
+      }
+
+      /* Printable Notes Section */
+      .crafter-notes-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+        border-top: 1px solid #ccc;
+        padding-top: 1rem;
+        page-break-inside: avoid;
+      }
+      .note-line {
+        border-bottom: 1px solid #aaa;
+        height: 1.8rem;
+        margin-top: 0.25rem;
+      }
+    }
 
     @media (max-width: 720px) {
       .grid { grid-template-columns: 1fr; }
@@ -216,20 +276,38 @@
 <body>
   <div class="container">
     
+    <!-- Post-Checkout Success Banner -->
+    <div id="unlockedBanner" class="unlocked-banner">
+      <div class="unlocked-banner-content">
+        <div>
+          <h3 style="margin: 0; color: #2d5a38; border: none; padding: 0;">🎉 PDF Blueprint Unlocked!</h3>
+          <p style="margin: 0.25rem 0 0 0; color: #4a7c59; font-size: 0.9rem;">Your custom project worksheet is ready for printing or saving.</p>
+        </div>
+        <button onclick="window.print()" style="background: #4a7c59; color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+          🖨️ Print / Save as PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Print-Only Header Header -->
+    <div class="print-only" style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+      <h2 style="margin: 0; font-size: 1.5rem;">🧶 STITCHSCALE PROJECT BLUEPRINT</h2>
+      <div style="font-size: 0.85rem; color: #555; margin-top: 0.25rem;">Generated Custom Pattern Sizing Worksheet</div>
+    </div>
+
     <div class="header-bar">
       <div>
         <h1>🧶 StitchScale</h1>
         <p class="subtitle">Your pattern sizing companion. Rescale any pattern to your exact yarn and gauge.</p>
       </div>
       
-      <!-- Units Switcher -->
       <div class="unit-toggle">
         <button id="unitIn" class="unit-btn active" onclick="setUnit('in')">Inches (in)</button>
         <button id="unitCm" class="unit-btn" onclick="setUnit('cm')">Metric (cm)</button>
       </div>
     </div>
 
-    <div>
+    <div class="no-print">
       <span class="sample-link" onclick="loadSampleProject()">⚡ Load Sample Scenario (Worsted → Chunky Blanket)</span>
     </div>
 
@@ -311,7 +389,7 @@
           </div>
         </div>
 
-        <button class="primary-btn" onclick="calculateScale()">Recalculate Pattern</button>
+        <button class="primary-btn no-print" onclick="calculateScale()">Recalculate Pattern</button>
       </div>
 
       <!-- Output Panel -->
@@ -348,7 +426,7 @@
           </div>
         </div>
 
-        <div style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+        <div class="no-print" style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
           <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable PDF Blueprint</h4>
           <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Includes couch-ready row counting checkboxes and full sizing diagrams.</p>
           <button style="background: var(--accent-sage);" class="primary-btn" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
@@ -356,8 +434,29 @@
       </div>
     </div>
 
+    <!-- Print-Only Printable Sections -->
+    <div class="print-only" style="margin-top: 1.5rem;">
+      <h3 style="border-bottom: 1px solid #000; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">📝 Row Counting Checklist</h3>
+      <div id="printRowTracker" class="tracker-grid"></div>
+
+      <div class="crafter-notes-grid">
+        <div>
+          <b>Yarn Brand / Colorway:</b>
+          <div class="note-line"></div>
+          <b style="margin-top: 0.5rem; display: inline-block;">Hook / Needle Size Used:</b>
+          <div class="note-line"></div>
+        </div>
+        <div>
+          <b>Dye Lot #:</b>
+          <div class="note-line"></div>
+          <b style="margin-top: 0.5rem; display: inline-block;">Tension & Custom Notes:</b>
+          <div class="note-line"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Accordion Guide -->
-    <details>
+    <details class="no-print">
       <summary>📏 Need help swatching & measuring accurately?</summary>
       <div class="guide-content">
         <ol>
@@ -371,9 +470,8 @@
   </div>
 
   <script>
-    let currentUnit = 'in'; // 'in' or 'cm'
+    let currentUnit = 'in';
 
-    // Preset dimensions (Inches & CM)
     const PRESETS = {
       in: {
         baby: { w: 30, h: 40 },
@@ -396,7 +494,6 @@
       document.getElementById('unitIn').className = unit === 'in' ? 'unit-btn active' : 'unit-btn';
       document.getElementById('unitCm').className = unit === 'cm' ? 'unit-btn active' : 'unit-btn';
 
-      // Update unit labels in UI
       document.querySelectorAll('.unit-name').forEach(el => el.textContent = unit);
       document.querySelectorAll('.unit-label-4in').forEach(el => {
         el.textContent = unit === 'in' ? 'per 4 in' : 'per 10 cm';
@@ -416,7 +513,6 @@
     }
 
     function loadSampleProject() {
-      // Set to Worsted (20st/28row) -> Chunky (12st/16row), Ripple Repeat 12+3, Throw Blanket
       document.getElementById('pStitches').value = 20;
       document.getElementById('pRows').value = 28;
       document.getElementById('yStitches').value = 12;
@@ -426,6 +522,13 @@
       document.getElementById('sizePreset').value = 'throw';
       setUnit('in');
       applyPreset();
+    }
+
+    function checkPaidStatus() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('paid') === 'true') {
+        document.getElementById('unlockedBanner').style.display = 'block';
+      }
     }
 
     function loadSavedInputs() {
@@ -464,12 +567,10 @@
       const rOff = parseInt(document.getElementById('rOffset').value) || 0;
       const preset = document.getElementById('sizePreset').value;
 
-      // Auto-save state
       localStorage.setItem('stitchscale_state', JSON.stringify({ 
         unit: currentUnit, pSt, pRow, ySt, yRow, w, h, rMult, rOff, preset 
       }));
 
-      // Base Gauge Reference Divisor: 4 inches or 10 cm
       const refDivisor = currentUnit === 'in' ? 4 : 10;
 
       const rawStitches = Math.round((w / refDivisor) * ySt);
@@ -478,7 +579,6 @@
       let finalStitches = rawStitches;
       let repeatHtml = '';
 
-      // Stitch Repeat Guard
       if (rMult > 1) {
         const kApprox = (rawStitches - rOff) / rMult;
         const kLower = Math.floor(kApprox);
@@ -512,6 +612,18 @@
 
       // Render live SVG preview
       updateStitchPreview(w, h, pSt, ySt);
+
+      // Generate Print Row Tracker Grid (cap display at max 200 rows for print spacing)
+      generatePrintRowTracker(Math.min(newRows, 200));
+    }
+
+    function generatePrintRowTracker(totalRows) {
+      const container = document.getElementById('printRowTracker');
+      let html = '';
+      for (let i = 1; i <= totalRows; i++) {
+        html += `<div class="tracker-cell">[ &nbsp; ] R${i}</div>`;
+      }
+      container.innerHTML = html;
     }
 
     function updateStitchPreview(origUnitsW, origUnitsH, patternGauge, userGauge) {
@@ -561,7 +673,6 @@
       document.getElementById('label-resc-dims').setAttribute('x', centerX2);
       document.getElementById('label-resc-dims').setAttribute('y', centerY + rescH / 2 + 18);
 
-      // Safety Badge logic
       const pctChange = Math.round((scaleFactor - 1) * 100);
       const badge = document.getElementById('safety-badge');
       const absChange = Math.abs(pctChange);
@@ -582,7 +693,7 @@
       window.location.href = "https://buy.stripe.com/9B6eVegcIgGQ5a85p6bo400";
     }
 
-    // Input event listeners
+    // Input listeners
     ['pStitches', 'pRows', 'yStitches', 'yRows', 'tWidth', 'tHeight', 'rMultiple', 'rOffset'].forEach(id => {
       document.getElementById(id).addEventListener('input', () => {
         document.getElementById('sizePreset').value = 'custom';
@@ -591,6 +702,7 @@
     });
 
     // Initialize state on load
+    checkPaidStatus();
     loadSavedInputs();
     calculateScale();
   </script>
