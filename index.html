@@ -14,8 +14,18 @@
     input { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-top: 0.25rem; }
     button { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; }
     button:hover { opacity: 0.9; }
-    canvas { width: 100%; height: 200px; background: #0f172a; border-radius: 8px; margin-top: 1rem; }
     .stat { font-size: 1.5rem; font-weight: 700; color: #38bdf8; }
+
+    /* SVG Visualizer Styles */
+    .svg-wrapper { width: 100%; border-radius: 8px; overflow: hidden; margin-top: 0.75rem; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .badge-safe { background: #059669; color: #ecfdf5; }
+    .badge-warning { background: #d97706; color: #fffbeb; }
+    .badge-alert { background: #dc2626; color: #fef2f2; }
+    .svg-title { font-size: 12px; font-weight: 700; fill: #94a3b8; }
+    .svg-subtitle { font-size: 11px; fill: #38bdf8; font-weight: 600; }
+    .svg-title-rescaled { font-size: 12px; font-weight: 700; fill: #a5b4fc; }
+    .svg-subtitle-rescaled { font-size: 11px; fill: #818cf8; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -53,7 +63,32 @@
         <div>New Cast-On / Starting Chain: <span class="stat" id="outStitches">80</span> stitches</div>
         <div style="margin-top:0.5rem;">New Total Rows: <span class="stat" id="outRows">165</span> rows</div>
 
-        <canvas id="gaugeCanvas"></canvas>
+        <!-- Dynamic SVG Visualizer Component -->
+        <div style="margin-top: 1rem;">
+          <div id="safety-badge" class="badge badge-safe">Scale: 100% (Safe Drape)</div>
+          <div class="svg-wrapper">
+            <svg id="stitch-canvas" viewBox="0 0 700 350" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <pattern id="stitch-grid" width="14" height="14" patternUnits="userSpaceOnUse">
+                  <path d="M 14 0 L 0 0 0 14" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="2 2"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="#0f172a" rx="8"/>
+
+              <g id="box-original">
+                <rect id="rect-original" fill="url(#stitch-grid)" stroke="#475569" stroke-width="2" rx="6"/>
+                <text id="label-orig-title" class="svg-title" text-anchor="middle">Pattern Target</text>
+                <text id="label-orig-dims" class="svg-subtitle" text-anchor="middle"></text>
+              </g>
+
+              <g id="box-rescaled">
+                <rect id="rect-rescaled" fill="#1e1b4b" fill-opacity="0.6" stroke="#6366f1" stroke-width="2.5" rx="6"/>
+                <text id="label-resc-title" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
+                <text id="label-resc-dims" class="svg-subtitle-rescaled" text-anchor="middle"></text>
+              </g>
+            </svg>
+          </div>
+        </div>
 
         <div style="margin-top:1.5rem; border-top: 1px solid #334155; padding-top: 1rem;">
           <h4>Export High-Res PDF Blueprint</h4>
@@ -66,11 +101,12 @@
 
   <script>
     function calculateScale() {
-      const pSt = parseFloat(document.getElementById('pStitches').value);
-      const ySt = parseFloat(document.getElementById('yStitches').value);
-      const yRow = parseFloat(document.getElementById('yRows').value);
-      const w = parseFloat(document.getElementById('tWidth').value);
-      const h = parseFloat(document.getElementById('tHeight').value);
+      const pSt = parseFloat(document.getElementById('pStitches').value) || 1;
+      const pRow = parseFloat(document.getElementById('pRows').value) || 1;
+      const ySt = parseFloat(document.getElementById('yStitches').value) || 1;
+      const yRow = parseFloat(document.getElementById('yRows').value) || 1;
+      const w = parseFloat(document.getElementById('tWidth').value) || 0;
+      const h = parseFloat(document.getElementById('tHeight').value) || 0;
 
       // Formulas
       const newStitches = Math.round((w / 4) * ySt);
@@ -79,31 +115,80 @@
       document.getElementById('outStitches').innerText = newStitches;
       document.getElementById('outRows').innerText = newRows;
 
-      drawCanvas(pSt, ySt);
+      // Render live SVG preview
+      updateStitchPreview(w, h, pSt, ySt);
     }
 
-    function drawCanvas(pSt, ySt) {
-      const canvas = document.getElementById('gaugeCanvas');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw visual proportion comparison
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(20, 40, 100, 100); // Original
-      ctx.fillStyle = '#6366f1';
-      const scaledWidth = 100 * (ySt / pSt);
-      ctx.fillRect(150, 40, scaledWidth, 100); // Adjusted
+    function updateStitchPreview(origWInches, origHInches, patternGauge, userGauge) {
+      const scaleFactor = patternGauge / userGauge;
+      const rescWInches = origWInches * scaleFactor;
+      const rescHInches = origHInches * scaleFactor;
 
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '12px sans-serif';
-      ctx.fillText('Original Gauge', 20, 30);
-      ctx.fillText('Scaled Result', 150, 30);
+      const canvasMaxW = 280;
+      const canvasMaxH = 220;
+      
+      const maxW = Math.max(origWInches, rescWInches, 1);
+      const maxH = Math.max(origHInches, rescHInches, 1);
+      const pxPerInch = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
+
+      const origW = origWInches * pxPerInch;
+      const origH = origHInches * pxPerInch;
+      const rescW = rescWInches * pxPerInch;
+      const rescH = rescHInches * pxPerInch;
+
+      const centerX1 = 180;
+      const centerX2 = 520;
+      const centerY = 160;
+
+      const rectOrig = document.getElementById('rect-original');
+      rectOrig.setAttribute('width', origW);
+      rectOrig.setAttribute('height', origH);
+      rectOrig.setAttribute('x', centerX1 - origW / 2);
+      rectOrig.setAttribute('y', centerY - origH / 2);
+
+      const rectResc = document.getElementById('rect-rescaled');
+      rectResc.setAttribute('width', rescW);
+      rectResc.setAttribute('height', rescH);
+      rectResc.setAttribute('x', centerX2 - rescW / 2);
+      rectResc.setAttribute('y', centerY - rescH / 2);
+
+      document.getElementById('label-orig-title').setAttribute('x', centerX1);
+      document.getElementById('label-orig-title').setAttribute('y', centerY - origH / 2 - 10);
+      document.getElementById('label-orig-dims').textContent = `${origWInches}" × ${origHInches}"`;
+      document.getElementById('label-orig-dims').setAttribute('x', centerX1);
+      document.getElementById('label-orig-dims').setAttribute('y', centerY + origH / 2 + 18);
+
+      document.getElementById('label-resc-title').setAttribute('x', centerX2);
+      document.getElementById('label-resc-title').setAttribute('y', centerY - rescH / 2 - 10);
+      document.getElementById('label-resc-dims').textContent = `${rescWInches.toFixed(1)}" × ${rescHInches.toFixed(1)}"`;
+      document.getElementById('label-resc-dims').setAttribute('x', centerX2);
+      document.getElementById('label-resc-dims').setAttribute('y', centerY + rescH / 2 + 18);
+
+      // Safety Badge logic
+      const pctChange = Math.round((scaleFactor - 1) * 100);
+      const badge = document.getElementById('safety-badge');
+      const absChange = Math.abs(pctChange);
+
+      if (absChange <= 15) {
+        badge.className = 'badge badge-safe';
+        badge.textContent = `Scale: ${pctChange >= 0 ? '+' : ''}${pctChange}% (Safe Drape)`;
+      } else if (absChange <= 35) {
+        badge.className = 'badge badge-warning';
+        badge.textContent = `Scale: ${pctChange >= 0 ? '+' : ''}${pctChange}% (Noticeable Drape Shift)`;
+      } else {
+        badge.className = 'badge badge-alert';
+        badge.textContent = `Scale: ${pctChange >= 0 ? '+' : ''}${pctChange}% (Major Dimension Shift)`;
+      }
     }
 
     function triggerCheckout() {
-      // Directs to your generated Stripe Payment Link
       window.location.href = "https://buy.stripe.com/9B6eVegcIgGQ5a85p6bo400";
     }
+
+    // Attach real-time input listeners
+    ['pStitches', 'pRows', 'yStitches', 'yRows', 'tWidth', 'tHeight'].forEach(id => {
+      document.getElementById(id).addEventListener('input', calculateScale);
+    });
 
     calculateScale();
   </script>
