@@ -100,6 +100,24 @@
   </div>
 
   <script>
+    // 1. Restore saved values on page load
+    function loadSavedInputs() {
+      const saved = localStorage.getItem('stitchscale_state');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          if (data.pSt) document.getElementById('pStitches').value = data.pSt;
+          if (data.pRow) document.getElementById('pRows').value = data.pRow;
+          if (data.ySt) document.getElementById('yStitches').value = data.ySt;
+          if (data.yRow) document.getElementById('yRows').value = data.yRow;
+          if (data.w) document.getElementById('tWidth').value = data.w;
+          if (data.h) document.getElementById('tHeight').value = data.h;
+        } catch (e) {
+          console.error('Error loading saved state:', e);
+        }
+      }
+    }
+
     function calculateScale() {
       const pSt = parseFloat(document.getElementById('pStitches').value) || 1;
       const pRow = parseFloat(document.getElementById('pRows').value) || 1;
@@ -107,6 +125,9 @@
       const yRow = parseFloat(document.getElementById('yRows').value) || 1;
       const w = parseFloat(document.getElementById('tWidth').value) || 0;
       const h = parseFloat(document.getElementById('tHeight').value) || 0;
+
+      // Save inputs to browser storage automatically
+      localStorage.setItem('stitchscale_state', JSON.stringify({ pSt, pRow, ySt, yRow, w, h }));
 
       // Formulas
       const newStitches = Math.round((w / 4) * ySt);
@@ -190,6 +211,8 @@
       document.getElementById(id).addEventListener('input', calculateScale);
     });
 
+    // Initialize state on load
+    loadSavedInputs();
     calculateScale();
   </script>
 </body>
