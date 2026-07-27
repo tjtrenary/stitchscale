@@ -228,26 +228,103 @@
     .svg-title-rescaled { font-size: 12px; font-weight: 700; fill: #2d5a38; }
     .svg-subtitle-rescaled { font-size: 11px; fill: #4a7c59; font-weight: 600; }
 
-    /* Interactive Live Blueprint Preview Box */
-    .blueprint-preview-box {
+    /* REALISTIC PRINTABLE PAPER SHEET PREVIEW */
+    .paper-sheet {
       background: #ffffff;
-      border: 2px dashed #a89a8c;
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin-top: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    }
-    .instructions-card {
-      background: #f5efeb;
-      border: 1px solid #e6ded6;
+      border: 1px solid #d4c9bd;
       border-radius: 8px;
+      padding: 2.25rem;
+      margin-top: 2rem;
+      box-shadow: 0 12px 35px rgba(45, 38, 35, 0.08);
+      position: relative;
+    }
+    
+    .paper-watermark {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #fdf2f2;
+      border: 1px dashed #e53e3e;
+      color: #c53030;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .paper-header-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #2d2623;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+    .paper-header-sub {
+      font-size: 0.82rem;
+      color: #736760;
+      margin-top: 0.15rem;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.84rem;
+    }
+    .spec-table th {
+      background: #f5efeb;
+      color: #2d2623;
+      text-align: left;
+      padding: 6px 10px;
+      border: 1px solid #e6ded6;
+      font-weight: 700;
+    }
+    .spec-table td {
+      padding: 6px 10px;
+      border: 1px solid #e6ded6;
+      color: #4a3e37;
+    }
+
+    .guide-box {
+      background: #fcfaf7;
+      border: 1px solid #e6ded6;
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
       padding: 0.85rem 1rem;
-      margin-top: 0.75rem;
-      font-size: 0.85rem;
+      margin-top: 1rem;
+      font-size: 0.83rem;
       line-height: 1.5;
     }
-    .instructions-card ol { margin: 0.35rem 0 0 0; padding-left: 1.2rem; }
-    .instructions-card li { margin-bottom: 0.25rem; color: #5c4e43; }
+    .guide-box ol { margin: 0.35rem 0 0 0; padding-left: 1.1rem; }
+    .guide-box li { margin-bottom: 0.25rem; color: #5c4e43; }
+
+    .tracker-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+      margin-top: 0.75rem;
+    }
+    .tracker-cell {
+      border: 1px solid #d4c9bd;
+      border-radius: 4px;
+      padding: 4px 2px;
+      font-size: 0.72rem;
+      text-align: center;
+      background: #fff;
+      color: #736760;
+    }
+
+    .crafter-notes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+      border-top: 1px solid #e6ded6;
+      padding-top: 1rem;
+      font-size: 0.83rem;
+    }
+    .note-line { border-bottom: 1px solid #ccc; height: 1.6rem; margin-top: 0.2rem; }
 
     details {
       background: var(--card);
@@ -265,43 +342,19 @@
     @media print {
       body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; font-size: 11pt; }
       .container { max-width: 100% !important; margin: 0 !important; }
-      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .unlocked-banner, .no-print, .shape-selector { 
+      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .unlocked-banner, .no-print, .shape-selector, .paper-watermark { 
         display: none !important; 
       }
       .grid { display: block !important; }
       .card { border: none !important; box-shadow: none !important; padding: 0 !important; background: transparent !important; margin-bottom: 1.5rem; }
-      .blueprint-preview-box { border: none !important; padding: 0 !important; box-shadow: none !important; }
+      .paper-sheet { border: none !important; padding: 0 !important; box-shadow: none !important; margin: 0 !important; }
       .print-only { display: block !important; }
-
-      .tracker-grid {
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        gap: 6px;
-        margin-top: 0.75rem;
-        page-break-inside: avoid;
-      }
-      .tracker-cell {
-        border: 1px solid #a89a8c;
-        border-radius: 4px;
-        padding: 4px 2px;
-        font-size: 0.75rem;
-        text-align: center;
-      }
-      .crafter-notes-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-top: 1rem;
-        border-top: 1px solid #ccc;
-        padding-top: 1rem;
-        page-break-inside: avoid;
-      }
-      .note-line { border-bottom: 1px solid #aaa; height: 1.8rem; margin-top: 0.25rem; }
     }
 
     @media (max-width: 720px) {
       .grid { grid-template-columns: 1fr; }
       body { padding: 1rem; }
+      .tracker-grid { grid-template-columns: repeat(5, 1fr); }
     }
   </style>
 </head>
@@ -556,49 +609,73 @@
       </div>
     </div>
 
-    <!-- On-Screen Blueprint Preview Frame -->
-    <div class="blueprint-preview-box no-print">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
-        <h3 style="margin: 0; border: none; padding: 0;">📋 Live PDF Blueprint Preview</h3>
-        <span style="font-size: 0.75rem; background: #e8f0eb; color: #2d5a38; font-weight: 700; padding: 3px 8px; border-radius: 10px;">PRINT WORKSHEET MOCKUP</span>
+    <!-- =======================================================
+         📄 REALISTIC PRINTABLE PAPER SHEET PREVIEW
+         ======================================================= -->
+    <div class="paper-sheet">
+      <div class="paper-watermark no-print">SAMPLE PREVIEW SHEET</div>
+
+      <div style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem;">
+        <div class="paper-header-title">🧶 STITCHSCALE PROJECT BLUEPRINT</div>
+        <div class="paper-header-sub">Custom Pattern Sizing & Crafting Worksheet</div>
       </div>
 
-      <!-- How to Interface with Pattern Guide -->
-      <div class="instructions-card">
-        <b style="color: #2d2623; font-size: 0.9rem;">📖 How to Interface This Blueprint with Your Pattern:</b>
+      <!-- Spec Comparison Table -->
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Specification</th>
+            <th>Original Pattern Setup</th>
+            <th>Your Custom Setup</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Yarn Weight</b></td>
+            <td id="tablePYarn">#4 Medium (Worsted)</td>
+            <td id="tableYYarn">#5 Bulky</td>
+          </tr>
+          <tr>
+            <td><b>Hook Size</b></td>
+            <td id="tablePHook">5.50 mm (I-9)</td>
+            <td id="tableYHook">6.50 mm (K-10.5)</td>
+          </tr>
+          <tr>
+            <td><b>Swatch Gauge (per 4 in / 10 cm)</b></td>
+            <td id="tablePGauge">20 sts × 28 rows</td>
+            <td id="tableYGauge">14 sts × 18 rows</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Workflow Instruction Box -->
+      <div class="guide-box">
+        <b style="color: #2d2623;">📖 How to Interface This Blueprint with Your Original Pattern:</b>
         <ol>
-          <li><b>Stitch Definitions & Motifs:</b> Keep your original pattern open for stitch keys, ribbing rules, and special stitches.</li>
-          <li><b>Starting Cast-On / Chain:</b> Replace the original pattern's starting stitch count with your <b>Blueprint Cast-On Stitches</b>.</li>
-          <li><b>Working Rows & Shaping:</b> Work in pattern until you reach the total rows or shaping intervals listed below, ticking off checkboxes as you go.</li>
-          <li><b>Assembly & Finishing:</b> Once your piece reaches the blueprint dimensions, return to the original pattern for seaming and borders.</li>
+          <li><b>Stitch Definitions & Motifs:</b> Keep your original pattern PDF open for special stitch keys, lace motifs, and ribbing rules.</li>
+          <li><b>Starting Cast-On / Chain:</b> Substitute the original pattern's starting stitch count with your <b>Blueprint Cast-On Number</b> listed below.</li>
+          <li><b>Working Length & Shaping:</b> Work in pattern until you reach the total rows or shaping intervals listed below, checking off row checkboxes as you go.</li>
+          <li><b>Assembly & Edging:</b> Once your piece reaches the blueprint target dimensions, return to the original pattern for seaming and borders.</li>
         </ol>
       </div>
 
-      <div style="margin-top: 1rem; font-size: 0.88rem; color: #5c4e43;">
-        <div><b>Selected Tools:</b> <span id="previewHookText">6.50 mm (K-10.5)</span></div>
-        <div style="margin-top: 0.25rem;"><b>Printable Row Tracker:</b> (Includes up to 200 couch-ready row checkboxes)</div>
-      </div>
-    </div>
-
-    <!-- Print-Only PDF Page Layout -->
-    <div class="print-only" style="margin-top: 1.5rem;">
-      <div class="instructions-card" style="margin-bottom: 1rem;">
-        <b style="color: #2d2623; font-size: 0.9rem;">📖 How to Interface This Blueprint with Your Pattern:</b>
-        <ol>
-          <li><b>Stitch Definitions & Motifs:</b> Keep your original pattern open for stitch keys, ribbing rules, and special stitches.</li>
-          <li><b>Starting Cast-On / Chain:</b> Replace the original pattern's starting stitch count with your <b>Blueprint Cast-On Stitches</b>.</li>
-          <li><b>Working Rows & Shaping:</b> Work in pattern until you reach the total rows or shaping intervals listed below, ticking off checkboxes as you go.</li>
-          <li><b>Assembly & Finishing:</b> Once your piece reaches the blueprint dimensions, return to the original pattern for seaming and borders.</li>
-        </ol>
+      <!-- Live Calculated Output Summary -->
+      <div style="margin-top: 1.25rem; background: #f5efeb; border: 1px solid #e6ded6; padding: 1rem; border-radius: 8px;">
+        <h4 style="margin: 0 0 0.5rem 0; color: #2d2623;">Calculated Project Execution</h4>
+        <div id="paperTargetSummary" style="font-size: 0.95rem; font-weight: 700; color: #c85a32;">Starting Cast-On: 175 sts</div>
+        <div id="paperShapingBox" style="margin-top: 0.25rem;"></div>
       </div>
 
-      <h3 style="border-bottom: 1px solid #000; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">📝 Row Counting Checklist & Shaping Schedule</h3>
-      <div id="printShapingNotes" style="font-size: 0.9rem; margin-bottom: 0.75rem; font-weight: 600; color: #2d5a38;"></div>
-      <div id="printRowTracker" class="tracker-grid"></div>
+      <!-- Live Printable Row Tracker -->
+      <div style="margin-top: 1.25rem;">
+        <h4 style="margin: 0 0 0.25rem 0; color: #2d2623; font-size: 0.95rem;">📝 Row & Round Checklist</h4>
+        <div id="printRowTracker" class="tracker-grid"></div>
+      </div>
 
+      <!-- Craft Notes Section -->
       <div class="crafter-notes-grid">
         <div>
-          <b>Yarn Brand / Colorway:</b>
+          <b>Yarn Brand & Colorway:</b>
           <div class="note-line"></div>
           <b style="margin-top: 0.5rem; display: inline-block;">Hook Size Used: <span id="printHookChoice" style="font-weight:normal;"></span></b>
           <div class="note-line"></div>
@@ -610,6 +687,7 @@
           <div class="note-line"></div>
         </div>
       </div>
+
     </div>
 
     <!-- Accordion Guide -->
@@ -785,6 +863,8 @@
       const pRow = parseFloat(document.getElementById('pRows').value) || 1;
       const ySt = parseFloat(document.getElementById('yStitches').value) || 1;
       const yRow = parseFloat(document.getElementById('yRows').value) || 1;
+      const pCYCVal = document.getElementById('pYarnCYC').value;
+      const yCYCVal = document.getElementById('yYarnCYC').value;
       const pHookVal = document.getElementById('pHook').value;
       const yHookVal = document.getElementById('yHook').value;
       const rMult = parseInt(document.getElementById('rMultiple').value) || 0;
@@ -799,7 +879,7 @@
       let totalRows = 0;
       let shapingHtml = '';
       let repeatHtml = '';
-      let origDimW = 0, origDimH = 0, rescDimW = 0, rescDimH = 0;
+      let origDimW = 0, origDimH = 0;
 
       if (currentShape === 'rect') {
         const w = parseFloat(document.getElementById('tWidth').value) || 0;
@@ -817,6 +897,7 @@
         }
 
         document.getElementById('outputPrimary').innerHTML = `Starting Cast-On / Chain: <span class="stat">${finalStitches}</span> stitches`;
+        document.getElementById('paperTargetSummary').innerHTML = `Starting Cast-On: ${finalStitches} stitches (${w}" × ${h}" target)`;
         origDimW = w; origDimH = h;
       } 
       else if (currentShape === 'taper') {
@@ -834,14 +915,12 @@
 
         finalStitches = startSts;
         shapingHtml = `
-          <div style="background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6; font-size:0.85rem;">
-            <div style="color:#2d5a38; font-weight:600;">📐 Shaping Schedule (Taper / Sleeve)</div>
-            <div>• <b>Cuff Cast-On:</b> ${startSts} sts</div>
-            <div>• <b>Top Target:</b> ${endSts} sts (Total +${deltaSts} sts)</div>
-            <div>• <b>Shaping Rule:</b> Inc 1 st at each edge <b>every ${rowInterval} rows</b> (${incEvents} times total).</div>
+          <div style="font-size:0.85rem; color:#2d2623;">
+            <b>📐 Shaping Rule:</b> Cuff Cast-On ${startSts} sts → Top Target ${endSts} sts. <b>Increase 1 st at each edge every ${rowInterval} rows</b> (${incEvents} times total).
           </div>
         `;
         document.getElementById('outputPrimary').innerHTML = `Cuff Cast-On: <span class="stat">${startSts}</span> sts → Top Target: <span class="stat">${endSts}</span> sts`;
+        document.getElementById('paperTargetSummary').innerHTML = `Cuff Cast-On: ${startSts} sts → Top Target: ${endSts} sts`;
         origDimW = topW; origDimH = len;
       }
       else if (currentShape === 'triangle') {
@@ -852,13 +931,12 @@
         totalRows = Math.round((spine / refDivisor) * yRow);
 
         shapingHtml = `
-          <div style="background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6; font-size:0.85rem;">
-            <div style="color:#2d5a38; font-weight:600;">🔺 Triangle Shawl Expansion</div>
-            <div>• <b>Wingspan Edge:</b> ${finalStitches} sts total across top edge.</div>
-            <div>• <b>Spine Depth:</b> ${totalRows} rows from center neck to point.</div>
+          <div style="font-size:0.85rem; color:#2d2623;">
+            <b>🔺 Triangle Expansion:</b> ${finalStitches} sts across top wingspan edge over ${totalRows} spine rows.
           </div>
         `;
         document.getElementById('outputPrimary').innerHTML = `Wingspan Target: <span class="stat">${finalStitches}</span> stitches`;
+        document.getElementById('paperTargetSummary').innerHTML = `Wingspan Target: ${finalStitches} sts (${wingspan}" wingspan × ${spine}" spine depth)`;
         origDimW = wingspan; origDimH = spine;
       }
       else if (currentShape === 'circle') {
@@ -869,28 +947,33 @@
         totalRows = totalRounds;
 
         shapingHtml = `
-          <div style="background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6; font-size:0.85rem;">
-            <div style="color:#2d5a38; font-weight:600;">⚪ Circular Flat Crown Expansion</div>
-            <div>• <b>Magic Ring Start:</b> 6 sts</div>
-            <div>• <b>Increase Rounds:</b> Work 6-st increases each round for <b>${totalRounds} rounds</b>.</div>
-            <div>• <b>Final Crown Circumference:</b> ${finalStitches} sts.</div>
+          <div style="font-size:0.85rem; color:#2d2623;">
+            <b>⚪ Circular Expansion:</b> Magic ring 6 sts → Work 6-st increases each round for <b>${totalRounds} rounds</b> (${finalStitches} final crown sts).
           </div>
         `;
         document.getElementById('outputPrimary').innerHTML = `Magic Ring Start: <span class="stat">6</span> sts → Final Crown: <span class="stat">${finalStitches}</span> sts`;
+        document.getElementById('paperTargetSummary').innerHTML = `Magic Ring Start: 6 sts → Final Crown: ${finalStitches} sts (${diam}" diameter)`;
         origDimW = diam; origDimH = diam;
       }
 
+      // Update Spec Table inside Paper Sheet
       const pHookObj = HOOK_LIST.find(h => h.mm === pHookVal);
       const yHookObj = HOOK_LIST.find(h => h.mm === yHookVal);
-      const hookText = `${yHookObj ? yHookObj.label : yHookVal + ' mm'} (Pattern specified: ${pHookObj ? pHookObj.label : pHookVal + ' mm'})`;
       
+      document.getElementById('tablePYarn').textContent = CYC_DATA[pCYCVal].name;
+      document.getElementById('tableYYarn').textContent = CYC_DATA[yCYCVal].name;
+      document.getElementById('tablePHook').textContent = pHookObj ? pHookObj.label : pHookVal + ' mm';
+      document.getElementById('tableYHook').textContent = yHookObj ? yHookObj.label : yHookVal + ' mm';
+      document.getElementById('tablePGauge').textContent = `${pSt} sts × ${pRow} rows`;
+      document.getElementById('tableYGauge').textContent = `${ySt} sts × ${yRow} rows`;
+
+      const hookText = `${yHookObj ? yHookObj.label : yHookVal + ' mm'}`;
       document.getElementById('printHookChoice').textContent = hookText;
-      document.getElementById('previewHookText').textContent = hookText;
 
       document.getElementById('shapingScheduleBox').innerHTML = shapingHtml;
+      document.getElementById('paperShapingBox').innerHTML = shapingHtml;
       document.getElementById('repeatBox').innerHTML = repeatHtml;
       document.getElementById('outRows').innerText = totalRows;
-      document.getElementById('printShapingNotes').innerHTML = shapingHtml;
 
       updateStitchPreview(origDimW, origDimH, pSt, ySt);
       generatePrintRowTracker(Math.min(totalRows, 200));
