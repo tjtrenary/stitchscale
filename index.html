@@ -173,11 +173,11 @@
       background: var(--primary); 
       color: white; 
       border: none; 
-      padding: 0.85rem 1.5rem; 
+      padding: 0.85rem 1rem; 
       border-radius: 10px; 
       cursor: pointer; 
       font-weight: 600; 
-      font-size: 1rem;
+      font-size: 0.95rem;
       width: 100%; 
       margin-top: 1.25rem; 
       transition: background 0.2s ease;
@@ -604,7 +604,11 @@
         <div class="no-print" style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
           <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable PDF Blueprint</h4>
           <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Includes couch-ready row counting checkboxes, shaping schedules, and sizing diagrams.</p>
-          <button style="background: var(--accent-sage);" class="primary-btn" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
+          
+          <div style="display: flex; gap: 0.5rem;">
+            <button style="background: #736760; flex: 1;" class="primary-btn" onclick="window.print()">👁️ Preview PDF</button>
+            <button style="background: var(--accent-sage); flex: 1.5;" class="primary-btn" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
+          </div>
         </div>
       </div>
     </div>
