@@ -1282,7 +1282,7 @@
             <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
               <b style="color:#2d5a38;">✏️ Custom Multi-Phase Shaping Breakdown (${actionWord}):</b>
               <div style="margin-top:0.25rem;">• <b>Start Width:</b> ${startSts} sts → <b>End Target:</b> ${endSts} sts (${totalRows} total rows)</div>
-              ${notchSts > 0 ? `<div>• <b>Initial Flat Cutout:</b> ${cutoutWord} <b>${notchSts} sts</b> at beg of next 2 rows.</div>` : ''}
+              ${notchSts > 0 ? `<div>• <b>Initial Cutout:</b> ${cutoutWord} <b>${notchSts} sts</b> at beg of next 2 rows.</div>` : ''}
               ${p1Reps > 0 ? `<div>• <b>Phase 1 Shaping:</b> ${actionShort} 1 st at each edge <b>EVERY ${p1Rows} ROWS</b> ${p1Reps} times.</div>` : ''}
               ${p2Reps > 0 ? `<div>• <b>Phase 2 Shaping:</b> ${actionShort} 1 st at each edge <b>EVERY ${p2Rows} ROWS</b> ${p2Reps} times.</div>` : ''}
               ${straightRows > 0 ? `<div>• <b>Vertical Straight Run:</b> Work <b>${straightRows} rows straight</b> with no shaping.</div>` : ''}
@@ -1422,7 +1422,6 @@
       updateStitchPreview(pSt, ySt);
       generatePrintRowTracker(Math.min(totalRows, 200));
 
-      // Refresh opened lightbox modal if active
       const modal = document.getElementById('svgModal');
       if (modal && modal.classList.contains('active')) {
         openSvgModal();
@@ -1585,55 +1584,63 @@
           const yBot = cy + hPx / 2;
           const yTop = cy - hPx / 2;
 
+          let notchPx = 0;
+          let p1Rows = 2, p2Rows = 4, straightRows = 0;
+
           if (currentCurveMode === 'custom') {
             const notchSts = parseInt(document.getElementById('cNotchSts').value) || 0;
-            const p1Rows = parseInt(document.getElementById('cPhase1Rows').value) || 2;
-            const p2Rows = parseInt(document.getElementById('cPhase2Rows').value) || 4;
-            const straightRows = parseInt(document.getElementById('cStraightRows').value) || 0;
-
-            const totalEstRows = Math.max(1, p1Rows * 4 + p2Rows * 4 + straightRows);
-            const straightHPx = Math.min(hPx * 0.7, (straightRows / totalEstRows) * hPx);
-            const curveHPx = hPx - straightHPx;
+            p1Rows = parseInt(document.getElementById('cPhase1Rows').value) || 2;
+            p2Rows = parseInt(document.getElementById('cPhase2Rows').value) || 4;
+            straightRows = parseInt(document.getElementById('cStraightRows').value) || 0;
 
             const maxDeltaPx = Math.abs(swPx - ewPx) / 2;
-            const notchPx = Math.min(maxDeltaPx * 0.7, notchSts * 3);
-
-            const yCurveTop = yTop + straightHPx;
-
-            if (p1Rows <= p2Rows) {
-              return `M ${cx - swPx/2} ${yBot} 
-                      L ${cx + swPx/2} ${yBot} 
-                      L ${cx + swPx/2 - notchPx} ${yBot} 
-                      C ${cx + swPx/2 - notchPx} ${yBot - curveHPx * 0.5}, ${cx + ewPx/2} ${yCurveTop + curveHPx * 0.2}, ${cx + ewPx/2} ${yCurveTop} 
-                      L ${cx + ewPx/2} ${yTop} 
-                      L ${cx - ewPx/2} ${yTop} 
-                      L ${cx - ewPx/2} ${yCurveTop} 
-                      C ${cx - ewPx/2} ${yCurveTop + curveHPx * 0.2}, ${cx - swPx/2 + notchPx} ${yBot - curveHPx * 0.5}, ${cx - swPx/2 + notchPx} ${yBot} 
-                      Z`;
-            } else {
-              return `M ${cx - swPx/2} ${yBot} 
-                      L ${cx + swPx/2} ${yBot} 
-                      L ${cx + swPx/2 - notchPx} ${yBot} 
-                      C ${cx + swPx/2 - notchPx + (ewPx - swPx)*0.3} ${yBot - curveHPx * 0.2}, ${cx + ewPx/2} ${yCurveTop + curveHPx * 0.7}, ${cx + ewPx/2} ${yCurveTop} 
-                      L ${cx + ewPx/2} ${yTop} 
-                      L ${cx - ewPx/2} ${yTop} 
-                      L ${cx - ewPx/2} ${yCurveTop} 
-                      C ${cx - ewPx/2} ${yCurveTop + curveHPx * 0.7}, ${cx - swPx/2 + notchPx - (ewPx - swPx)*0.3} ${yBot - curveHPx * 0.2}, ${cx - swPx/2 + notchPx} ${yBot} 
-                      Z`;
-            }
+            notchPx = Math.min(maxDeltaPx * 0.7, notchSts * 3);
           } else {
             const cStyle = document.getElementById('curveStylePreset').value;
-
-            if (cStyle === 'convex') {
-              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} Q ${cx + swPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} Q ${cx - swPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
-            } else if (cStyle === 'scurve') {
-              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} C ${cx + swPx/2} ${yBot - hPx*0.5}, ${cx + ewPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot - hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
+            if (cStyle === 'armhole' || cStyle === 'concave') {
+              notchPx = Math.min(Math.abs(swPx - ewPx) * 0.35, 14);
             } else if (cStyle === 'raglan') {
-              const notchPx = Math.min(Math.abs(swPx - ewPx) * 0.3, 12);
-              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} L ${cx + swPx/2 - notchPx} ${yBot} L ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} L ${cx - swPx/2 + notchPx} ${yBot} Z`;
+              notchPx = Math.min(Math.abs(swPx - ewPx) * 0.30, 12);
+            }
+          }
+
+          // Clean Underarm Notch Stub Handler (Eliminates Horizontal Overhang Spikes)
+          if (notchPx > 1) {
+            const stubH = Math.min(hPx * 0.12, 10);
+            const yNotch = yBot - stubH;
+            const curveHPx = hPx - stubH;
+
+            if (currentCurveMode === 'preset' && document.getElementById('curveStylePreset').value === 'raglan') {
+              return `M ${cx - swPx/2} ${yBot} 
+                      L ${cx + swPx/2} ${yBot} 
+                      L ${cx + swPx/2} ${yNotch} 
+                      L ${cx + swPx/2 - notchPx} ${yNotch} 
+                      L ${cx + ewPx/2} ${yTop} 
+                      L ${cx - ewPx/2} ${yTop} 
+                      L ${cx - swPx/2 + notchPx} ${yNotch} 
+                      L ${cx - swPx/2} ${yNotch} 
+                      Z`;
+            }
+
+            return `M ${cx - swPx/2} ${yBot} 
+                    L ${cx + swPx/2} ${yBot} 
+                    L ${cx + swPx/2} ${yNotch} 
+                    L ${cx + swPx/2 - notchPx} ${yNotch} 
+                    C ${cx + swPx/2 - notchPx} ${yNotch - curveHPx * 0.4}, ${cx + ewPx/2} ${yTop + curveHPx * 0.2}, ${cx + ewPx/2} ${yTop} 
+                    L ${cx - ewPx/2} ${yTop} 
+                    C ${cx - ewPx/2} ${yTop + curveHPx * 0.2}, ${cx - swPx/2 + notchPx} ${yNotch - curveHPx * 0.4}, ${cx - swPx/2 + notchPx} ${yNotch} 
+                    L ${cx - swPx/2} ${yNotch} 
+                    Z`;
+          } else {
+            // Smooth Bezier Curves (Convex, S-Curve, or Zero-Notch Curves)
+            const cStyle = document.getElementById('curveStylePreset').value;
+
+            if (currentCurveMode === 'preset' && cStyle === 'convex') {
+              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} Q ${cx + swPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} Q ${cx - swPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
+            } else if (currentCurveMode === 'preset' && cStyle === 'scurve') {
+              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} C ${cx + swPx/2} ${yBot - hPx*0.5}, ${cx + ewPx/2} ${yTop + hPx*0.5}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.5}, ${cx - swPx/2} ${yBot - hPx*0.5}, ${cx - swPx/2} ${yBot} Z`;
             } else {
-              const notchPx = Math.min(Math.abs(swPx - ewPx) * 0.35, 14);
-              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} L ${cx + swPx/2 - notchPx} ${yBot} C ${cx + swPx/2 - notchPx} ${yBot - hPx*0.4}, ${cx + ewPx/2} ${yTop + hPx*0.2}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.2}, ${cx - swPx/2 + notchPx} ${yBot - hPx*0.4}, ${cx - swPx/2 + notchPx} ${yBot} Z`;
+              return `M ${cx - swPx/2} ${yBot} L ${cx + swPx/2} ${yBot} C ${cx + swPx/2} ${yBot - hPx*0.4}, ${cx + ewPx/2} ${yTop + hPx*0.2}, ${cx + ewPx/2} ${yTop} L ${cx - ewPx/2} ${yTop} C ${cx - ewPx/2} ${yTop + hPx*0.2}, ${cx - swPx/2} ${yBot - hPx*0.4}, ${cx - swPx/2} ${yBot} Z`;
             }
           }
         };
