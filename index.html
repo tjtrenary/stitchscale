@@ -10,7 +10,7 @@
       --primary-hover: #b04b27;
       --bg: #fbf7f2; /* Soft Warm Linen */
       --card: #ffffff; 
-      --text: #2d2623; /* Deep Espresso / Charcoal */
+      --text: #2d2623; /* Deep Charcoal / Espresso */
       --text-muted: #736760;
       --border: #e6ded6;
       --input-bg: #f5efeb;
@@ -22,16 +22,64 @@
       background: var(--bg); 
       color: var(--text); 
       margin: 0; 
-      padding: 2rem; 
+      padding: 1.5rem; 
       line-height: 1.5;
     }
 
-    .container { max-width: 900px; margin: 0 auto; }
+    .container { max-width: 940px; margin: 0 auto; }
     
-    h1 { color: #2d2623; margin-bottom: 0.25rem; font-size: 2rem; }
-    .subtitle { color: var(--text-muted); margin-top: 0; font-size: 1.05rem; }
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    h1 { color: #2d2623; margin: 0; font-size: 2rem; }
+    .subtitle { color: var(--text-muted); margin-top: 0.25rem; font-size: 1.05rem; }
+
+    /* Unit Toggle Pills */
+    .unit-toggle {
+      display: inline-flex;
+      background: var(--input-bg);
+      padding: 3px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .unit-btn {
+      background: transparent;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      margin: 0;
+      width: auto;
+      transition: all 0.2s ease;
+    }
+    .unit-btn.active {
+      background: var(--card);
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .sample-link {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      cursor: pointer;
+      border-bottom: 1px dashed var(--primary);
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+    .sample-link:hover { opacity: 0.8; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.25rem; }
     
     .card { 
       background: var(--card); 
@@ -41,12 +89,54 @@
       box-shadow: 0 4px 20px rgba(45, 38, 35, 0.04); 
     }
 
-    h3 { margin-top: 0; color: #2d2623; font-size: 1.1rem; border-bottom: 2px solid #f2ece6; padding-bottom: 0.5rem; }
+    h3 { margin-top: 0; color: #2d2623; font-size: 1.05rem; border-bottom: 2px solid #f2ece6; padding-bottom: 0.5rem; }
     h3:not(:first-child) { margin-top: 1.5rem; }
 
-    label { display: block; font-size: 0.875rem; margin-top: 0.75rem; color: var(--text-muted); font-weight: 500; }
+    .label-row {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.75rem;
+    }
+
+    label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
     
-    input { 
+    /* Hover Tooltip Icon */
+    .tip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e6ded6;
+      color: #5c4e43;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: help;
+      position: relative;
+    }
+    .tip-icon:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d2623;
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 400;
+      white-space: normal;
+      width: 200px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+      pointer-events: none;
+      line-height: 1.35;
+    }
+
+    input, select { 
       width: 100%; 
       padding: 0.6rem 0.75rem; 
       border-radius: 8px; 
@@ -56,15 +146,16 @@
       margin-top: 0.25rem; 
       box-sizing: border-box; 
       font-size: 0.95rem;
+      font-family: inherit;
     }
 
-    input:focus {
+    input:focus, select:focus {
       outline: none;
       border-color: var(--primary);
       background: #ffffff;
     }
 
-    button { 
+    button.primary-btn { 
       background: var(--primary); 
       color: white; 
       border: none; 
@@ -78,7 +169,7 @@
       transition: background 0.2s ease;
     }
 
-    button:hover { background: var(--primary-hover); }
+    button.primary-btn:hover { background: var(--primary-hover); }
 
     .stat { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
 
@@ -93,55 +184,142 @@
     .svg-subtitle { font-size: 11px; fill: #2d2623; font-weight: 600; }
     .svg-title-rescaled { font-size: 12px; font-weight: 700; fill: #2d5a38; }
     .svg-subtitle-rescaled { font-size: 11px; fill: #4a7c59; font-weight: 600; }
+
+    /* Accordion Guide */
+    details {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.85rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+    summary {
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .guide-content {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      line-height: 1.6;
+    }
+    .guide-content ol { padding-left: 1.2rem; margin: 0.5rem 0; }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+      body { padding: 1rem; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🧶 StitchScale</h1>
-    <p class="subtitle">Your pattern sizing companion. Rescale any crochet or knitting pattern to match your exact yarn and gauge—no manual arithmetic required.</p>
+    
+    <div class="header-bar">
+      <div>
+        <h1>🧶 StitchScale</h1>
+        <p class="subtitle">Your pattern sizing companion. Rescale any pattern to your exact yarn and gauge.</p>
+      </div>
+      
+      <!-- Units Switcher -->
+      <div class="unit-toggle">
+        <button id="unitIn" class="unit-btn active" onclick="setUnit('in')">Inches (in)</button>
+        <button id="unitCm" class="unit-btn" onclick="setUnit('cm')">Metric (cm)</button>
+      </div>
+    </div>
+
+    <div>
+      <span class="sample-link" onclick="loadSampleProject()">⚡ Load Sample Scenario (Worsted → Chunky Blanket)</span>
+    </div>
 
     <div class="grid">
       <!-- Input Panel -->
       <div class="card">
-        <h3>1. Pattern Gauge (per 4 in / 10 cm)</h3>
-        <label>Pattern Stitches</label>
+        <h3>1. Pattern Gauge (<span class="unit-label-4in">per 4 in / 10 cm</span>)</h3>
+        
+        <div class="label-row">
+          <label>Pattern Stitches</label>
+          <span class="tip-icon" data-tip="Number of stitches specified in the designer's gauge swatch.">?</span>
+        </div>
         <input type="number" id="pStitches" value="20">
-        <label>Pattern Rows</label>
+
+        <div class="label-row">
+          <label>Pattern Rows</label>
+          <span class="tip-icon" data-tip="Number of rows specified in the designer's gauge swatch.">?</span>
+        </div>
         <input type="number" id="pRows" value="28">
 
         <h3>2. Your Swatch Gauge</h3>
-        <label>Your Stitches</label>
+        
+        <div class="label-row">
+          <label>Your Stitches</label>
+          <span class="tip-icon" data-tip="Count how many stitches fit across 4 inches (10 cm) on your custom swatch.">?</span>
+        </div>
         <input type="number" id="yStitches" value="16">
-        <label>Your Rows</label>
+
+        <div class="label-row">
+          <label>Your Rows</label>
+          <span class="tip-icon" data-tip="Count how many rows fit down 4 inches (10 cm) on your custom swatch.">?</span>
+        </div>
         <input type="number" id="yRows" value="22">
 
         <h3>3. Target Dimensions</h3>
-        <label>Target Width (inches)</label>
-        <input type="number" id="tWidth" value="20">
-        <label>Target Height (inches)</label>
-        <input type="number" id="tHeight" value="30">
+        
+        <div class="label-row">
+          <label>Standard Size Presets</label>
+        </div>
+        <select id="sizePreset" onchange="applyPreset()">
+          <option value="custom">Custom Dimensions</option>
+          <option value="baby">Baby Blanket (30" × 40")</option>
+          <option value="throw" selected>Throw Blanket (50" × 60")</option>
+          <option value="scarf">Standard Scarf (8" × 60")</option>
+          <option value="dishcloth">Dishcloth (8" × 8")</option>
+          <option value="lapghan">Lapghan Blanket (36" × 48")</option>
+        </select>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Width (<span class="unit-name">in</span>)</label>
+            </div>
+            <input type="number" id="tWidth" value="50">
+          </div>
+          <div style="flex: 1;">
+            <div class="label-row">
+              <label>Height (<span class="unit-name">in</span>)</label>
+            </div>
+            <input type="number" id="tHeight" value="60">
+          </div>
+        </div>
 
         <h3>4. Stitch Repeat Rule (Optional)</h3>
         <div style="display: flex; gap: 0.5rem;">
           <div style="flex: 1;">
-            <label>Multiple of</label>
+            <div class="label-row">
+              <label>Multiple of</label>
+              <span class="tip-icon" data-tip="Pattern instruction stitch multiple (e.g. for 'multiple of 6 + 1', enter 6).">?</span>
+            </div>
             <input type="number" id="rMultiple" placeholder="e.g. 6" min="1">
           </div>
           <div style="flex: 1;">
-            <label>Plus (+)</label>
+            <div class="label-row">
+              <label>Plus (+)</label>
+              <span class="tip-icon" data-tip="The extra offset stitches added to the starting chain (e.g. enter 1).">?</span>
+            </div>
             <input type="number" id="rOffset" placeholder="e.g. 1" value="0" min="0">
           </div>
         </div>
 
-        <button onclick="calculateScale()">Recalculate Pattern</button>
+        <button class="primary-btn" onclick="calculateScale()">Recalculate Pattern</button>
       </div>
 
       <!-- Output Panel -->
       <div class="card">
         <h3>Calculated Adjustments</h3>
-        <div>Starting Cast-On / Chain: <span class="stat" id="outStitches">80</span> stitches</div>
+        <div>Starting Cast-On / Chain: <span class="stat" id="outStitches">200</span> stitches</div>
         <div id="repeatBox"></div>
-        <div style="margin-top:0.75rem;">New Total Rows: <span class="stat" id="outRows">165</span> rows</div>
+        <div style="margin-top:0.75rem;">New Total Rows: <span class="stat" id="outRows">330</span> rows</div>
 
         <!-- Dynamic SVG Visualizer Component -->
         <div style="margin-top: 1.25rem;">
@@ -173,19 +351,93 @@
         <div style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
           <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable PDF Blueprint</h4>
           <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Includes couch-ready row counting checkboxes and full sizing diagrams.</p>
-          <button style="background: var(--accent-sage);" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
+          <button style="background: var(--accent-sage);" class="primary-btn" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
         </div>
       </div>
     </div>
+
+    <!-- Accordion Guide -->
+    <details>
+      <summary>📏 Need help swatching & measuring accurately?</summary>
+      <div class="guide-content">
+        <ol>
+          <li><b>Work a Swatch:</b> Cast on enough stitches to measure at least 5 to 6 inches (12–15 cm) square in your chosen yarn and hook/needle size.</li>
+          <li><b>Block Your Fabric:</b> Lay your swatch flat without stretching or pulling it out of shape.</li>
+          <li><b>Measure in the Center:</b> Place a ruler across the middle. Count how many stitches fit inside exactly 4 inches (10 cm). Do the same vertically for row count.</li>
+        </ol>
+      </div>
+    </details>
+
   </div>
 
   <script>
-    // 1. Restore saved values on page load
+    let currentUnit = 'in'; // 'in' or 'cm'
+
+    // Preset dimensions (Inches & CM)
+    const PRESETS = {
+      in: {
+        baby: { w: 30, h: 40 },
+        throw: { w: 50, h: 60 },
+        scarf: { w: 8, h: 60 },
+        dishcloth: { w: 8, h: 8 },
+        lapghan: { w: 36, h: 48 }
+      },
+      cm: {
+        baby: { w: 75, h: 100 },
+        throw: { w: 125, h: 150 },
+        scarf: { w: 20, h: 150 },
+        dishcloth: { w: 20, h: 20 },
+        lapghan: { w: 90, h: 120 }
+      }
+    };
+
+    function setUnit(unit) {
+      currentUnit = unit;
+      document.getElementById('unitIn').className = unit === 'in' ? 'unit-btn active' : 'unit-btn';
+      document.getElementById('unitCm').className = unit === 'cm' ? 'unit-btn active' : 'unit-btn';
+
+      // Update unit labels in UI
+      document.querySelectorAll('.unit-name').forEach(el => el.textContent = unit);
+      document.querySelectorAll('.unit-label-4in').forEach(el => {
+        el.textContent = unit === 'in' ? 'per 4 in' : 'per 10 cm';
+      });
+
+      applyPreset();
+      calculateScale();
+    }
+
+    function applyPreset() {
+      const selected = document.getElementById('sizePreset').value;
+      if (selected !== 'custom' && PRESETS[currentUnit][selected]) {
+        document.getElementById('tWidth').value = PRESETS[currentUnit][selected].w;
+        document.getElementById('tHeight').value = PRESETS[currentUnit][selected].h;
+        calculateScale();
+      }
+    }
+
+    function loadSampleProject() {
+      // Set to Worsted (20st/28row) -> Chunky (12st/16row), Ripple Repeat 12+3, Throw Blanket
+      document.getElementById('pStitches').value = 20;
+      document.getElementById('pRows').value = 28;
+      document.getElementById('yStitches').value = 12;
+      document.getElementById('yRows').value = 16;
+      document.getElementById('rMultiple').value = 12;
+      document.getElementById('rOffset').value = 3;
+      document.getElementById('sizePreset').value = 'throw';
+      setUnit('in');
+      applyPreset();
+    }
+
     function loadSavedInputs() {
       const saved = localStorage.getItem('stitchscale_state');
       if (saved) {
         try {
           const data = JSON.parse(saved);
+          if (data.unit) {
+            currentUnit = data.unit;
+            document.getElementById('unitIn').className = currentUnit === 'in' ? 'unit-btn active' : 'unit-btn';
+            document.getElementById('unitCm').className = currentUnit === 'cm' ? 'unit-btn active' : 'unit-btn';
+          }
           if (data.pSt) document.getElementById('pStitches').value = data.pSt;
           if (data.pRow) document.getElementById('pRows').value = data.pRow;
           if (data.ySt) document.getElementById('yStitches').value = data.ySt;
@@ -194,8 +446,9 @@
           if (data.h) document.getElementById('tHeight').value = data.h;
           if (data.rMult) document.getElementById('rMultiple').value = data.rMult;
           if (data.rOff !== undefined) document.getElementById('rOffset').value = data.rOff;
+          if (data.preset) document.getElementById('sizePreset').value = data.preset;
         } catch (e) {
-          console.error('Error loading saved state:', e);
+          console.error('Error loading state:', e);
         }
       }
     }
@@ -209,17 +462,23 @@
       const h = parseFloat(document.getElementById('tHeight').value) || 0;
       const rMult = parseInt(document.getElementById('rMultiple').value) || 0;
       const rOff = parseInt(document.getElementById('rOffset').value) || 0;
+      const preset = document.getElementById('sizePreset').value;
 
-      // Save inputs to browser storage automatically
-      localStorage.setItem('stitchscale_state', JSON.stringify({ pSt, pRow, ySt, yRow, w, h, rMult, rOff }));
+      // Auto-save state
+      localStorage.setItem('stitchscale_state', JSON.stringify({ 
+        unit: currentUnit, pSt, pRow, ySt, yRow, w, h, rMult, rOff, preset 
+      }));
 
-      const rawStitches = Math.round((w / 4) * ySt);
-      const newRows = Math.round((h / 4) * yRow);
+      // Base Gauge Reference Divisor: 4 inches or 10 cm
+      const refDivisor = currentUnit === 'in' ? 4 : 10;
+
+      const rawStitches = Math.round((w / refDivisor) * ySt);
+      const newRows = Math.round((h / refDivisor) * yRow);
 
       let finalStitches = rawStitches;
       let repeatHtml = '';
 
-      // Stitch Repeat Logic Guard
+      // Stitch Repeat Guard
       if (rMult > 1) {
         const kApprox = (rawStitches - rOff) / rMult;
         const kLower = Math.floor(kApprox);
@@ -228,8 +487,8 @@
         const sLower = Math.max(rOff, kLower * rMult + rOff);
         const sUpper = kUpper * rMult + rOff;
 
-        const wLower = ((sLower / ySt) * 4).toFixed(1);
-        const wUpper = ((sUpper / ySt) * 4).toFixed(1);
+        const wLower = ((sLower / ySt) * refDivisor).toFixed(1);
+        const wUpper = ((sUpper / ySt) * refDivisor).toFixed(1);
 
         if (Math.abs(rawStitches - sLower) <= Math.abs(rawStitches - sUpper)) {
           finalStitches = sLower;
@@ -241,8 +500,8 @@
           <div style="background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6; font-size:0.85rem;">
             <div style="color:#2d5a38; font-weight:600; margin-bottom:0.25rem;">✨ Repeat Rule Applied (${rMult} + ${rOff})</div>
             <div style="color:#736760;">Raw Calculated Target: ${rawStitches} sts</div>
-            <div style="margin-top:0.35rem;">• <b>Option A (Lower):</b> ${sLower} sts (${wLower}")</div>
-            <div>• <b>Option B (Upper):</b> ${sUpper} sts (${wUpper}")</div>
+            <div style="margin-top:0.35rem;">• <b>Option A (Lower):</b> ${sLower} sts (${wLower} ${currentUnit})</div>
+            <div>• <b>Option B (Upper):</b> ${sUpper} sts (${wUpper} ${currentUnit})</div>
           </div>
         `;
       }
@@ -255,22 +514,22 @@
       updateStitchPreview(w, h, pSt, ySt);
     }
 
-    function updateStitchPreview(origWInches, origHInches, patternGauge, userGauge) {
+    function updateStitchPreview(origUnitsW, origUnitsH, patternGauge, userGauge) {
       const scaleFactor = patternGauge / userGauge;
-      const rescWInches = origWInches * scaleFactor;
-      const rescHInches = origHInches * scaleFactor;
+      const rescUnitsW = origUnitsW * scaleFactor;
+      const rescUnitsH = origUnitsH * scaleFactor;
 
       const canvasMaxW = 280;
       const canvasMaxH = 220;
       
-      const maxW = Math.max(origWInches, rescWInches, 1);
-      const maxH = Math.max(origHInches, rescHInches, 1);
-      const pxPerInch = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
+      const maxW = Math.max(origUnitsW, rescUnitsW, 1);
+      const maxH = Math.max(origUnitsH, rescUnitsH, 1);
+      const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
 
-      const origW = origWInches * pxPerInch;
-      const origH = origHInches * pxPerInch;
-      const rescW = rescWInches * pxPerInch;
-      const rescH = rescHInches * pxPerInch;
+      const origW = origUnitsW * pxPerUnit;
+      const origH = origUnitsH * pxPerUnit;
+      const rescW = rescUnitsW * pxPerUnit;
+      const rescH = rescUnitsH * pxPerUnit;
 
       const centerX1 = 180;
       const centerX2 = 520;
@@ -288,15 +547,17 @@
       rectResc.setAttribute('x', centerX2 - rescW / 2);
       rectResc.setAttribute('y', centerY - rescH / 2);
 
+      const unitSymbol = currentUnit === 'in' ? '"' : ' cm';
+
       document.getElementById('label-orig-title').setAttribute('x', centerX1);
       document.getElementById('label-orig-title').setAttribute('y', centerY - origH / 2 - 10);
-      document.getElementById('label-orig-dims').textContent = `${origWInches}" × ${origHInches}"`;
+      document.getElementById('label-orig-dims').textContent = `${origUnitsW}${unitSymbol} × ${origUnitsH}${unitSymbol}`;
       document.getElementById('label-orig-dims').setAttribute('x', centerX1);
       document.getElementById('label-orig-dims').setAttribute('y', centerY + origH / 2 + 18);
 
       document.getElementById('label-resc-title').setAttribute('x', centerX2);
       document.getElementById('label-resc-title').setAttribute('y', centerY - rescH / 2 - 10);
-      document.getElementById('label-resc-dims').textContent = `${rescWInches.toFixed(1)}" × ${rescHInches.toFixed(1)}"`;
+      document.getElementById('label-resc-dims').textContent = `${rescUnitsW.toFixed(1)}${unitSymbol} × ${rescUnitsH.toFixed(1)}${unitSymbol}`;
       document.getElementById('label-resc-dims').setAttribute('x', centerX2);
       document.getElementById('label-resc-dims').setAttribute('y', centerY + rescH / 2 + 18);
 
@@ -321,9 +582,12 @@
       window.location.href = "https://buy.stripe.com/9B6eVegcIgGQ5a85p6bo400";
     }
 
-    // Attach real-time input listeners
+    // Input event listeners
     ['pStitches', 'pRows', 'yStitches', 'yRows', 'tWidth', 'tHeight', 'rMultiple', 'rOffset'].forEach(id => {
-      document.getElementById(id).addEventListener('input', calculateScale);
+      document.getElementById(id).addEventListener('input', () => {
+        document.getElementById('sizePreset').value = 'custom';
+        calculateScale();
+      });
     });
 
     // Initialize state on load
