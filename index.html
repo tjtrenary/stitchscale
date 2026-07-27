@@ -3,40 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StitchScale | Dynamic Pattern Gauge & Blueprint Generator</title>
+  <title>StitchScale | Your Pattern Sizing Companion</title>
   <style>
-    :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 2rem; }
+    :root { 
+      --primary: #c85a32; /* Warm Terracotta */
+      --primary-hover: #b04b27;
+      --bg: #fbf7f2; /* Soft Warm Linen */
+      --card: #ffffff; 
+      --text: #2d2623; /* Deep Espresso / Charcoal */
+      --text-muted: #736760;
+      --border: #e6ded6;
+      --input-bg: #f5efeb;
+      --accent-sage: #4a7c59;
+    }
+
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      margin: 0; 
+      padding: 2rem; 
+      line-height: 1.5;
+    }
+
     .container { max-width: 900px; margin: 0 auto; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
-    .card { background: var(--card); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
-    label { display: block; font-size: 0.875rem; margin-top: 0.75rem; color: #94a3b8; }
-    input { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-top: 0.25rem; box-sizing: border-box; }
-    button { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; }
-    button:hover { opacity: 0.9; }
-    .stat { font-size: 1.5rem; font-weight: 700; color: #38bdf8; }
+    
+    h1 { color: #2d2623; margin-bottom: 0.25rem; font-size: 2rem; }
+    .subtitle { color: var(--text-muted); margin-top: 0; font-size: 1.05rem; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+    
+    .card { 
+      background: var(--card); 
+      padding: 1.75rem; 
+      border-radius: 16px; 
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(45, 38, 35, 0.04); 
+    }
+
+    h3 { margin-top: 0; color: #2d2623; font-size: 1.1rem; border-bottom: 2px solid #f2ece6; padding-bottom: 0.5rem; }
+    h3:not(:first-child) { margin-top: 1.5rem; }
+
+    label { display: block; font-size: 0.875rem; margin-top: 0.75rem; color: var(--text-muted); font-weight: 500; }
+    
+    input { 
+      width: 100%; 
+      padding: 0.6rem 0.75rem; 
+      border-radius: 8px; 
+      border: 1px solid var(--border); 
+      background: var(--input-bg); 
+      color: var(--text); 
+      margin-top: 0.25rem; 
+      box-sizing: border-box; 
+      font-size: 0.95rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    button { 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 0.85rem 1.5rem; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      font-size: 1rem;
+      width: 100%; 
+      margin-top: 1.25rem; 
+      transition: background 0.2s ease;
+    }
+
+    button:hover { background: var(--primary-hover); }
+
+    .stat { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
 
     /* SVG Visualizer Styles */
-    .svg-wrapper { width: 100%; border-radius: 8px; overflow: hidden; margin-top: 0.75rem; }
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.25rem; }
-    .badge-safe { background: #059669; color: #ecfdf5; }
-    .badge-warning { background: #d97706; color: #fffbeb; }
-    .badge-alert { background: #dc2626; color: #fef2f2; }
-    .svg-title { font-size: 12px; font-weight: 700; fill: #94a3b8; }
-    .svg-subtitle { font-size: 11px; fill: #38bdf8; font-weight: 600; }
-    .svg-title-rescaled { font-size: 12px; font-weight: 700; fill: #a5b4fc; }
-    .svg-subtitle-rescaled { font-size: 11px; fill: #818cf8; font-weight: 600; }
+    .svg-wrapper { width: 100%; border-radius: 10px; overflow: hidden; margin-top: 0.75rem; border: 1px solid var(--border); }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .badge-safe { background: #e8f0eb; color: #2d5a38; }
+    .badge-warning { background: #fff4e5; color: #b45309; }
+    .badge-alert { background: #fde8e8; color: #9b1c1c; }
+    
+    .svg-title { font-size: 12px; font-weight: 700; fill: #736760; }
+    .svg-subtitle { font-size: 11px; fill: #2d2623; font-weight: 600; }
+    .svg-title-rescaled { font-size: 12px; font-weight: 700; fill: #2d5a38; }
+    .svg-subtitle-rescaled { font-size: 11px; fill: #4a7c59; font-weight: 600; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🧶 StitchScale Engine</h1>
-    <p>Rescale any crochet or knitting pattern to match your exact gauge and yarn weight without losing geometric proportions.</p>
+    <h1>🧶 StitchScale</h1>
+    <p class="subtitle">Your pattern sizing companion. Rescale any crochet or knitting pattern to match your exact yarn and gauge—no manual arithmetic required.</p>
 
     <div class="grid">
       <!-- Input Panel -->
       <div class="card">
-        <h3>1. Pattern Gauge (per 4 inches / 10 cm)</h3>
+        <h3>1. Pattern Gauge (per 4 in / 10 cm)</h3>
         <label>Pattern Stitches</label>
         <input type="number" id="pStitches" value="20">
         <label>Pattern Rows</label>
@@ -54,7 +121,7 @@
         <label>Target Height (inches)</label>
         <input type="number" id="tHeight" value="30">
 
-        <h3>4. Pattern Repeat Rule (Optional)</h3>
+        <h3>4. Stitch Repeat Rule (Optional)</h3>
         <div style="display: flex; gap: 0.5rem;">
           <div style="flex: 1;">
             <label>Multiple of</label>
@@ -72,30 +139,30 @@
       <!-- Output Panel -->
       <div class="card">
         <h3>Calculated Adjustments</h3>
-        <div>New Cast-On / Starting Chain: <span class="stat" id="outStitches">80</span> stitches</div>
+        <div>Starting Cast-On / Chain: <span class="stat" id="outStitches">80</span> stitches</div>
         <div id="repeatBox"></div>
         <div style="margin-top:0.75rem;">New Total Rows: <span class="stat" id="outRows">165</span> rows</div>
 
         <!-- Dynamic SVG Visualizer Component -->
-        <div style="margin-top: 1rem;">
+        <div style="margin-top: 1.25rem;">
           <div id="safety-badge" class="badge badge-safe">Scale: 100% (Safe Drape)</div>
           <div class="svg-wrapper">
             <svg id="stitch-canvas" viewBox="0 0 700 350" preserveAspectRatio="xMidYMid meet">
               <defs>
                 <pattern id="stitch-grid" width="14" height="14" patternUnits="userSpaceOnUse">
-                  <path d="M 14 0 L 0 0 0 14" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="2 2"/>
+                  <path d="M 14 0 L 0 0 0 14" fill="none" stroke="#d8cebe" stroke-width="1" stroke-dasharray="2 2"/>
                 </pattern>
               </defs>
-              <rect width="100%" height="100%" fill="#0f172a" rx="8"/>
+              <rect width="100%" height="100%" fill="#f5efeb" rx="8"/>
 
               <g id="box-original">
-                <rect id="rect-original" fill="url(#stitch-grid)" stroke="#475569" stroke-width="2" rx="6"/>
+                <rect id="rect-original" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2" rx="6"/>
                 <text id="label-orig-title" class="svg-title" text-anchor="middle">Pattern Target</text>
                 <text id="label-orig-dims" class="svg-subtitle" text-anchor="middle"></text>
               </g>
 
               <g id="box-rescaled">
-                <rect id="rect-rescaled" fill="#1e1b4b" fill-opacity="0.6" stroke="#6366f1" stroke-width="2.5" rx="6"/>
+                <rect id="rect-rescaled" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5" rx="6"/>
                 <text id="label-resc-title" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
                 <text id="label-resc-dims" class="svg-subtitle-rescaled" text-anchor="middle"></text>
               </g>
@@ -103,10 +170,10 @@
           </div>
         </div>
 
-        <div style="margin-top:1.5rem; border-top: 1px solid #334155; padding-top: 1rem;">
-          <h4>Export High-Res PDF Blueprint</h4>
-          <p style="font-size:0.85rem; color:#94a3b8;">Includes row-by-row stitch counts and custom sizing diagram.</p>
-          <button style="background: #22c55e;" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
+        <div style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+          <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable PDF Blueprint</h4>
+          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Includes couch-ready row counting checkboxes and full sizing diagrams.</p>
+          <button style="background: var(--accent-sage);" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
         </div>
       </div>
     </div>
@@ -164,7 +231,6 @@
         const wLower = ((sLower / ySt) * 4).toFixed(1);
         const wUpper = ((sUpper / ySt) * 4).toFixed(1);
 
-        // Auto-select nearest valid match
         if (Math.abs(rawStitches - sLower) <= Math.abs(rawStitches - sUpper)) {
           finalStitches = sLower;
         } else {
@@ -172,9 +238,9 @@
         }
 
         repeatHtml = `
-          <div style="background:#0f172a; padding:0.75rem; border-radius:6px; margin-top:0.5rem; border:1px solid #334155; font-size:0.85rem;">
-            <div style="color:#a5b4fc; font-weight:600; margin-bottom:0.25rem;">✨ Repeat Rule Guard Applied (${rMult} + ${rOff})</div>
-            <div style="color:#94a3b8;">Raw Calculated Target: ${rawStitches} sts</div>
+          <div style="background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6; font-size:0.85rem;">
+            <div style="color:#2d5a38; font-weight:600; margin-bottom:0.25rem;">✨ Repeat Rule Applied (${rMult} + ${rOff})</div>
+            <div style="color:#736760;">Raw Calculated Target: ${rawStitches} sts</div>
             <div style="margin-top:0.35rem;">• <b>Option A (Lower):</b> ${sLower} sts (${wLower}")</div>
             <div>• <b>Option B (Upper):</b> ${sUpper} sts (${wUpper}")</div>
           </div>
