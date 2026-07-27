@@ -15,6 +15,7 @@
       --border: #e6ded6;
       --input-bg: #f5efeb;
       --accent-sage: #4a7c59;
+      --accent-sage-hover: #3d6849;
     }
 
     body { 
@@ -27,22 +28,6 @@
     }
 
     .container { max-width: 960px; margin: 0 auto; }
-    
-    .unlocked-banner {
-      display: none;
-      background: #e8f0eb;
-      border: 1px solid #4a7c59;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-    .unlocked-banner-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
 
     .header-bar {
       display: flex;
@@ -243,9 +228,9 @@
       position: absolute;
       top: 1.5rem;
       right: 1.5rem;
-      background: #fdf2f2;
-      border: 1px dashed #e53e3e;
-      color: #c53030;
+      background: #e8f0eb;
+      border: 1px solid #4a7c59;
+      color: #2d5a38;
       font-size: 0.72rem;
       font-weight: 800;
       padding: 4px 10px;
@@ -342,7 +327,7 @@
     @media print {
       body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; font-size: 11pt; }
       .container { max-width: 100% !important; margin: 0 !important; }
-      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .unlocked-banner, .no-print, .shape-selector, .paper-watermark { 
+      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .no-print, .shape-selector, .paper-watermark { 
         display: none !important; 
       }
       .grid { display: block !important; }
@@ -360,19 +345,6 @@
 </head>
 <body>
   <div class="container">
-    
-    <!-- Post-Checkout Success Banner -->
-    <div id="unlockedBanner" class="unlocked-banner">
-      <div class="unlocked-banner-content">
-        <div>
-          <h3 style="margin: 0; color: #2d5a38; border: none; padding: 0;">🎉 PDF Blueprint Unlocked!</h3>
-          <p style="margin: 0.25rem 0 0 0; color: #4a7c59; font-size: 0.9rem;">Your custom project worksheet is ready for printing or saving.</p>
-        </div>
-        <button onclick="window.print()" style="background: #4a7c59; color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
-          🖨️ Print / Save as PDF
-        </button>
-      </div>
-    </div>
 
     <!-- Print-Only Header -->
     <div class="print-only" style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem; margin-bottom: 1rem;">
@@ -603,11 +575,11 @@
 
         <div class="no-print" style="margin-top:1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
           <h4 style="margin: 0 0 0.25rem 0; color: #2d2623;">Export Printable PDF Blueprint</h4>
-          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">Includes couch-ready row counting checkboxes, shaping schedules, and sizing diagrams.</p>
+          <p style="font-size:0.85rem; color: var(--text-muted); margin: 0 0 0.75rem 0;">StitchScale is 100% free! Print or save your couch-ready project worksheet below.</p>
           
-          <div style="display: flex; gap: 0.5rem;">
-            <button style="background: #736760; flex: 1;" class="primary-btn" onclick="window.print()">👁️ Preview PDF</button>
-            <button style="background: var(--accent-sage); flex: 1.5;" class="primary-btn" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button style="background: var(--accent-sage); flex: 1;" class="primary-btn" onclick="window.print()">🖨️ Print / Save PDF Blueprint</button>
+            <button style="background: var(--primary); flex: 1;" class="primary-btn" onclick="triggerSupport()">🧶 Buy Me a Skein of Yarn ($3)</button>
           </div>
         </div>
       </div>
@@ -617,7 +589,7 @@
          📄 REALISTIC PRINTABLE PAPER SHEET PREVIEW
          ======================================================= -->
     <div class="paper-sheet">
-      <div class="paper-watermark no-print">SAMPLE PREVIEW SHEET</div>
+      <div class="paper-watermark no-print">FREE COMMUNITY WORKSHEET</div>
 
       <div style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem;">
         <div class="paper-header-title">🧶 STITCHSCALE PROJECT BLUEPRINT</div>
@@ -840,13 +812,6 @@
       document.getElementById('tTopWidth').value = 16;
       document.getElementById('tTaperLength').value = 18;
       calculateScale();
-    }
-
-    function checkPaidStatus() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('paid') === 'true') {
-        document.getElementById('unlockedBanner').style.display = 'block';
-      }
     }
 
     function loadSavedInputs() {
@@ -1082,7 +1047,7 @@
       }
     }
 
-    function triggerCheckout() {
+    function triggerSupport() {
       window.location.href = "https://buy.stripe.com/9B6eVegcIgGQ5a85p6bo400";
     }
 
@@ -1094,7 +1059,6 @@
 
     // Initialize
     populateHookDropdowns();
-    checkPaidStatus();
     loadSavedInputs();
     calculateScale();
   </script>
