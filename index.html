@@ -11,7 +11,7 @@
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
     .card { background: var(--card); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
     label { display: block; font-size: 0.875rem; margin-top: 0.75rem; color: #94a3b8; }
-    input { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-top: 0.25rem; }
+    input { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-top: 0.25rem; box-sizing: border-box; }
     button { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; }
     button:hover { opacity: 0.9; }
     .stat { font-size: 1.5rem; font-weight: 700; color: #38bdf8; }
@@ -54,6 +54,18 @@
         <label>Target Height (inches)</label>
         <input type="number" id="tHeight" value="30">
 
+        <h3>4. Pattern Repeat Rule (Optional)</h3>
+        <div style="display: flex; gap: 0.5rem;">
+          <div style="flex: 1;">
+            <label>Multiple of</label>
+            <input type="number" id="rMultiple" placeholder="e.g. 6" min="1">
+          </div>
+          <div style="flex: 1;">
+            <label>Plus (+)</label>
+            <input type="number" id="rOffset" placeholder="e.g. 1" value="0" min="0">
+          </div>
+        </div>
+
         <button onclick="calculateScale()">Recalculate Pattern</button>
       </div>
 
@@ -61,7 +73,8 @@
       <div class="card">
         <h3>Calculated Adjustments</h3>
         <div>New Cast-On / Starting Chain: <span class="stat" id="outStitches">80</span> stitches</div>
-        <div style="margin-top:0.5rem;">New Total Rows: <span class="stat" id="outRows">165</span> rows</div>
+        <div id="repeatBox"></div>
+        <div style="margin-top:0.75rem;">New Total Rows: <span class="stat" id="outRows">165</span> rows</div>
 
         <!-- Dynamic SVG Visualizer Component -->
         <div style="margin-top: 1rem;">
@@ -112,6 +125,8 @@
           if (data.yRow) document.getElementById('yRows').value = data.yRow;
           if (data.w) document.getElementById('tWidth').value = data.w;
           if (data.h) document.getElementById('tHeight').value = data.h;
+          if (data.rMult) document.getElementById('rMultiple').value = data.rMult;
+          if (data.rOff !== undefined) document.getElementById('rOffset').value = data.rOff;
         } catch (e) {
           console.error('Error loading saved state:', e);
         }
@@ -125,15 +140,49 @@
       const yRow = parseFloat(document.getElementById('yRows').value) || 1;
       const w = parseFloat(document.getElementById('tWidth').value) || 0;
       const h = parseFloat(document.getElementById('tHeight').value) || 0;
+      const rMult = parseInt(document.getElementById('rMultiple').value) || 0;
+      const rOff = parseInt(document.getElementById('rOffset').value) || 0;
 
       // Save inputs to browser storage automatically
-      localStorage.setItem('stitchscale_state', JSON.stringify({ pSt, pRow, ySt, yRow, w, h }));
+      localStorage.setItem('stitchscale_state', JSON.stringify({ pSt, pRow, ySt, yRow, w, h, rMult, rOff }));
 
-      // Formulas
-      const newStitches = Math.round((w / 4) * ySt);
+      const rawStitches = Math.round((w / 4) * ySt);
       const newRows = Math.round((h / 4) * yRow);
 
-      document.getElementById('outStitches').innerText = newStitches;
+      let finalStitches = rawStitches;
+      let repeatHtml = '';
+
+      // Stitch Repeat Logic Guard
+      if (rMult > 1) {
+        const kApprox = (rawStitches - rOff) / rMult;
+        const kLower = Math.floor(kApprox);
+        const kUpper = Math.ceil(kApprox);
+
+        const sLower = Math.max(rOff, kLower * rMult + rOff);
+        const sUpper = kUpper * rMult + rOff;
+
+        const wLower = ((sLower / ySt) * 4).toFixed(1);
+        const wUpper = ((sUpper / ySt) * 4).toFixed(1);
+
+        // Auto-select nearest valid match
+        if (Math.abs(rawStitches - sLower) <= Math.abs(rawStitches - sUpper)) {
+          finalStitches = sLower;
+        } else {
+          finalStitches = sUpper;
+        }
+
+        repeatHtml = `
+          <div style="background:#0f172a; padding:0.75rem; border-radius:6px; margin-top:0.5rem; border:1px solid #334155; font-size:0.85rem;">
+            <div style="color:#a5b4fc; font-weight:600; margin-bottom:0.25rem;">✨ Repeat Rule Guard Applied (${rMult} + ${rOff})</div>
+            <div style="color:#94a3b8;">Raw Calculated Target: ${rawStitches} sts</div>
+            <div style="margin-top:0.35rem;">• <b>Option A (Lower):</b> ${sLower} sts (${wLower}")</div>
+            <div>• <b>Option B (Upper):</b> ${sUpper} sts (${wUpper}")</div>
+          </div>
+        `;
+      }
+
+      document.getElementById('outStitches').innerText = finalStitches;
+      document.getElementById('repeatBox').innerHTML = repeatHtml;
       document.getElementById('outRows').innerText = newRows;
 
       // Render live SVG preview
@@ -207,7 +256,7 @@
     }
 
     // Attach real-time input listeners
-    ['pStitches', 'pRows', 'yStitches', 'yRows', 'tWidth', 'tHeight'].forEach(id => {
+    ['pStitches', 'pRows', 'yStitches', 'yRows', 'tWidth', 'tHeight', 'rMultiple', 'rOffset'].forEach(id => {
       document.getElementById(id).addEventListener('input', calculateScale);
     });
 
