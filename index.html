@@ -172,11 +172,11 @@
 
     .stat { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
 
-    /* Shape Selector Tabs */
+    /* 5-Column Shape Selector Tabs */
     .shape-selector {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.35rem;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.25rem;
       margin-top: 0.5rem;
       background: var(--input-bg);
       padding: 4px;
@@ -186,14 +186,17 @@
     .shape-btn {
       background: transparent;
       border: none;
-      padding: 8px 4px;
+      padding: 8px 2px;
       border-radius: 7px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
       text-align: center;
       transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .shape-btn.active {
       background: var(--card);
@@ -340,6 +343,7 @@
       .grid { grid-template-columns: 1fr; }
       body { padding: 1rem; }
       .tracker-grid { grid-template-columns: repeat(5, 1fr); }
+      .shape-selector { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -375,10 +379,11 @@
         <!-- Shape Type Selector -->
         <h3>1. Project Geometry</h3>
         <div class="shape-selector">
-          <button id="btnRect" class="shape-btn active" onclick="setShape('rect')">⬜ Rectangle</button>
-          <button id="btnTaper" class="shape-btn" onclick="setShape('taper')">📐 Sleeve / Taper</button>
-          <button id="btnTriangle" class="shape-btn" onclick="setShape('triangle')">🔺 Triangle / Shawl</button>
-          <button id="btnCircle" class="shape-btn" onclick="setShape('circle')">⚪ Circle / Hat</button>
+          <button id="btnRect" class="shape-btn active" onclick="setShape('rect')">⬜ Rect</button>
+          <button id="btnTaper" class="shape-btn" onclick="setShape('taper')">📐 Taper</button>
+          <button id="btnTriangle" class="shape-btn" onclick="setShape('triangle')">🔺 Triangle</button>
+          <button id="btnCircle" class="shape-btn" onclick="setShape('circle')">⚪ Circle</button>
+          <button id="btnCurve" class="shape-btn" onclick="setShape('curve')">🧥 Curve</button>
         </div>
 
         <h3>2. Pattern Specifications</h3>
@@ -465,7 +470,7 @@
 
         <h3>4. Target Dimensions</h3>
         
-        <!-- Rectangle & Preset Inputs -->
+        <!-- Rectangle Inputs -->
         <div id="inputsRect">
           <div class="label-row">
             <label>Standard Size Presets</label>
@@ -523,6 +528,31 @@
         <div id="inputsCircle" style="display: none;">
           <label>Target Crown / Circumference Diameter (<span class="unit-name">in</span>)</label>
           <input type="number" id="tDiameter" value="20">
+        </div>
+
+        <!-- Complex Curve / Armhole Inputs -->
+        <div id="inputsCurve" style="display: none;">
+          <div class="label-row">
+            <label>Shaping Curve Profile</label>
+          </div>
+          <select id="curveStyle" onchange="calculateScale()">
+            <option value="armhole" selected>Set-In Armhole (Underarm Notch + Curved Slope)</option>
+            <option value="raglan">Raglan Yoke (Flat Underarm + 45° Diagonal Line)</option>
+            <option value="neckline">Scoop Neckline / Crown (Center Drop + Curved Sides)</option>
+          </select>
+
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+            <div style="flex: 1;">
+              <label>Bottom / Bust Width (<span class="unit-name">in</span>)</label>
+              <input type="number" id="tCurveStartW" value="20">
+            </div>
+            <div style="flex: 1;">
+              <label>Top / Shoulder Width (<span class="unit-name">in</span>)</label>
+              <input type="number" id="tCurveEndW" value="14">
+            </div>
+          </div>
+          <label style="margin-top: 0.5rem;">Armhole / Shaping Height (<span class="unit-name">in</span>)</label>
+          <input type="number" id="tCurveLength" value="8">
         </div>
 
         <h3>5. Stitch Repeat Rule (Optional)</h3>
@@ -722,6 +752,7 @@
           <li><b>Flat Swatch First:</b> Swatch a flat 5" x 5" square in your main stitch pattern (even for sleeves or circles) to measure baseline gauge per 4 inches / 10 cm.</li>
           <li><b>Sleeves & Tapers:</b> Measure your cuff diameter and fullest bicep width. StitchScale calculates the exact shaping interval automatically.</li>
           <li><b>Circles & Crowns:</b> Measure target circumference or flat crown diameter across the center before transitioning to straight sides.</li>
+          <li><b>Complex Curves:</b> Enter bust/underarm width, shoulder width, and armhole depth. StitchScale handles the multi-phase bind-off and slope schedule.</li>
         </ol>
       </div>
     </details>
@@ -736,7 +767,8 @@
       rect: "⚡ Load Sample Scenario (Worsted → Chunky Throw Blanket)",
       taper: "⚡ Load Sample Scenario (DK → Bulky Tapered Sleeve)",
       triangle: "⚡ Load Sample Scenario (Fingering → DK Triangle Shawl)",
-      circle: "⚡ Load Sample Scenario (Worsted → Super Bulky Beanie Crown)"
+      circle: "⚡ Load Sample Scenario (Worsted → Super Bulky Beanie Crown)",
+      curve: "⚡ Load Sample Scenario (DK → Bulky Sweater Armhole Curve)"
     };
 
     const HOOK_LIST = [
@@ -822,15 +854,20 @@
 
     function setShape(shape) {
       currentShape = shape;
-      ['btnRect', 'btnTaper', 'btnTriangle', 'btnCircle'].forEach(id => {
-        document.getElementById(id).classList.remove('active');
+      ['btnRect', 'btnTaper', 'btnTriangle', 'btnCircle', 'btnCurve'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
       });
-      document.getElementById('btn' + shape.charAt(0).toUpperCase() + shape.slice(1)).classList.add('active');
+      
+      const activeBtnId = 'btn' + shape.charAt(0).toUpperCase() + shape.slice(1);
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) activeBtn.classList.add('active');
 
       document.getElementById('inputsRect').style.display = shape === 'rect' ? 'block' : 'none';
       document.getElementById('inputsTaper').style.display = shape === 'taper' ? 'block' : 'none';
       document.getElementById('inputsTriangle').style.display = shape === 'triangle' ? 'block' : 'none';
       document.getElementById('inputsCircle').style.display = shape === 'circle' ? 'block' : 'none';
+      document.getElementById('inputsCurve').style.display = shape === 'curve' ? 'block' : 'none';
 
       const linkEl = document.getElementById('sampleLink');
       if (linkEl && SAMPLE_SCENARIO_LABELS[shape]) {
@@ -912,6 +949,19 @@
         document.getElementById('rOffset').value = 0;
         document.getElementById('pYardage').value = 220;
         document.getElementById('skeinYardage').value = 90;
+      } else if (currentShape === 'curve') {
+        document.getElementById('pYarnCYC').value = 3; // DK
+        document.getElementById('yYarnCYC').value = 5; // Bulky
+        updateCYCGauge('p');
+        updateCYCGauge('y');
+        document.getElementById('pHook').value = "4.50";
+        document.getElementById('yHook').value = "6.50";
+        document.getElementById('curveStyle').value = 'armhole';
+        document.getElementById('tCurveStartW').value = 20;
+        document.getElementById('tCurveEndW').value = 14;
+        document.getElementById('tCurveLength').value = 8;
+        document.getElementById('pYardage').value = 550;
+        document.getElementById('skeinYardage').value = 160;
       }
       calculateScale();
     }
@@ -974,7 +1024,7 @@
         const wInches = currentUnit === 'in' ? w : w / 2.54;
         const hInches = currentUnit === 'in' ? h : h / 2.54;
         targetAreaInches = wInches * hInches;
-        patternAreaInches = targetAreaInches; // base target dimensions
+        patternAreaInches = targetAreaInches;
 
         if (rMult > 1) {
           const kApprox = (rawStitches - rOff) / rMult;
@@ -1054,6 +1104,73 @@
         document.getElementById('outputPrimary').innerHTML = `Magic Ring Start: <span class="stat">6</span> sts → Final Crown: <span class="stat">${finalStitches}</span> sts`;
         document.getElementById('paperTargetSummary').innerHTML = `Magic Ring Start: 6 sts → Final Crown: ${finalStitches} sts (${diam}" diameter)`;
       }
+      else if (currentShape === 'curve') {
+        const cStyle = document.getElementById('curveStyle').value;
+        const startW = parseFloat(document.getElementById('tCurveStartW').value) || 0;
+        const endW = parseFloat(document.getElementById('tCurveEndW').value) || 0;
+        const len = parseFloat(document.getElementById('tCurveLength').value) || 0;
+
+        const startSts = Math.round((startW / refDivisor) * ySt);
+        const endSts = Math.round((endW / refDivisor) * ySt);
+        totalRows = Math.round((len / refDivisor) * yRow);
+
+        const deltaStsSide = Math.max(0, Math.floor((startSts - endSts) / 2));
+        finalStitches = startSts;
+
+        const avgWInches = currentUnit === 'in' ? (startW + endW) / 2 : ((startW + endW) / 2) / 2.54;
+        const lenInches = currentUnit === 'in' ? len : len / 2.54;
+        targetAreaInches = avgWInches * lenInches * 0.88; // Accounting for curve cutout
+        patternAreaInches = targetAreaInches;
+
+        if (cStyle === 'armhole') {
+          const bindOffSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.35));
+          const remSts = deltaStsSide - bindOffSts;
+          const rapidDecs = Math.min(remSts, Math.round(remSts * 0.65));
+          const gentleDecs = remSts - rapidDecs;
+
+          const activeShapingRows = 2 + (rapidDecs * 2) + (gentleDecs * 4);
+          const straightRows = Math.max(0, totalRows - activeShapingRows);
+
+          shapingHtml = `
+            <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+              <b style="color:#2d5a38;">🧥 Set-In Armhole Shaping Breakdown:</b>
+              <div style="margin-top:0.25rem;">• <b>Start Width:</b> ${startSts} sts → <b>Top Target:</b> ${endSts} sts (${totalRows} rows total)</div>
+              <div>• <b>Phase 1 (Underarm Cutout):</b> Bind off <b>${bindOffSts} sts</b> at beg of next 2 rows.</div>
+              ${rapidDecs > 0 ? `<div>• <b>Phase 2 (Rapid Curve):</b> Dec 1 st at each edge <b>EVERY 2 ROWS</b> ${rapidDecs} times.</div>` : ''}
+              ${gentleDecs > 0 ? `<div>• <b>Phase 3 (Gentle Curve):</b> Dec 1 st at each edge <b>EVERY 4 ROWS</b> ${gentleDecs} times.</div>` : ''}
+              ${straightRows > 0 ? `<div>• <b>Phase 4 (Vertical Run):</b> Work <b>${straightRows} rows straight</b> with no shaping up to shoulder.</div>` : ''}
+            </div>
+          `;
+        } else if (cStyle === 'raglan') {
+          const notchSts = Math.min(deltaStsSide, Math.round(deltaStsSide * 0.25));
+          const diagDecs = deltaStsSide - notchSts;
+          const diagRows = totalRows - 2;
+          const rowInterval = diagDecs > 0 ? Math.max(2, Math.floor(diagRows / diagDecs)) : 2;
+
+          shapingHtml = `
+            <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+              <b style="color:#2d5a38;">🧥 Raglan Yoke Shaping Breakdown:</b>
+              <div style="margin-top:0.25rem;">• <b>Start Width:</b> ${startSts} sts → <b>Top Neck:</b> ${endSts} sts (${totalRows} rows total)</div>
+              <div>• <b>Underarm Notch:</b> Bind off <b>${notchSts} sts</b> at beg of next 2 rows.</div>
+              <div>• <b>Diagonal Raglan Slope:</b> Dec 1 st at each edge <b>EVERY ${rowInterval} ROWS</b> (${diagDecs} times total).</div>
+            </div>
+          `;
+        } else if (cStyle === 'neckline') {
+          const centerDropSts = Math.round(startSts * 0.40);
+          const sideDecs = Math.floor((startSts - centerDropSts - endSts) / 2);
+
+          shapingHtml = `
+            <div style="font-size:0.83rem; color:#2d2623; background:#f5efeb; padding:0.75rem; border-radius:8px; margin-top:0.5rem; border:1px solid #e6ded6;">
+              <b style="color:#2d5a38;">🧥 Scoop Neckline Shaping Breakdown:</b>
+              <div>• <b>Center Neck Drop:</b> Bind off center <b>${centerDropSts} sts</b> on Row 1.</div>
+              <div>• <b>Side Curves:</b> Work each shoulder separately, decreasing 1 st at neck edge <b>EVERY 2 ROWS</b> ${sideDecs} times.</div>
+            </div>
+          `;
+        }
+
+        document.getElementById('outputPrimary').innerHTML = `Panel Cast-On: <span class="stat">${startSts}</span> sts → Top Target: <span class="stat">${endSts}</span> sts`;
+        document.getElementById('paperTargetSummary').innerHTML = `Panel Cast-On: ${startSts} sts → Top Target: ${endSts} sts (${len}" armhole depth)`;
+      }
 
       // =======================================================
       // 🧶 VOLUMETRIC YARDAGE & SKEIN ESTIMATION ENGINE
@@ -1062,13 +1179,10 @@
       const lenUnit = currentUnit === 'in' ? 'yds' : 'm';
 
       if (pYardageIn > 0) {
-        // Volumetric scaling from pattern baseline:
-        // Total yarn length scales linearly with row gauge and surface area ratio
         const rowGaugeRatio = yRow / pRow;
         const areaRatio = patternAreaInches > 0 ? (targetAreaInches / patternAreaInches) : 1;
         estYardage = Math.round(pYardageIn * rowGaugeRatio * areaRatio);
       } else {
-        // Empirical surface density estimation (based on CYC weight category yards/sq in)
         const density = CYC_DATA[yCYCVal].ydsPerSqIn;
         estYardage = Math.round(targetAreaInches * density);
       }
@@ -1077,7 +1191,6 @@
       let skeinText = `--`;
 
       if (skeinSizeIn > 0 && estYardage > 0) {
-        // Add 10% safety cushion for swatching and weaving ends
         const bufferedYardage = estYardage * 1.10;
         const skeinsNeeded = Math.ceil(bufferedYardage / skeinSizeIn);
         skeinText = `${skeinsNeeded} skeins (${skeinSizeIn} ${lenUnit}/skein)`;
@@ -1175,12 +1288,7 @@
 
         const oYTop = centerY - oH / 2;
         const oYBot = centerY + oH / 2;
-        const oXTopL = centerX1 - oTopW / 2;
-        const oXTopR = centerX1 + oTopW / 2;
-        const oXBotR = centerX1 + oCuffW / 2;
-        const oXBotL = centerX1 - oCuffW / 2;
-
-        const pointsOrig = `${oXTopL},${oYTop} ${oXTopR},${oYTop} ${oXBotR},${oYBot} ${oXBotL},${oYBot}`;
+        const pointsOrig = `${centerX1 - oTopW/2},${oYTop} ${centerX1 + oTopW/2},${oYTop} ${centerX1 + oCuffW/2},${oYBot} ${centerX1 - oCuffW/2},${oYBot}`;
 
         const rTopW = rescTopW * pxPerUnit;
         const rCuffW = rescCuffW * pxPerUnit;
@@ -1188,12 +1296,7 @@
 
         const rYTop = centerY - rH / 2;
         const rYBot = centerY + rH / 2;
-        const rXTopL = centerX2 - rTopW / 2;
-        const rXTopR = centerX2 + rTopW / 2;
-        const rXBotR = centerX2 + rCuffW / 2;
-        const rXBotL = centerX2 - rCuffW / 2;
-
-        const pointsResc = `${rXTopL},${rYTop} ${rXTopR},${rYTop} ${rXBotR},${rYBot} ${rXBotL},${rYBot}`;
+        const pointsResc = `${centerX2 - rTopW/2},${rYTop} ${centerX2 + rTopW/2},${rYTop} ${centerX2 + rCuffW/2},${rYBot} ${centerX2 - rCuffW/2},${rYBot}`;
 
         gOrig.innerHTML = `
           <polygon points="${pointsOrig}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
@@ -1259,6 +1362,48 @@
           <text x="${centerX2}" y="${centerY - rR - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
           <text x="${centerX2}" y="${centerY + rR + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescDiam.toFixed(1)}${unitSym} Diam.</text>
         `;
+      } else if (currentShape === 'curve') {
+        const origStartW = parseFloat(document.getElementById('tCurveStartW').value) || 0;
+        const origEndW = parseFloat(document.getElementById('tCurveEndW').value) || 0;
+        const origH = parseFloat(document.getElementById('tCurveLength').value) || 0;
+
+        const rescStartW = origStartW * scaleFactor;
+        const rescEndW = origEndW * scaleFactor;
+        const rescH = origH * scaleFactor;
+
+        const maxW = Math.max(origStartW, origEndW, rescStartW, rescEndW, 1);
+        const maxH = Math.max(origH, rescH, 1);
+        const pxPerUnit = Math.min(canvasMaxW / maxW, canvasMaxH / maxH);
+
+        const oSW = origStartW * pxPerUnit, oEW = origEndW * pxPerUnit, oH = origH * pxPerUnit;
+        const rSW = rescStartW * pxPerUnit, rEW = rescEndW * pxPerUnit, rH = rescH * pxPerUnit;
+
+        const oYTop = centerY - oH/2, oYBot = centerY + oH/2;
+        const rYTop = centerY - rH/2, rYBot = centerY + rH/2;
+
+        // Path with Curved Underarm Outlets
+        const dOrig = `M ${centerX1 - oSW/2} ${oYBot} 
+                       L ${centerX1 + oSW/2} ${oYBot} 
+                       C ${centerX1 + oSW/2 - 10} ${oYBot - oH*0.3}, ${centerX1 + oEW/2} ${oYTop + oH*0.2}, ${centerX1 + oEW/2} ${oYTop} 
+                       L ${centerX1 - oEW/2} ${oYTop} 
+                       C ${centerX1 - oEW/2} ${oYTop + oH*0.2}, ${centerX1 - oSW/2 + 10} ${oYBot - oH*0.3}, ${centerX1 - oSW/2} ${oYBot} Z`;
+
+        const dResc = `M ${centerX2 - rSW/2} ${rYBot} 
+                       L ${centerX2 + rSW/2} ${rYBot} 
+                       C ${centerX2 + rSW/2 - 10} ${rYBot - rH*0.3}, ${centerX2 + rEW/2} ${rYTop + rH*0.2}, ${centerX2 + rEW/2} ${rYTop} 
+                       L ${centerX2 - rEW/2} ${rYTop} 
+                       C ${centerX2 - rEW/2} ${rYTop + rH*0.2}, ${centerX2 - rSW/2 + 10} ${rYBot - rH*0.3}, ${centerX2 - rSW/2} ${rYBot} Z`;
+
+        gOrig.innerHTML = `
+          <path d="${dOrig}" fill="url(#stitch-grid)" stroke="#a89a8c" stroke-width="2"/>
+          <text x="${centerX1}" y="${oYTop - 10}" class="svg-title" text-anchor="middle">Pattern Target</text>
+          <text x="${centerX1}" y="${oYBot + 18}" class="svg-subtitle" text-anchor="middle">${origStartW}${unitSym} Bust → ${origEndW}${unitSym} Shoulder</text>
+        `;
+        gResc.innerHTML = `
+          <path d="${dResc}" fill="#e8f0eb" fill-opacity="0.75" stroke="#4a7c59" stroke-width="2.5"/>
+          <text x="${centerX2}" y="${rYTop - 10}" class="svg-title-rescaled" text-anchor="middle">Your Fabric</text>
+          <text x="${centerX2}" y="${rYBot + 18}" class="svg-subtitle-rescaled" text-anchor="middle">${rescStartW.toFixed(1)}${unitSym} Bust → ${rescEndW.toFixed(1)}${unitSym} Shoulder</text>
+        `;
       }
 
       const pctChange = Math.round((scaleFactor - 1) * 100);
@@ -1282,7 +1427,7 @@
     }
 
     // Attach real-time input listeners
-    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'rMultiple', 'rOffset', 'pYardage', 'skeinYardage'].forEach(id => {
+    ['pStitches', 'pRows', 'yStitches', 'yRows', 'pHook', 'yHook', 'tWidth', 'tHeight', 'tCuffWidth', 'tTopWidth', 'tTaperLength', 'tWingspan', 'tSpineDepth', 'tDiameter', 'tCurveStartW', 'tCurveEndW', 'tCurveLength', 'rMultiple', 'rOffset', 'pYardage', 'skeinYardage'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateScale);
     });
