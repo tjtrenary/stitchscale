@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StitchScale | Multi-Dimensional Size Cross-Over Matrix</title>
+  <title>StitchScale | Universal Multi-Garment Size Cross-Over Matrix</title>
   <style>
     :root { 
       --primary: #c85a32; /* Warm Terracotta */
@@ -27,7 +27,7 @@
       line-height: 1.5;
     }
 
-    .container { max-width: 1050px; margin: 0 auto; }
+    .container { max-width: 1100px; margin: 0 auto; }
 
     .header-bar {
       display: flex;
@@ -67,19 +67,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
-    .sample-link {
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      cursor: pointer;
-      border-bottom: 1px dashed var(--primary);
-      display: inline-block;
-      margin-top: 0.5rem;
-    }
-    .sample-link:hover { opacity: 0.8; }
-
-    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.5rem; margin-top: 1.25rem; }
+    .grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.5rem; margin-top: 1.25rem; }
     
     .card { 
       background: var(--card); 
@@ -100,40 +88,6 @@
     }
 
     label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
-    
-    .tip-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #e6ded6;
-      color: #5c4e43;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: help;
-      position: relative;
-    }
-    .tip-icon:hover::after {
-      content: attr(data-tip);
-      position: absolute;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #2d2623;
-      color: #ffffff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 400;
-      white-space: normal;
-      width: 220px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 100;
-      pointer-events: none;
-      line-height: 1.35;
-    }
 
     input, select { 
       width: 100%; 
@@ -170,10 +124,11 @@
 
     button.primary-btn:hover { background: var(--primary-hover); }
 
-    /* Multi-Dimensional Size Chart Table Styling */
+    /* Dynamic Size Chart Table Styling */
     .size-table-wrapper {
       overflow-x: auto;
       margin-top: 0.75rem;
+      max-height: 400px;
     }
     .size-table {
       width: 100%;
@@ -184,7 +139,7 @@
       background: #f5efeb;
       color: #2d2623;
       text-align: left;
-      padding: 6px 6px;
+      padding: 6px;
       border: 1px solid var(--border);
       font-weight: 700;
       white-space: nowrap;
@@ -193,6 +148,7 @@
       padding: 5px 6px;
       border: 1px solid var(--border);
       color: var(--text);
+      vertical-align: middle;
     }
     .size-table input {
       margin-top: 0;
@@ -221,50 +177,12 @@
       line-height: 1.45;
     }
 
-    /* PRINTABLE PAPER SHEET PREVIEW */
-    .paper-sheet {
-      background: #ffffff;
-      border: 1px solid #d4c9bd;
-      border-radius: 8px;
-      padding: 2.25rem;
-      margin-top: 2rem;
-      box-shadow: 0 12px 35px rgba(45, 38, 35, 0.08);
-      position: relative;
-    }
-    
-    .paper-watermark {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      background: #e8f0eb;
-      border: 1px solid #4a7c59;
-      color: #2d5a38;
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 4px;
-      letter-spacing: 0.5px;
-    }
-
-    .paper-header-title {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #2d2623;
-      margin: 0;
-      letter-spacing: -0.3px;
-    }
-    .paper-header-sub {
-      font-size: 0.82rem;
-      color: #736760;
-      margin-top: 0.15rem;
-    }
-
     .print-only { display: none; }
 
     @media print {
       body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; font-size: 11pt; }
       .container { max-width: 100% !important; margin: 0 !important; }
-      .header-bar, .unit-toggle, .sample-link, button, .tip-icon, details, .no-print, .paper-watermark { 
+      .header-bar, .unit-toggle, button, details, .no-print, .paper-watermark { 
         display: none !important; 
       }
       .grid { display: block !important; }
@@ -285,13 +203,13 @@
     <!-- Print-Only Header -->
     <div class="print-only" style="border-bottom: 2px solid #2d2623; padding-bottom: 0.5rem; margin-bottom: 1rem;">
       <h2 style="margin: 0; font-size: 1.5rem;">🧶 STITCHSCALE SIZE CROSS-OVER REPORT</h2>
-      <div style="font-size: 0.85rem; color: #555; margin-top: 0.25rem;">Multi-Dimensional Garment Sizing & Tension Worksheet</div>
+      <div style="font-size: 0.85rem; color: #555; margin-top: 0.25rem;">Universal Multi-Dimensional Sizing & Tension Worksheet</div>
     </div>
 
     <div class="header-bar">
       <div>
         <h1>🧶 StitchScale</h1>
-        <p class="subtitle">Multi-Dimensional Size Cross-Over Matrix & Gauge Matcher.</p>
+        <p class="subtitle">Universal Multi-Dimensional Size Cross-Over Matrix & Gauge Matcher.</p>
       </div>
       
       <div class="unit-toggle">
@@ -300,17 +218,23 @@
       </div>
     </div>
 
-    <div class="no-print">
-      <span class="sample-link" onclick="loadSampleScenario()">⚡ Load Sample Scenario (Garment Sizing Discrepancy)</span>
-    </div>
-
     <div class="grid">
       <!-- Input Panel -->
       <div class="card">
         
-        <h3>1. Pattern & Swatch Specifications</h3>
+        <h3>1. Garment Type & Specifications</h3>
         
-        <div style="display: flex; gap: 0.5rem;">
+        <div class="label-row"><label>Preset Garment Category</label></div>
+        <select id="garmentPreset" onchange="loadPresetCategory()">
+          <option value="sweater" selected>Sweater / Top / Blouse</option>
+          <option value="pants">Pants / Trousers / Shorts</option>
+          <option value="socks">Socks / Footwear</option>
+          <option value="hats">Hats / Beanies</option>
+          <option value="skirt">Skirt / Dress</option>
+          <option value="custom">Custom Garment</option>
+        </select>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
           <div style="flex: 1;">
             <div class="label-row"><label>Pattern Yarn Weight</label></div>
             <select id="pYarnCYC" onchange="updateCYCGauge('p')">
@@ -372,72 +296,28 @@
           </div>
         </div>
 
-        <h3>2. Your Desired Fit</h3>
+        <h3>2. Your Target Primary Fit</h3>
         <div style="display: flex; gap: 0.5rem;">
           <div style="flex: 1;">
-            <label>Target Bust / Chest (<span class="unit-name">in</span>)</label>
-            <input type="number" id="targetBust" value="40" oninput="calculateMatrix()">
-          </div>
-          <div style="flex: 1;">
-            <label>Target Sleeve Length (<span class="unit-name">in</span>)</label>
-            <input type="number" id="targetSleeve" value="18" oninput="calculateMatrix()">
+            <label id="targetLabel">Target Bust / Chest Circumference (<span class="unit-name">in</span>)</label>
+            <input type="number" id="targetPrimary" value="40" oninput="calculateMatrix()">
           </div>
         </div>
 
-        <h3>3. Pattern Multi-Dimensional Size Chart</h3>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Enter each size's designer-intended dimensions.</p>
+        <h3>3. Pattern Multi-Dimensional Size Chart & Columns</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Configure your measurement columns and enter designer specifications for each size.</p>
 
         <div class="size-table-wrapper">
-          <table class="size-table" id="sizeTableInputs">
-            <thead>
-              <tr>
-                <th>Size</th>
-                <th>Bust (<span class="unit-name">in</span>)</th>
-                <th>Sleeve L. (<span class="unit-name">in</span>)</th>
-                <th>Total L. (<span class="unit-name">in</span>)</th>
-                <th style="width: 28px;"></th>
-              </tr>
-            </thead>
-            <tbody id="sizeRowsBody">
-              <tr>
-                <td><input type="text" value="XS" style="width:100%;"></td>
-                <td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="17" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="22" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-              </tr>
-              <tr>
-                <td><input type="text" value="S" style="width:100%;"></td>
-                <td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="17.5" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="23" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-              </tr>
-              <tr>
-                <td><input type="text" value="M" style="width:100%;"></td>
-                <td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="18" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="24" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-              </tr>
-              <tr>
-                <td><input type="text" value="L" style="width:100%;"></td>
-                <td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="18.5" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="25" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-              </tr>
-              <tr>
-                <td><input type="text" value="XL" style="width:100%;"></td>
-                <td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="19" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><input type="number" value="26" style="width:100%;" oninput="calculateMatrix()"></td>
-                <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-              </tr>
-            </tbody>
+          <table class="size-table" id="dynamicSizeTable">
+            <thead id="dynamicTableHead"></thead>
+            <tbody id="dynamicTableBody"></tbody>
           </table>
         </div>
-        <button type="button" class="primary-btn no-print" style="background: var(--input-bg); color: var(--text); border: 1px dashed var(--border); margin-top: 0.75rem;" onclick="addSizeRow()">+ Add Size</button>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+          <button type="button" class="primary-btn no-print" style="background: var(--input-bg); color: var(--text); border: 1px dashed var(--border); flex: 1; margin-top: 0;" onclick="addColumn()">+ Add Measurement Column</button>
+          <button type="button" class="primary-btn no-print" style="background: var(--input-bg); color: var(--text); border: 1px dashed var(--border); flex: 1; margin-top: 0;" onclick="addSizeRow()">+ Add Written Size</button>
+        </div>
 
         <button class="primary-btn no-print" onclick="calculateMatrix()">Calculate Cross-Over Matrix</button>
       </div>
@@ -450,7 +330,7 @@
         <div id="recommendationBox" class="recommendation-box">
           <div class="recommendation-title">🎯 Optimal Size Match: Size S</div>
           <div class="recommendation-body" id="recText">
-            Because your gauge differs from the pattern, following instructions for <b>Size S</b> will yield an actual finished bust of 42.4 inches at your tension.
+            Because your gauge differs from the pattern, following instructions for <b>Size S</b> will yield an actual effective measurement matching your target fit.
           </div>
         </div>
 
@@ -459,17 +339,8 @@
           <h4 style="margin: 0 0 0.5rem 0; color: #2d2623; font-size: 0.92rem;">📊 Translated Effective Measurements</h4>
           <div class="size-table-wrapper">
             <table class="size-table">
-              <thead>
-                <tr>
-                  <th>Written Size</th>
-                  <th>Effective Bust</th>
-                  <th>Effective Sleeve L.</th>
-                  <th>Effective Total L.</th>
-                </tr>
-              </thead>
-              <tbody id="matrixOutputBody">
-                <!-- Dynamically populated -->
-              </tbody>
+              <thead id="outputTableHead"></thead>
+              <tbody id="outputTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -496,6 +367,108 @@
 
   <script>
     let currentUnit = 'in';
+
+    const STANDARD_MEASUREMENTS = [
+      "Bust / Chest Circumference",
+      "Waist Circumference",
+      "Hip Circumference",
+      "Shoulder Width",
+      "Sleeve Length",
+      "Inseam",
+      "Rise (Crotch Depth)",
+      "Total Length",
+      "Foot Circumference",
+      "Foot Length",
+      "Cuff Height",
+      "Head Circumference",
+      "Crown Depth / Height",
+      "Custom..."
+    ];
+
+    const GARMENT_PRESETS = {
+      sweater: {
+        targetName: "Target Bust / Chest Circumference",
+        columns: [
+          { name: "Bust / Chest Circumference", axis: "width" },
+          { name: "Shoulder Width", axis: "width" },
+          { name: "Sleeve Length", axis: "length" },
+          { name: "Total Length", axis: "length" }
+        ],
+        sizes: [
+          { name: "XS", vals: [32, 14, 17, 22] },
+          { name: "S", vals: [36, 15, 17.5, 23] },
+          { name: "M", vals: [40, 16, 18, 24] },
+          { name: "L", vals: [44, 17, 18.5, 25] },
+          { name: "XL", vals: [48, 18, 19, 26] }
+        ]
+      },
+      pants: {
+        targetName: "Target Waist Circumference",
+        columns: [
+          { name: "Waist Circumference", axis: "width" },
+          { name: "Hip Circumference", axis: "width" },
+          { name: "Inseam", axis: "length" },
+          { name: "Rise (Crotch Depth)", axis: "length" }
+        ],
+        sizes: [
+          { name: "S", vals: [28, 36, 30, 10] },
+          { name: "M", vals: [32, 40, 31, 11] },
+          { name: "L", vals: [36, 44, 32, 12] },
+          { name: "XL", vals: [40, 48, 33, 13] }
+        ]
+      },
+      socks: {
+        targetName: "Target Foot Circumference",
+        columns: [
+          { name: "Foot Circumference", axis: "width" },
+          { name: "Foot Length", axis: "length" },
+          { name: "Cuff Height", axis: "length" }
+        ],
+        sizes: [
+          { name: "Small", vals: [7, 8.5, 6] },
+          { name: "Medium", vals: [8, 9.5, 6.5] },
+          { name: "Large", vals: [9, 10.5, 7] }
+        ]
+      },
+      hats: {
+        targetName: "Target Head Circumference",
+        columns: [
+          { name: "Head Circumference", axis: "width" },
+          { name: "Crown Depth / Height", axis: "length" }
+        ],
+        sizes: [
+          { name: "Child", vals: [18, 7] },
+          { name: "Adult S/M", vals: [21, 8.5] },
+          { name: "Adult L/XL", vals: [23, 9] }
+        ]
+      },
+      skirt: {
+        targetName: "Target Waist Circumference",
+        columns: [
+          { name: "Waist Circumference", axis: "width" },
+          { name: "Hip Circumference", axis: "width" },
+          { name: "Total Length", axis: "length" }
+        ],
+        sizes: [
+          { name: "S", vals: [26, 36, 22] },
+          { name: "M", vals: [30, 40, 23] },
+          { name: "L", vals: [34, 44, 24] }
+        ]
+      },
+      custom: {
+        targetName: "Target Primary Measurement",
+        columns: [
+          { name: "Bust / Chest Circumference", axis: "width" },
+          { name: "Total Length", axis: "length" }
+        ],
+        sizes: [
+          { name: "Size 1", vals: [36, 24] },
+          { name: "Size 2", vals: [40, 25] }
+        ]
+      }
+    };
+
+    let activeGarment = JSON.parse(JSON.stringify(GARMENT_PRESETS.sweater));
 
     const HOOK_LIST = [
       { mm: "2.25", label: "2.25 mm (B-1)" },
@@ -565,115 +538,224 @@
       calculateMatrix();
     }
 
+    function loadPresetCategory() {
+      const cat = document.getElementById('garmentPreset').value;
+      activeGarment = JSON.parse(JSON.stringify(GARMENT_PRESETS[cat]));
+      document.getElementById('targetLabel').textContent = `${activeGarment.targetName} (${currentUnit})`;
+      renderTable();
+      calculateMatrix();
+    }
+
+    function syncDataFromDOM() {
+      // Read current table state back into activeGarment object before re-rendering or calculating
+      const headRowCols = document.querySelectorAll('#dynamicTableHead th');
+      // Columns are from index 1 to length - 1 (excluding Size and delete button)
+      let newCols = [];
+      for (let i = 1; i < headRowCols.length - 1; i++) {
+        const nameSelect = headRowCols[i].querySelector('.col-name-select');
+        const customInput = headRowCols[i].querySelector('.col-custom-input');
+        const axisSelect = headRowCols[i].querySelector('.col-axis-select');
+        
+        let colName = nameSelect ? nameSelect.value : "Measurement";
+        if (colName === "Custom..." && customInput) {
+          colName = customInput.value || "Custom Measurement";
+        }
+        let axis = axisSelect ? axisSelect.value : "width";
+        newCols.push({ name: colName, axis: axis });
+      }
+      activeGarment.columns = newCols;
+
+      const sizeRows = document.querySelectorAll('#dynamicTableBody tr');
+      let newSizes = [];
+      sizeRows.forEach(tr => {
+        const sizeNameInput = tr.querySelector('.size-name-input');
+        const sizeName = sizeNameInput ? sizeNameInput.value : "Size";
+        const valInputs = tr.querySelectorAll('.size-val-input');
+        let vals = [];
+        valInputs.forEach(inp => {
+          vals.push(parseFloat(inp.value) || 0);
+        });
+        newSizes.push({ name: sizeName, vals: vals });
+      });
+      activeGarment.sizes = newSizes;
+    }
+
+    function renderTable() {
+      const unitSym = currentUnit === 'in' ? '"' : ' cm';
+      
+      // Render Head
+      let headHtml = `<tr><th>Written Size</th>`;
+      activeGarment.columns.forEach((col, idx) => {
+        let isStandard = STANDARD_MEASUREMENTS.includes(col.name);
+        let selectVal = isStandard ? col.name : "Custom...";
+        
+        headHtml += `
+          <th>
+            <div style="display:flex; flex-direction:column; gap:3px;">
+              <select class="col-name-select" onchange="onColNameChange(this, ${idx})">
+                ${STANDARD_MEASUREMENTS.map(m => `<option value="${m}" ${m === selectVal ? 'selected' : ''}>${m}</option>`).join('')}
+              </select>
+              <input type="text" class="col-custom-input" value="${col.name}" style="display:${isStandard && col.name !== 'Custom...' ? 'none' : 'block'}; font-size:0.78rem;" placeholder="Custom name..." oninput="syncDataFromDOM()">
+              
+              <div style="display:flex; gap:3px; align-items:center; margin-top:2px;">
+                <select class="col-axis-select" style="font-size:0.75rem; padding:2px;" onchange="syncDataFromDOM()">
+                  <option value="width" ${col.axis === 'width' ? 'selected' : ''}>Axis: Width (Stitch)</option>
+                  <option value="length" ${col.axis === 'length' ? 'selected' : ''}>Axis: Length (Row)</option>
+                </select>
+                <button type="button" onclick="deleteCol(${idx})" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;" title="Delete Column">×</button>
+              </div>
+            </div>
+          </th>
+        `;
+      });
+      headHtml += `<th style="width:30px;"></th></tr>`;
+      document.getElementById('dynamicTableHead').innerHTML = headHtml;
+
+      // Render Body
+      let bodyHtml = '';
+      activeGarment.sizes.forEach((size, sIdx) => {
+        bodyHtml += `
+          <tr>
+            <td><input type="text" class="size-name-input" value="${size.name}" style="width:50px; font-weight:bold;" oninput="syncDataFromDOM()"></td>
+        `;
+        activeGarment.columns.forEach((col, cIdx) => {
+          let val = (size.vals && size.vals[cIdx] !== undefined) ? size.vals[cIdx] : 0;
+          bodyHtml += `<td><input type="number" class="size-val-input" value="${val}" style="width:70px;" oninput="syncDataFromDOM(); calculateMatrix()"></td>`;
+        });
+        bodyHtml += `
+            <td><button type="button" onclick="deleteSizeRow(${sIdx})" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;" title="Delete Size">×</button></td>
+          </tr>
+        `;
+      });
+      document.getElementById('dynamicTableBody').innerHTML = bodyHtml;
+    }
+
+    function onColNameChange(selectEl, idx) {
+      const tr = selectEl.closest('th');
+      const customInput = tr.querySelector('.col-custom-input');
+      if (selectEl.value === "Custom...") {
+        customInput.style.display = 'block';
+        customInput.focus();
+      } else {
+        customInput.style.display = 'none';
+        customInput.value = selectEl.value;
+      }
+      syncDataFromDOM();
+    }
+
+    function addColumn() {
+      syncDataFromDOM();
+      activeGarment.columns.push({ name: "New Measurement", axis: "width" });
+      activeGarment.sizes.forEach(s => {
+        if (!s.vals) s.vals = [];
+        s.vals.push(30);
+      });
+      renderTable();
+      calculateMatrix();
+    }
+
+    function deleteCol(idx) {
+      syncDataFromDOM();
+      if (activeGarment.columns.length <= 1) {
+        alert("You must keep at least one measurement column.");
+        return;
+      }
+      activeGarment.columns.splice(idx, 1);
+      activeGarment.sizes.forEach(s => {
+        if (s.vals) s.vals.splice(idx, 1);
+      });
+      renderTable();
+      calculateMatrix();
+    }
+
     function addSizeRow() {
-      const tbody = document.getElementById('sizeRowsBody');
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><input type="text" value="New" style="width:100%;"></td>
-        <td><input type="number" value="52" style="width:100%;" oninput="calculateMatrix()"></td>
-        <td><input type="number" value="19" style="width:100%;" oninput="calculateMatrix()"></td>
-        <td><input type="number" value="27" style="width:100%;" oninput="calculateMatrix()"></td>
-        <td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td>
-      `;
-      tbody.appendChild(tr);
+      syncDataFromDOM();
+      let defaultVals = activeGarment.columns.map(() => 40);
+      activeGarment.sizes.push({ name: "New", vals: defaultVals });
+      renderTable();
       calculateMatrix();
     }
 
-    function removeRow(btn) {
-      btn.closest('tr').remove();
-      calculateMatrix();
-    }
-
-    function loadSampleScenario() {
-      document.getElementById('pYarnCYC').value = 4;
-      document.getElementById('yYarnCYC').value = 5;
-      updateCYCGauge('p');
-      updateCYCGauge('y');
-      document.getElementById('pStitches').value = 20;
-      document.getElementById('pRows').value = 28;
-      document.getElementById('yStitches').value = 17; // Looser gauge -> larger garment width
-      document.getElementById('yRows').value = 22; // Taller rows -> longer garment length
-      document.getElementById('targetBust').value = 40;
-      document.getElementById('targetSleeve').value = 18;
-
-      const tbody = document.getElementById('sizeRowsBody');
-      tbody.innerHTML = `
-        <tr><td><input type="text" value="XS" style="width:100%;"></td><td><input type="number" value="32" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="17" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="22" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="S" style="width:100%;"></td><td><input type="number" value="36" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="17.5" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="23" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="M" style="width:100%;"></td><td><input type="number" value="40" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="18" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="24" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="L" style="width:100%;"></td><td><input type="number" value="44" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="18.5" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="25" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-        <tr><td><input type="text" value="XL" style="width:100%;"></td><td><input type="number" value="48" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="19" style="width:100%;" oninput="calculateMatrix()"></td><td><input type="number" value="26" style="width:100%;" oninput="calculateMatrix()"></td><td><button type="button" onclick="removeRow(this)" style="background:transparent; border:none; color:#c85a32; font-weight:bold; cursor:pointer;">×</button></td></tr>
-      `;
+    function deleteSizeRow(sIdx) {
+      syncDataFromDOM();
+      if (activeGarment.sizes.length <= 1) {
+        alert("You must keep at least one size.");
+        return;
+      }
+      activeGarment.sizes.splice(sIdx, 1);
+      renderTable();
       calculateMatrix();
     }
 
     function calculateMatrix() {
+      syncDataFromDOM();
+
       const pSt = parseFloat(document.getElementById('pStitches').value) || 20;
       const pRow = parseFloat(document.getElementById('pRows').value) || 28;
       const ySt = parseFloat(document.getElementById('yStitches').value) || 20;
       const yRow = parseFloat(document.getElementById('yRows').value) || 28;
-      const targetBust = parseFloat(document.getElementById('targetBust').value) || 40;
+      const targetPrimary = parseFloat(document.getElementById('targetPrimary').value) || 40;
 
       const unitSym = currentUnit === 'in' ? '"' : ' cm';
 
-      // Width scaling ratio (stitch gauge)
+      // Scaling ratios
       const widthMultiplier = pSt / ySt;
-      // Length scaling ratio (row gauge)
       const rowMultiplier = pRow / yRow;
 
-      const rows = document.querySelectorAll('#sizeRowsBody tr');
-      let sizesData = [];
+      let translatedSizes = [];
 
-      rows.forEach(tr => {
-        const inputs = tr.querySelectorAll('input');
-        if (inputs.length >= 4) {
-          const name = inputs[0].value || 'Unknown';
-          const pBust = parseFloat(inputs[1].value) || 0;
-          const pSleeve = parseFloat(inputs[2].value) || 0;
-          const pTotal = parseFloat(inputs[3].value) || 0;
-
-          const actBust = pBust * widthMultiplier;
-          const actSleeve = pSleeve * rowMultiplier;
-          const actTotal = pTotal * rowMultiplier;
-
-          sizesData.push({ name, actBust, actSleeve, actTotal });
-        }
+      activeGarment.sizes.forEach(size => {
+        let effectiveVals = [];
+        size.vals.forEach((val, idx) => {
+          const colAxis = activeGarment.columns[idx] ? activeGarment.columns[idx].axis : 'width';
+          const multiplier = colAxis === 'width' ? widthMultiplier : rowMultiplier;
+          effectiveVals.push(val * multiplier);
+        });
+        translatedSizes.push({ name: size.name, vals: effectiveVals });
       });
 
-      // Find closest size to target bust
+      // Find best match based on column 0 (primary dimension, e.g., Bust/Waist/Circumference)
       let bestSize = null;
       let minDiff = Infinity;
 
-      sizesData.forEach(s => {
-        const diff = Math.abs(s.actBust - targetBust);
+      translatedSizes.forEach(s => {
+        const primaryVal = s.vals[0] || 0;
+        const diff = Math.abs(primaryVal - targetPrimary);
         if (diff < minDiff) {
           minDiff = diff;
           bestSize = s;
         }
       });
 
-      // Populate Table HTML
-      let tableHtml = '';
-      sizesData.forEach(s => {
+      // Render Output Table Head
+      let outHeadHtml = `<tr><th>Written Size</th>`;
+      activeGarment.columns.forEach(col => {
+        outHeadHtml += `<th>${col.name}</th>`;
+      });
+      outHeadHtml += `</tr>`;
+      document.getElementById('outputTableHead').innerHTML = outHeadHtml;
+
+      // Render Output Table Body
+      let outBodyHtml = '';
+      translatedSizes.forEach(s => {
         const isBest = bestSize && s.name === bestSize.name;
         const highlightStyle = isBest ? 'background: #e8f0eb; font-weight: 700; color: #2d5a38;' : '';
-        tableHtml += `
-          <tr style="${highlightStyle}">
-            <td>${s.name} ${isBest ? '⭐' : ''}</td>
-            <td><b>${s.actBust.toFixed(1)}${unitSym}</b></td>
-            <td>${s.actSleeve.toFixed(1)}${unitSym}</td>
-            <td>${s.actTotal.toFixed(1)}${unitSym}</td>
-          </tr>
-        `;
+        outBodyHtml += `<tr style="${highlightStyle}"><td>${s.name} ${isBest ? '⭐' : ''}</td>`;
+        s.vals.forEach(val => {
+          outBodyHtml += `<td><b>${val.toFixed(1)}${unitSym}</b></td>`;
+        });
+        outBodyHtml += `</tr>`;
       });
-      document.getElementById('matrixOutputBody').innerHTML = tableHtml;
+      document.getElementById('outputTableBody').innerHTML = outBodyHtml;
 
       // Update Recommendation Box
-      if (bestSize) {
+      if (bestSize && activeGarment.columns.length > 0) {
+        const primaryColName = activeGarment.columns[0].name;
+        const primaryEffectiveVal = bestSize.vals[0].toFixed(1);
         document.getElementById('recommendationBox').innerHTML = `
           <div class="recommendation-title">🎯 Optimal Size Match: Size ${bestSize.name}</div>
           <div class="recommendation-body">
-            To hit your target bust measurement of <b>${targetBust}${unitSym}</b> at your current gauge, follow the written pattern instructions for <b>Size ${bestSize.name}</b>. At your tension, it will effectively measure <b>${bestSize.actBust.toFixed(1)}${unitSym} bust</b>, <b>${bestSize.actSleeve.toFixed(1)}${unitSym} sleeve length</b>, and <b>${bestSize.actTotal.toFixed(1)}${unitSym} total length</b>.
+            To hit your target <b>${primaryColName.toLowerCase()}</b> of <b>${targetPrimary}${unitSym}</b>, follow the pattern instructions for <b>Size ${bestSize.name}</b>. At your current tension, its effective measurements across the garment will match the row above.
           </div>
         `;
       }
@@ -685,6 +767,7 @@
 
     // Initialize
     populateHookDropdowns();
+    renderTable();
     calculateMatrix();
   </script>
 </body>
