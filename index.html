@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StitchScale | Dynamic Pattern Gauge & Blueprint Generator</title>
+  <style>
+    :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 2rem; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    .card { background: var(--card); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
+    label { display: block; font-size: 0.875rem; margin-top: 0.75rem; color: #94a3b8; }
+    input { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-top: 0.25rem; }
+    button { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; }
+    button:hover { opacity: 0.9; }
+    canvas { width: 100%; height: 200px; background: #0f172a; border-radius: 8px; margin-top: 1rem; }
+    .stat { font-size: 1.5rem; font-weight: 700; color: #38bdf8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧶 StitchScale Engine</h1>
+    <p>Rescale any crochet or knitting pattern to match your exact gauge and yarn weight without losing geometric proportions.</p>
+
+    <div class="grid">
+      <!-- Input Panel -->
+      <div class="card">
+        <h3>1. Pattern Gauge (per 4 inches / 10 cm)</h3>
+        <label>Pattern Stitches</label>
+        <input type="number" id="pStitches" value="20">
+        <label>Pattern Rows</label>
+        <input type="number" id="pRows" value="28">
+
+        <h3>2. Your Swatch Gauge</h3>
+        <label>Your Stitches</label>
+        <input type="number" id="yStitches" value="16">
+        <label>Your Rows</label>
+        <input type="number" id="yRows" value="22">
+
+        <h3>3. Target Dimensions</h3>
+        <label>Target Width (inches)</label>
+        <input type="number" id="tWidth" value="20">
+        <label>Target Height (inches)</label>
+        <input type="number" id="tHeight" value="30">
+
+        <button onclick="calculateScale()">Recalculate Pattern</button>
+      </div>
+
+      <!-- Output Panel -->
+      <div class="card">
+        <h3>Calculated Adjustments</h3>
+        <div>New Cast-On / Starting Chain: <span class="stat" id="outStitches">80</span> stitches</div>
+        <div style="margin-top:0.5rem;">New Total Rows: <span class="stat" id="outRows">165</span> rows</div>
+
+        <canvas id="gaugeCanvas"></canvas>
+
+        <div style="margin-top:1.5rem; border-top: 1px solid #334155; padding-top: 1rem;">
+          <h4>Export High-Res PDF Blueprint</h4>
+          <p style="font-size:0.85rem; color:#94a3b8;">Includes row-by-row stitch counts and custom sizing diagram.</p>
+          <button style="background: #22c55e;" onclick="triggerCheckout()">Unlock PDF Blueprint ($3.00)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculateScale() {
+      const pSt = parseFloat(document.getElementById('pStitches').value);
+      const ySt = parseFloat(document.getElementById('yStitches').value);
+      const yRow = parseFloat(document.getElementById('yRows').value);
+      const w = parseFloat(document.getElementById('tWidth').value);
+      const h = parseFloat(document.getElementById('tHeight').value);
+
+      // Formulas
+      const newStitches = Math.round((w / 4) * ySt);
+      const newRows = Math.round((h / 4) * yRow);
+
+      document.getElementById('outStitches').innerText = newStitches;
+      document.getElementById('outRows').innerText = newRows;
+
+      drawCanvas(pSt, ySt);
+    }
+
+    function drawCanvas(pSt, ySt) {
+      const canvas = document.getElementById('gaugeCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw visual proportion comparison
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(20, 40, 100, 100); // Original
+      ctx.fillStyle = '#6366f1';
+      const scaledWidth = 100 * (ySt / pSt);
+      ctx.fillRect(150, 40, scaledWidth, 100); // Adjusted
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('Original Gauge', 20, 30);
+      ctx.fillText('Scaled Result', 150, 30);
+    }
+
+    function triggerCheckout() {
+      // Directs to your generated Stripe Payment Link
+      window.location.href = "https://buy.stripe.com/your_payment_link_here";
+    }
+
+    calculateScale();
+  </script>
+</body>
+</html>
